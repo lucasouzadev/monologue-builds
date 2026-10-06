@@ -7,9 +7,17 @@ import time
 import xml.etree.ElementTree as ET
 
 
+def run(cmd, limit=25):
+    try:
+        return subprocess.run(cmd, capture_output=True, timeout=limit)
+    except subprocess.TimeoutExpired:
+        print(f'  (timeout after {limit}s: {" ".join(cmd[:4])})')
+        return None
+
+
 def dump():
-    subprocess.run(['adb', 'shell', 'uiautomator', 'dump', '/sdcard/ui.xml'], capture_output=True)
-    subprocess.run(['adb', 'pull', '/sdcard/ui.xml', '/tmp/ui.xml'], capture_output=True)
+    run(['adb', 'shell', 'uiautomator', 'dump', '/sdcard/ui.xml'])
+    run(['adb', 'pull', '/sdcard/ui.xml', '/tmp/ui.xml'])
     try:
         return ET.parse('/tmp/ui.xml').getroot()
     except Exception:
@@ -59,7 +67,7 @@ def main():
             hit = find(args)
             if hit:
                 if command == 'tap':
-                    subprocess.run(['adb', 'shell', 'input', 'tap', str(hit[1][0]), str(hit[1][1])])
+                    run(['adb', 'shell', 'input', 'tap', str(hit[1][0]), str(hit[1][1])], 10)
                 print(f'  {command} ok: {hit[0]!r} at {hit[1]}')
                 return
             time.sleep(1.5)
