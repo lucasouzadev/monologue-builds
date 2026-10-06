@@ -7,10 +7,11 @@ appId: app.monologue.mobile
     timeout: 60000
 - tapOn: "Open personal space"
 - extendedWaitUntil:
-    visible: "Activity"
+    visible: ".*Activity.*"
     timeout: 10000
 - takeScreenshot: 02-drawer
-- pressKey: back
+- tapOn:
+    point: "8%,50%"
 - extendedWaitUntil:
     visible: "More creation options"
     timeout: 10000

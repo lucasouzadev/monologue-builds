@@ -1,0 +1,17 @@
+# The composer "+" (Tools) menu: it did not open on the owner's Android.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Ola"
+    timeout: 60000
+- tapOn: "Ola"
+- extendedWaitUntil:
+    visible: "Message"
+    timeout: 20000
+- takeScreenshot: 05-before-plus
+- tapOn: "Tools"
+- takeScreenshot: 05-after-plus
+- extendedWaitUntil:
+    visible: ".*(Photos|Camera|Files).*"
+    timeout: 10000
