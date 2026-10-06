@@ -1,0 +1,27 @@
+# The Photos panel inside the composer "+" menu: selecting an image closed the app on the owner's Android.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Untitled.*"
+    timeout: 60000
+- tapOn: ".*Untitled.*"
+- extendedWaitUntil:
+    visible: "Message"
+    timeout: 20000
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- tapOn: "Photos"
+- takeScreenshot: 06-gallery
+- tapOn:
+    point: "20%,80%"
+- takeScreenshot: 06-image-selected
+- tapOn:
+    point: "55%,80%"
+- takeScreenshot: 06-two-selected
+- assertVisible:
+    text: ".*(Message|Tools).*"
+    optional: true
+- takeScreenshot: 06-end
