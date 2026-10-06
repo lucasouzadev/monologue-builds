@@ -1,0 +1,249 @@
+name: Monologue native build (private source, encrypted artifacts)
+run-name: Build ${{ inputs.platforms }} / ${{ inputs.channel }} @ ${{ inputs.source_ref }}
+
+# Each manual dispatch authorizes only that execution and selected platforms.
+# No push, pull_request, tag or schedule may start a native build.
+on:
+  workflow_dispatch:
+    inputs:
+      authorize_native_build:
+        description: I authorize this native build execution and selected platforms
+        type: boolean
+        required: true
+        default: false
+      platforms:
+        description: Both by default; choose one only for an explicit scope or failed-platform retry
+        type: choice
+        required: true
+        default: both
+        options: [both, android, ios]
+      channel:
+        description: OTA channel and matching EAS environment embedded in the new binaries
+        type: choice
+        required: true
+        default: development
+        options: [development, preview, production]
+      source_ref:
+        description: Branch, tag or SHA of the private lucasouzadev/monologue repository
+        type: string
+        required: true
+        default: main
+      upload_apple:
+        description: Upload the signed IPA directly to App Store Connect (TestFlight processing follows)
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-local-${{ inputs.channel }}
+  cancel-in-progress: false
+
+env:
+  CI: '1'
+  EXPO_NO_TELEMETRY: '1'
+  NATIVE_BUILD_AUTHORIZED: ${{ inputs.authorize_native_build }}
+  BUILD_CHANNEL: ${{ inputs.channel }}
+  # Public client configuration; must match this channel's EAS environment.
+  EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
+  EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Require authorization for this execution
+        env:
+          PLATFORMS: ${{ inputs.platforms }}
+        run: |
+          test "$NATIVE_BUILD_AUTHORIZED" = true || { echo 'Explicit native build authorization is required.'; exit 1; }
+          case "$BUILD_CHANNEL" in development|preview|production) ;; *) exit 1 ;; esac
+          case "$PLATFORMS" in both|android|ios) ;; *) exit 1 ;; esac
+      - uses: actions/checkout@v4
+        with:
+          repository: lucasouzadev/monologue
+          ref: ${{ inputs.source_ref }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Validate types and installed baseline contract without building
+        run: |
+          node --test scripts/ci/local-build-credentials.test.cjs
+          pnpm typecheck
+          node scripts/validate-native-baseline.cjs
+
+  android:
+    if: inputs.platforms == 'both' || inputs.platforms == 'android'
+    needs: preflight
+    runs-on: ${{ fromJSON(vars.ANDROID_RUNNER_LABELS || '["ubuntu-24.04"]') }}
+    timeout-minutes: 90
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: lucasouzadev/monologue
+          ref: ${{ inputs.source_ref }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          persist-credentials: false
+      - name: Check required signing inputs before installing tools
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: node scripts/ci/local-build-credentials.cjs check android
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+      - name: Install matching Android tools (SDK 57 / RN 0.86)
+        run: |
+          { yes || true; } | sdkmanager --licenses > /dev/null
+          sdkmanager 'platforms;android-36' 'build-tools;36.0.0' 'ndk;27.1.12297006' 'cmake;3.22.1'
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: 24.8.0
+          packager: npm
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: pnpm install --frozen-lockfile
+      - name: Restore signing files
+        id: signing
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: node scripts/ci/local-build-credentials.cjs android
+      - name: Compile signed Release APK on this runner (no EAS cloud build)
+        working-directory: apps/mobile
+        run: |
+          mkdir -p "$RUNNER_TEMP/monologue-artifacts"
+          eas build --local --platform android --profile "github-$BUILD_CHANNEL" --non-interactive --output "$RUNNER_TEMP/monologue-artifacts/Monologue.apk"
+      - name: Validate APK signature and record checksum
+        run: |
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$RUNNER_TEMP/monologue-artifacts/Monologue.apk"
+          cd "$RUNNER_TEMP/monologue-artifacts"
+          sha256sum Monologue.apk > Monologue.apk.sha256
+      - name: Encrypt artifact (this repository is public)
+        env:
+          ARTIFACT_PASSPHRASE: ${{ secrets.ARTIFACT_PASSPHRASE }}
+        run: |
+          test -n "$ARTIFACT_PASSPHRASE" || { echo 'ARTIFACT_PASSPHRASE is required.'; exit 1; }
+          cd "$RUNNER_TEMP/monologue-artifacts"
+          openssl enc -aes-256-cbc -pbkdf2 -iter 600000 -salt -pass env:ARTIFACT_PASSPHRASE -in Monologue.apk -out Monologue.apk.enc
+          rm -f Monologue.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: monologue-android-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/monologue-artifacts/Monologue.apk.enc*
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+      - name: Remove signing files
+        if: always() && steps.signing.outcome == 'success'
+        run: node scripts/ci/local-build-credentials.cjs cleanup
+
+  ios:
+    if: inputs.platforms == 'both' || inputs.platforms == 'ios'
+    needs: preflight
+    runs-on: ${{ fromJSON(vars.IOS_RUNNER_LABELS || '["macos-26"]') }}
+    timeout-minutes: 90
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      DEVELOPER_DIR: ${{ vars.IOS_DEVELOPER_DIR || '/Applications/Xcode_26.6.app/Contents/Developer' }}
+      UPLOAD_APPLE: ${{ inputs.upload_apple }}
+      FASTLANE_SKIP_UPDATE_CHECK: '1'
+      FASTLANE_HIDE_CHANGELOG: '1'
+      FASTLANE_OPT_OUT_USAGE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: lucasouzadev/monologue
+          ref: ${{ inputs.source_ref }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          persist-credentials: false
+      - name: Check required signing/API inputs before installing tools
+        env:
+          IOS_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}
+          IOS_DISTRIBUTION_CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          ASC_KEY_ID: ${{ vars.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ vars.ASC_ISSUER_ID }}
+          ASC_API_KEY_BASE64: ${{ secrets.ASC_API_KEY_BASE64 }}
+        run: node scripts/ci/local-build-credentials.cjs check ios
+      - name: Check Apple toolchain before dependencies/build
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+          fastlane --version
+          pod --version
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: 24.8.0
+          packager: npm
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: pnpm install --frozen-lockfile
+      - name: Restore signing and optional App Store API credentials
+        id: signing
+        env:
+          IOS_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}
+          IOS_DISTRIBUTION_CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          ASC_KEY_ID: ${{ vars.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ vars.ASC_ISSUER_ID }}
+          ASC_API_KEY_BASE64: ${{ secrets.ASC_API_KEY_BASE64 }}
+        run: node scripts/ci/local-build-credentials.cjs ios
+      - name: Compile signed App Store IPA on this Mac (no EAS cloud build)
+        working-directory: apps/mobile
+        run: |
+          mkdir -p "$RUNNER_TEMP/monologue-artifacts"
+          eas build --local --platform ios --profile "github-$BUILD_CHANNEL" --non-interactive --output "$RUNNER_TEMP/monologue-artifacts/Monologue.ipa"
+          cd "$RUNNER_TEMP/monologue-artifacts"
+          shasum -a 256 Monologue.ipa > Monologue.ipa.sha256
+      - name: Upload directly to App Store Connect with fastlane / Apple Transporter
+        if: inputs.upload_apple
+        run: >
+          fastlane pilot upload
+          --api_key_path "$GITHUB_WORKSPACE/apps/mobile/.ci-signing/app-store-api.json"
+          --app_identifier app.monologue.mobile
+          --ipa "$RUNNER_TEMP/monologue-artifacts/Monologue.ipa"
+          --skip_waiting_for_build_processing true
+          --skip_submission true
+      - name: Encrypt artifact (this repository is public)
+        env:
+          ARTIFACT_PASSPHRASE: ${{ secrets.ARTIFACT_PASSPHRASE }}
+        run: |
+          test -n "$ARTIFACT_PASSPHRASE" || { echo 'ARTIFACT_PASSPHRASE is required.'; exit 1; }
+          cd "$RUNNER_TEMP/monologue-artifacts"
+          openssl enc -aes-256-cbc -pbkdf2 -iter 600000 -salt -pass env:ARTIFACT_PASSPHRASE -in Monologue.ipa -out Monologue.ipa.enc
+          rm -f Monologue.ipa
+      - uses: actions/upload-artifact@v4
+        with:
+          name: monologue-ios-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/monologue-artifacts/Monologue.ipa.enc*
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+      - name: Remove signing and API files
+        if: always() && steps.signing.outcome == 'success'
+        run: node scripts/ci/local-build-credentials.cjs cleanup
