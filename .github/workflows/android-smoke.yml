@@ -1,0 +1,48 @@
+name: Android emulator smoke (decrypted APK from a build run)
+run-name: Android smoke @ build run ${{ inputs.build_run_id }}
+
+# Manual only. Installs an APK produced by build.yml on an emulator and prints UI text + crash logs (no screenshots, no artifacts).
+on:
+  workflow_dispatch:
+    inputs:
+      build_run_id:
+        description: Run id of the build.yml run that produced monologue-android-<id>-1
+        type: string
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          name: monologue-android-${{ inputs.build_run_id }}-1
+          run-id: ${{ inputs.build_run_id }}
+          github-token: ${{ github.token }}
+          path: apk
+      - name: Decrypt APK
+        env:
+          ARTIFACT_PASSPHRASE: ${{ secrets.ARTIFACT_PASSPHRASE }}
+        run: node tools/decrypt-artifact.mjs apk/Monologue.apk.enc Monologue.apk "$ARTIFACT_PASSPHRASE"
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          disable-animations: true
+          script: bash tools/android-smoke/smoke.sh
