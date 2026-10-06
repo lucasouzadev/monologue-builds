@@ -118,6 +118,9 @@ jobs:
           distribution: temurin
           java-version: 17
       - uses: android-actions/setup-android@v3
+        with:
+          # The runner image already ships the SDK; the action's default `tools` package no longer exists and fails the job.
+          packages: ''
       - name: Install matching Android tools (SDK 57 / RN 0.86)
         run: |
           { yes || true; } | sdkmanager --licenses > /dev/null
