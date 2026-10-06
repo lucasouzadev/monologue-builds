@@ -11,6 +11,12 @@ on:
         type: boolean
         required: true
         default: false
+      native_baseline:
+        description: Native baseline label embedded in the binaries (07 = morphlet + expo-content-transition)
+        type: choice
+        required: true
+        default: '07'
+        options: ['07', '06']
       platforms:
         description: Both by default; choose one only for an explicit scope or failed-platform retry
         type: choice
@@ -45,6 +51,7 @@ env:
   EXPO_NO_TELEMETRY: '1'
   NATIVE_BUILD_AUTHORIZED: ${{ inputs.authorize_native_build }}
   BUILD_CHANNEL: ${{ inputs.channel }}
+  MONOLOGUE_NATIVE_BASELINE: ${{ inputs.native_baseline }}
   # Public client configuration; must match this channel's EAS environment.
   EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
   EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
