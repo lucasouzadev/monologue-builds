@@ -61,6 +61,10 @@ def main():
     command, args = sys.argv[1], sys.argv[2:]
     if command == 'show':
         show()
+    elif command == 'has':
+        root = dump()
+        found = [a for a in args if root is not None and any(a.lower() in (t + ' ' + d).lower() for t, d, *_ in nodes(root))]
+        print(f'  has {args}: ' + ('PRESENT ' + str(found) if found else 'ABSENT'))
     elif command in ('tap', 'wait'):
         deadline = time.time() + 25
         while time.time() < deadline:

@@ -25,6 +25,13 @@ sleep 1
 $UI tap "Create conversation" || true
 sleep 5; stage "3 home after create"; alive; $UI show
 
+stage "3b tap probes on Home (does a tap change anything?)"
+echo " -- personal space button"; $UI tap "Open personal space"; sleep 2; $UI has "Activity" "Integrations" "Create"; adb shell input keyevent KEYCODE_BACK; sleep 2
+echo " -- options handle"; $UI tap "More creation options"; sleep 2; $UI has "Wide search" "Timeline"; adb shell input keyevent KEYCODE_BACK; sleep 2
+echo " -- filter button"; $UI tap "Filter conversations"; sleep 2; $UI show | head -20; adb shell input keyevent KEYCODE_BACK; sleep 2
+echo " -- row options (...)"; $UI tap "Options for"; sleep 2; $UI show | head -20; adb shell input keyevent KEYCODE_BACK; sleep 2
+alive
+
 stage "4 open the conversation"
 $UI tap "Teste" || true
 sleep 10; alive; $UI show
