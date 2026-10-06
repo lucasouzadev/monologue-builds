@@ -12,6 +12,10 @@ appId: app.monologue.mobile
     timeout: 15000
 - tapOn: "First note"
 - inputText: "Teste"
+- takeScreenshot: 01-sheet-typed
+- extendedWaitUntil:
+    visible: "Create conversation"
+    timeout: 8000
 - tapOn: "Create conversation"
 - extendedWaitUntil:
     visible: "Teste"
