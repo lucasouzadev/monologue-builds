@@ -1,0 +1,20 @@
+# Conversation: message long-press menu, reply focus mode, return to the header.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Untitled.*"
+    timeout: 60000
+- tapOn: ".*Untitled.*"
+- extendedWaitUntil:
+    visible: "Message"
+    timeout: 20000
+- longPressOn: "Ola, .*"
+- takeScreenshot: 08-message-menu
+- tapOn:
+    text: "Reply"
+    optional: true
+- takeScreenshot: 08-reply-focus
+- pressKey: back
+- takeScreenshot: 08-after-reply-header
+- assertVisible: "Back"

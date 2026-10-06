@@ -1,0 +1,22 @@
+# Home list: filter menu, long-press preview (with actions), row menu, selection mode.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Untitled.*"
+    timeout: 60000
+- takeScreenshot: 07-home
+- tapOn:
+    text: "Filter conversations.*"
+    optional: true
+- takeScreenshot: 07-filter-menu
+- pressKey: back
+- longPressOn: ".*Untitled.*"
+- takeScreenshot: 07-long-press-preview
+- pressKey: back
+- tapOn:
+    text: "Options for Untitled.*"
+    optional: true
+- takeScreenshot: 07-row-menu
+- pressKey: back
+- takeScreenshot: 07-end

@@ -1,0 +1,23 @@
+# Profile (drawer) sections.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 60000
+- tapOn: "Open personal space"
+- tapOn: "Activity.*"
+- takeScreenshot: 09-activity
+- pressKey: back
+- takeScreenshot: 09-after-activity
+- tapOn:
+    text: "Integrations.*"
+    optional: true
+- takeScreenshot: 09-integrations
+- pressKey: back
+- tapOn:
+    text: "Settings.*"
+    optional: true
+- takeScreenshot: 09-settings
+- pressKey: back
+- takeScreenshot: 09-end
