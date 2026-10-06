@@ -75,7 +75,7 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Restore a previous simulator build when native inputs are unchanged
         id: simcache
-        uses: actions/cache@v4
+        uses: actions/cache/restore@v4
         with:
           path: ${{ runner.temp }}/sim/Monologue.tar.gz
           key: sim-${{ inputs.native_baseline }}-${{ hashFiles('src/pnpm-lock.yaml', 'src/apps/mobile/modules/**', 'src/apps/mobile/app.config.*', 'src/apps/mobile/package.json') }}
@@ -85,6 +85,12 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/sim"
           eas build --local --platform ios --profile github-simulator --non-interactive --output "$RUNNER_TEMP/sim/Monologue.tar.gz"
+      - name: Save the simulator build for reruns
+        if: always() && steps.simcache.outputs.cache-hit != 'true' && hashFiles(format('{0}/sim/Monologue.tar.gz', runner.temp)) != ''
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/sim/Monologue.tar.gz
+          key: ${{ steps.simcache.outputs.cache-primary-key }}
       - name: Boot a simulator and install the app
         run: |
           tar -xzf "$RUNNER_TEMP/sim/Monologue.tar.gz" -C "$RUNNER_TEMP/sim"
