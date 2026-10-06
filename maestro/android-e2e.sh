@@ -2,6 +2,8 @@
 # Installs the APK, runs every flow, then prints the crash buffer (FATAL blocks) so a native stop is explained in the log.
 set -u
 cd "$(dirname "$0")/.."
+adb shell settings put global window_animation_scale 0 >/dev/null 2>&1
+sleep 25  # let the system finish booting; a loaded emulator ANRs the launcher otherwise
 adb install -r Monologue.apk | tail -1
 adb logcat -c
 bash maestro/run.sh
