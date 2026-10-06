@@ -1,0 +1,84 @@
+name: Monologue OTA update (private source)
+run-name: OTA ${{ inputs.platform }} / ${{ inputs.channel }} @ ${{ inputs.source_ref }} (baseline ${{ inputs.native_baseline }})
+
+# Manual only. Publishes a JS/asset-only update to the Expo project; never compiles a native binary.
+# The runtime label must match the installed binary (07 = the build that contains morphlet + expo-content-transition).
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: Branch, tag or SHA of the private lucasouzadev/monologue repository
+        type: string
+        required: true
+        default: main
+      channel:
+        description: EAS update channel and matching EAS environment
+        type: choice
+        required: true
+        default: development
+        options: [development, preview, production]
+      platform:
+        description: Platform(s) to publish
+        type: choice
+        required: true
+        default: all
+        options: [all, ios, android]
+      native_baseline:
+        description: Runtime label of the installed binary (must match it)
+        type: choice
+        required: true
+        default: '07'
+        options: ['07', '06']
+      message:
+        description: Update message
+        type: string
+        required: true
+        default: OTA
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ota-${{ inputs.channel }}
+  cancel-in-progress: false
+
+env:
+  CI: '1'
+  EXPO_NO_TELEMETRY: '1'
+  MONOLOGUE_NATIVE_BASELINE: ${{ inputs.native_baseline }}
+
+jobs:
+  ota:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: lucasouzadev/monologue
+          ref: ${{ inputs.source_ref }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: 24.8.0
+          packager: npm
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: pnpm install --frozen-lockfile
+      - name: Validate types and baseline contract
+        run: |
+          pnpm typecheck
+          node scripts/validate-native-baseline.cjs
+      - name: Publish update
+        working-directory: apps/mobile
+        env:
+          CHANNEL: ${{ inputs.channel }}
+          PLATFORM: ${{ inputs.platform }}
+          UPDATE_MESSAGE: ${{ inputs.message }}
+        run: eas update --channel "$CHANNEL" --platform "$PLATFORM" --environment "$CHANNEL" --message "$UPDATE_MESSAGE" --non-interactive
