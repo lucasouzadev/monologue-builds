@@ -1,0 +1,26 @@
+# Inside a conversation: calendar reveal open/close (the app stopped after this on the owner's Android), options menu, composer tools.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Teste"
+    timeout: 60000
+- tapOn: "Teste"
+- extendedWaitUntil:
+    visible: "Message"
+    timeout: 20000
+- tapOn: "Dates of messages"
+- extendedWaitUntil:
+    visible: "Today"
+    timeout: 10000
+- tapOn: "Close dates of messages"
+- extendedWaitUntil:
+    visible: "Message"
+    timeout: 10000
+- tapOn: "Conversation options"
+- assertVisible: "Rename"
+- pressKey: back
+- tapOn: "Tools"
+- extendedWaitUntil:
+    visible: "Photos|Camera|Files"
+    timeout: 10000

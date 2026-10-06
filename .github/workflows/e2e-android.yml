@@ -56,4 +56,4 @@ jobs:
           disk-size: 8192M
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
-          script: bash -c 'adb install -r Monologue.apk && bash maestro/run.sh'
+          script: bash maestro/android-e2e.sh
