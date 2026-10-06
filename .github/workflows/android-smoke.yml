@@ -42,7 +42,12 @@ jobs:
         with:
           api-level: 34
           arch: x86_64
-          target: google_apis
+          target: google_atd
           profile: pixel_6
+          cores: 4
+          ram-size: 4096M
+          heap-size: 1024M
+          disk-size: 8192M
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
           script: bash tools/android-smoke/smoke.sh
