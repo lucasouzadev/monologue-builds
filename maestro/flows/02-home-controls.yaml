@@ -1,0 +1,19 @@
+# Header and entry controls on Home (the buttons that did nothing on the Android build).
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 60000
+- tapOn: "Open personal space"
+- extendedWaitUntil:
+    visible: "Activity"
+    timeout: 10000
+- tapOn: "Close personal space"
+- extendedWaitUntil:
+    visible: "More creation options"
+    timeout: 10000
+- tapOn: "More creation options"
+- assertVisible: "Wide search"
+- tapOn: "Wide search"
+- assertVisible: "Search"

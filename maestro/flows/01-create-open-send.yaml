@@ -1,0 +1,25 @@
+# The core path the owner could not complete on Android: create a conversation, open it, write and send a message.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "New conversation"
+    timeout: 60000
+- tapOn: "New conversation"
+- extendedWaitUntil:
+    visible: "Create conversation|First note|Write your first note…"
+    timeout: 15000
+- tapOn: "First note"
+- inputText: "Teste"
+- tapOn: "Create conversation"
+- extendedWaitUntil:
+    visible: "Teste"
+    timeout: 20000
+- tapOn: "Teste"
+- extendedWaitUntil:
+    visible: "Message"
+    timeout: 20000
+- tapOn: "Message"
+- inputText: "Ola"
+- tapOn: "Send message"
+- assertVisible: "Ola"

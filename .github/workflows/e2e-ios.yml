@@ -1,0 +1,96 @@
+name: E2E iOS (simulator build + Maestro)
+run-name: E2E iOS @ ${{ inputs.source_ref }}
+
+# Manual. Builds the app FOR THE SIMULATOR from the private source (no signing, no TestFlight, never an installable device build)
+# and runs the Maestro flows in maestro/flows on an iOS simulator. Each run authorises one simulator build.
+on:
+  workflow_dispatch:
+    inputs:
+      authorize_native_build:
+        description: I authorize this iOS simulator build execution
+        type: boolean
+        required: true
+        default: false
+      source_ref:
+        description: Branch, tag or SHA of the private lucasouzadev/monologue repository
+        type: string
+        required: true
+        default: main
+      native_baseline:
+        description: Native baseline label embedded in the build
+        type: choice
+        required: true
+        default: '07'
+        options: ['07', '06']
+
+permissions:
+  contents: read
+
+env:
+  CI: '1'
+  EXPO_NO_TELEMETRY: '1'
+  MONOLOGUE_NATIVE_BASELINE: ${{ inputs.native_baseline }}
+  EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
+  EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+
+jobs:
+  e2e:
+    runs-on: macos-26
+    timeout-minutes: 90
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      DEVELOPER_DIR: ${{ vars.IOS_DEVELOPER_DIR || '/Applications/Xcode_26.6.app/Contents/Developer' }}
+    steps:
+      - name: Require authorization for this execution
+        run: test "${{ inputs.authorize_native_build }}" = true || { echo 'Explicit build authorization is required.'; exit 1; }
+      - uses: actions/checkout@v4
+        with:
+          path: builds
+      - uses: actions/checkout@v4
+        with:
+          repository: lucasouzadev/monologue
+          ref: ${{ inputs.source_ref }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          persist-credentials: false
+          path: src
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: src/package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: src/pnpm-lock.yaml
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: 24.8.0
+          packager: npm
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Install dependencies
+        working-directory: src
+        run: pnpm install --frozen-lockfile
+      - name: Compile the app for the iOS simulator (EAS --local, no signing)
+        working-directory: src/apps/mobile
+        run: |
+          mkdir -p "$RUNNER_TEMP/sim"
+          eas build --local --platform ios --profile github-simulator --non-interactive --output "$RUNNER_TEMP/sim/Monologue.tar.gz"
+      - name: Boot a simulator and install the app
+        run: |
+          tar -xzf "$RUNNER_TEMP/sim/Monologue.tar.gz" -C "$RUNNER_TEMP/sim"
+          APP=$(find "$RUNNER_TEMP/sim" -maxdepth 2 -name '*.app' | head -1)
+          echo "app: $APP"
+          xcrun simctl list devices available | grep -i iphone | head -5
+          UDID=$(xcrun simctl list devices available -j | python3 -c "import json,sys; d=json.load(sys.stdin)['devices']; c=[x for k,v in d.items() if 'iOS' in k for x in v if 'iPhone' in x['name'] and x['isAvailable']]; print((c[-1] if c else {})['udid'])")
+          echo "udid: $UDID"
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl install "$UDID" "$APP"
+          echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
+      - name: Install Maestro
+        run: curl -Ls "https://get.maestro.mobile.dev" | bash
+      - name: Run Maestro flows
+        run: bash builds/maestro/run.sh "$SIM_UDID"
