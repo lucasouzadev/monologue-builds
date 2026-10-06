@@ -3,9 +3,9 @@ appId: app.monologue.mobile
 ---
 - launchApp
 - extendedWaitUntil:
-    visible: "Teste"
+    visible: "Ola"
     timeout: 60000
-- tapOn: "Teste"
+- tapOn: "Ola"
 - extendedWaitUntil:
     visible: "Message"
     timeout: 20000
