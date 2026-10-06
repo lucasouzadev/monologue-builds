@@ -13,5 +13,7 @@ appId: app.monologue.mobile
 - tapOn: "Tools.*"
 - takeScreenshot: 05-after-plus
 - extendedWaitUntil:
-    visible: ".*(Photos|Camera|Files).*"
+    visible: "Expand editor"
     timeout: 10000
+- assertNotVisible: "Gallery"
+- takeScreenshot: 05-plus-menu-open
