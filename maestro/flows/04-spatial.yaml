@@ -1,0 +1,14 @@
+# Spatial overview (opened from the Home options tray, "Timeline").
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "More creation options"
+    timeout: 60000
+- tapOn: "More creation options"
+- tapOn: "Timeline"
+- extendedWaitUntil:
+    visible: "Close conversation previews"
+    timeout: 10000
+- takeScreenshot: 04-spatial
+- tapOn: "Close conversation previews"

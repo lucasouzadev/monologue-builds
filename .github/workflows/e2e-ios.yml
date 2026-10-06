@@ -24,7 +24,7 @@ on:
         options: ['07', '06']
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   CI: '1'
@@ -94,3 +94,16 @@ jobs:
         run: curl -Ls "https://get.maestro.mobile.dev" | bash
       - name: Run Maestro flows
         run: bash builds/maestro/run.sh "$SIM_UDID"
+
+      - name: Publish screenshots (test data only) to a screens branch
+        if: always()
+        run: |
+          mkdir -p /tmp/shots
+          cp builds/maestro/flows/*.png /tmp/shots/ 2>/dev/null || true
+          cd /tmp/shots
+          ls
+          if ls *.png >/dev/null 2>&1; then
+            git init -q && git checkout -q -b screens-ios
+            git -c user.email=ci@example.invalid -c user.name=ci add . && git -c user.email=ci@example.invalid -c user.name=ci commit -q -m "screenshots ios ${{ github.run_id }}"
+            git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:refs/heads/screens-ios
+          fi

@@ -11,7 +11,7 @@ on:
         required: true
 
 permissions:
-  contents: read
+  contents: write
   actions: read
 
 jobs:
@@ -57,3 +57,16 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
           script: bash maestro/android-e2e.sh
+
+      - name: Publish screenshots (test data only) to a screens branch
+        if: always()
+        run: |
+          mkdir -p /tmp/shots
+          cp maestro/flows/*.png /tmp/shots/ 2>/dev/null || true
+          cd /tmp/shots
+          ls
+          if ls *.png >/dev/null 2>&1; then
+            git init -q && git checkout -q -b screens-android
+            git -c user.email=ci@example.invalid -c user.name=ci add . && git -c user.email=ci@example.invalid -c user.name=ci commit -q -m "screenshots android ${{ github.run_id }}"
+            git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:refs/heads/screens-android
+          fi

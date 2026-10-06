@@ -6,6 +6,7 @@ appId: app.monologue.mobile
     visible: "New conversation"
     timeout: 60000
 - tapOn: "New conversation"
+- takeScreenshot: 01-new-conversation-sheet
 - extendedWaitUntil:
     visible: "Create conversation|First note|Write your first note…"
     timeout: 15000
@@ -15,6 +16,7 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Teste"
     timeout: 20000
+- takeScreenshot: 01-home-with-conversation
 - tapOn: "Teste"
 - extendedWaitUntil:
     visible: "Message"
@@ -23,3 +25,4 @@ appId: app.monologue.mobile
 - inputText: "Ola"
 - tapOn: "Send message"
 - assertVisible: "Ola"
+- takeScreenshot: 01-conversation-sent
