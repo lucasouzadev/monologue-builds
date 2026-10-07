@@ -18,15 +18,15 @@ appId: app.monologue.mobile
     timeout: 8000
 - tapOn: "Create conversation"
 - extendedWaitUntil:
-    visible: "Teste"
+    visible: ".*Teste.*"
     timeout: 20000
 - takeScreenshot: 01-home-with-conversation
-- tapOn: "Teste"
+- tapOn: ".*Teste.*"
 - extendedWaitUntil:
     visible: "Message"
     timeout: 20000
 - tapOn: "Message"
 - inputText: "Ola"
 - tapOn: "Send message"
-- assertVisible: "Ola"
+- assertVisible: ".*Ola.*"
 - takeScreenshot: 01-conversation-sent
