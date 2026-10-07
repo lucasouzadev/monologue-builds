@@ -21,6 +21,10 @@ appId: app.monologue.mobile
 - tapOn:
     point: "55%,47%"
 - takeScreenshot: 06-two-selected
+# Import the selection (the check button at the panel's lower right): this is where the owner's app closed.
+- tapOn:
+    point: "86%,90%"
+- takeScreenshot: 06-after-import
 - assertVisible:
     text: ".*(Message|Tools).*"
     optional: true
