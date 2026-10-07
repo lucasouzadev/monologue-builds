@@ -29,6 +29,8 @@ permissions:
 env:
   CI: '1'
   EXPO_NO_TELEMETRY: '1'
+  # The Maestro iOS driver (XCTest runner) can take longer than the 2 minute default to come up on a busy macOS runner.
+  MAESTRO_DRIVER_STARTUP_TIMEOUT: '240000'
   MONOLOGUE_NATIVE_BASELINE: ${{ inputs.native_baseline }}
   # Simulator-only stress lab (burst sends, huge messages); never set for release or device builds.
   EXPO_PUBLIC_ENABLE_STRESS_LAB: '1'
