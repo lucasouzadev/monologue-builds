@@ -30,6 +30,8 @@ env:
   CI: '1'
   EXPO_NO_TELEMETRY: '1'
   MONOLOGUE_NATIVE_BASELINE: ${{ inputs.native_baseline }}
+  # Simulator-only stress lab (burst sends, huge messages); never set for release or device builds.
+  EXPO_PUBLIC_ENABLE_STRESS_LAB: '1'
   EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
   EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
 
@@ -109,11 +111,15 @@ jobs:
       - name: Run Maestro flows
         run: bash builds/maestro/run.sh "$SIM_UDID"
 
+      - name: Run the stress flow (burst sends, 100k-char messages, Reply Focus, history scroll)
+        if: always()
+        run: FLOWS_DIR="$PWD/builds/maestro/stress" SHOT_PREFIX=stress- bash builds/maestro/run.sh "$SIM_UDID"
+
       - name: Publish screenshots (test data only) to a screens branch
         if: always()
         run: |
           mkdir -p /tmp/shots
-          cp builds/maestro/flows/*.png builds/maestro/shots/* /tmp/shots/ 2>/dev/null || true
+          cp builds/maestro/flows/*.png builds/maestro/stress/*.png builds/maestro/shots/* /tmp/shots/ 2>/dev/null || true
           find ~/.maestro/tests -name "*.png" 2>/dev/null | while read -r f; do cp "$f" /tmp/shots/ 2>/dev/null || true; done
           cd /tmp/shots
           ls

@@ -1,0 +1,34 @@
+# Stress (iOS simulator job only; needs EXPO_PUBLIC_ENABLE_STRESS_LAB=1, set by e2e-ios.yml). The lab creates a conversation and
+# sends one 100k-char message, 300 short messages as fast as the JS thread allows, then another 100k-char message, through the
+# real conversation screen; the on-screen report carries send latency percentiles and the worst JS-thread stall.
+appId: app.monologue.mobile
+---
+- launchApp
+- openLink: "monologue://__diagnostics/stress"
+- tapOn:
+    text: "Open"
+    optional: true
+- extendedWaitUntil:
+    visible: "STRESS DONE.*"
+    timeout: 300000
+- takeScreenshot: stress-01-report
+# Reply Focus on a message of a very long conversation.
+- longPressOn: ".*wall two.*"
+- takeScreenshot: stress-02-message-menu
+- tapOn:
+    text: "Reply"
+    optional: true
+- takeScreenshot: stress-03-reply-focus
+- tapOn:
+    text: "Done|Close.*"
+    optional: true
+# Scroll back through history quickly (pages older messages in while scrolling).
+- repeat:
+    times: 8
+    commands:
+      - swipe:
+          start: "50%,35%"
+          end: "50%,88%"
+          duration: 120
+- takeScreenshot: stress-04-scrolled-history
+- assertVisible: "Back"
