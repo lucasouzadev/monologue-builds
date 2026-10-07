@@ -46,6 +46,7 @@ jobs:
           sudo udevadm trigger --name-match=kvm
       - uses: reactivecircus/android-emulator-runner@v2
         with:
+          emulator-build: 11237101
           api-level: 34
           arch: x86_64
           target: default
