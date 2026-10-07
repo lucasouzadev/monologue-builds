@@ -21,7 +21,7 @@ on:
         type: choice
         required: true
         default: '07'
-        options: ['07', '06']
+        options: ['07', '08', '06']
 
 permissions:
   contents: write
