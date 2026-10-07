@@ -7,7 +7,7 @@ appId: app.monologue.mobile
     timeout: 60000
 - tapOn: ".*Ola.*"
 - extendedWaitUntil:
-    visible: "Message"
+    visible: "Message.*"
     timeout: 20000
 - tapOn: "Dates of messages"
 - extendedWaitUntil:
@@ -21,7 +21,7 @@ appId: app.monologue.mobile
     duration: 400
 - takeScreenshot: 03-calendar-after-swipe
 - extendedWaitUntil:
-    visible: "Message"
+    visible: "Message.*"
     timeout: 10000
 # Reopen and close with the button as well.
 - tapOn: "Dates of messages"
@@ -30,7 +30,7 @@ appId: app.monologue.mobile
     timeout: 10000
 - tapOn: "Close dates of messages"
 - extendedWaitUntil:
-    visible: "Message"
+    visible: "Message.*"
     timeout: 10000
 - tapOn: "Conversation options"
 - assertVisible: "Rename"

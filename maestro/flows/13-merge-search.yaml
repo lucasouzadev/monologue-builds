@@ -7,7 +7,7 @@ appId: app.monologue.mobile
     timeout: 60000
 - tapOn: ".*Ola.*"
 - extendedWaitUntil:
-    visible: "Message"
+    visible: "Message.*"
     timeout: 20000
 - longPressOn: "Ola, .*"
 - tapOn:

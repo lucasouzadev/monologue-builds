@@ -23,9 +23,9 @@ appId: app.monologue.mobile
 - takeScreenshot: 01-home-with-conversation
 - tapOn: ".*Teste.*"
 - extendedWaitUntil:
-    visible: "Message"
+    visible: "Message.*"
     timeout: 20000
-- tapOn: "Message"
+- tapOn: "Message.*"
 - inputText: "Ola"
 - tapOn: "Send message"
 - assertVisible: ".*Ola.*"
