@@ -23,9 +23,8 @@ appId: app.monologue.mobile
           text: ".*Choose month and year.*"
           optional: true
       - takeScreenshot: 03-month-picker
-      - tapOn:
-          text: "Dec"
-          optional: true
+      - tapOn: ".*December 2026.*"
+      - assertVisible: "December 2026, Choose month and year"
       - takeScreenshot: 03-month-chosen
 # Close by dragging the lifted conversation card back up (the gesture the owner could not use on Android).
 - swipe:
