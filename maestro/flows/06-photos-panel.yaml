@@ -16,10 +16,10 @@ appId: app.monologue.mobile
 - tapOn: "Photos"
 - takeScreenshot: 06-gallery
 - tapOn:
-    point: "20%,80%"
+    point: "20%,47%"
 - takeScreenshot: 06-image-selected
 - tapOn:
-    point: "55%,80%"
+    point: "55%,47%"
 - takeScreenshot: 06-two-selected
 - assertVisible:
     text: ".*(Message|Tools).*"
