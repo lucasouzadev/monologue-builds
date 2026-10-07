@@ -46,13 +46,12 @@ jobs:
           sudo udevadm trigger --name-match=kvm
       - uses: reactivecircus/android-emulator-runner@v2
         with:
-          emulator-build: 11237101
           api-level: 34
           arch: x86_64
           target: default
           profile: pixel_6
-          cores: 4
-          ram-size: 4096M
+          cores: 2
+          ram-size: 3072M
           heap-size: 1024M
           disk-size: 8192M
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
