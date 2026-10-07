@@ -1,0 +1,46 @@
+# Settings > Font: each packaged face, then back to the system font (the choice is saved, so the flow restores it).
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 60000
+- tapOn: "Open personal space"
+- tapOn: "Settings.*"
+- extendedWaitUntil:
+    visible:
+      id: "font-options"
+    timeout: 10000
+- takeScreenshot: 21-settings-fonts
+- tapOn:
+    id: "font-option-lora"
+- takeScreenshot: 21-lora
+- tapOn:
+    id: "font-option-mono"
+- takeScreenshot: 21-mono
+- tapOn:
+    id: "font-option-atkinson"
+- takeScreenshot: 21-atkinson
+- tapOn:
+    id: "font-option-inter"
+- takeScreenshot: 21-inter
+# Home and the chat in a packaged face (the Composer input too): relaunch with Inter saved, look, then restore the system font.
+- launchApp
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 60000
+- takeScreenshot: 21-home-in-inter
+- tapOn: ".*Ola.*"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 20000
+- takeScreenshot: 21-chat-in-inter
+- launchApp
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 60000
+- tapOn: "Open personal space"
+- tapOn: "Settings.*"
+- tapOn:
+    id: "font-option-system"
+- takeScreenshot: 21-back-to-system

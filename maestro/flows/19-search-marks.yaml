@@ -1,0 +1,23 @@
+# Wide search with the Favorites and Pinned chips (a blank query lists the marked messages).
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "More creation options"
+    timeout: 60000
+- tapOn: "More creation options"
+- tapOn: "Wide search"
+- extendedWaitUntil:
+    visible:
+      id: "search-chip-favorite"
+    timeout: 10000
+- takeScreenshot: 19-wide-search-chips
+- tapOn:
+    id: "search-chip-favorite"
+- takeScreenshot: 19-favorites-list
+- tapOn:
+    id: "search-chip-pin"
+- takeScreenshot: 19-pinned-list
+- tapOn:
+    id: "search-chip-pin"
+- takeScreenshot: 19-chips-off

@@ -1,0 +1,38 @@
+# The conversation panel with the new content: Pinned / Favorites lists and the real links of the Media tab.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Novidades.*"
+    timeout: 60000
+- tapOn: ".*Novidades.*"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 20000
+- tapOn:
+    id: "conversation-title-button"
+- extendedWaitUntil:
+    visible:
+      id: "panel-tab-pins"
+    timeout: 15000
+- takeScreenshot: 18-panel-pins
+- tapOn:
+    id: "panel-tab-favorites"
+- takeScreenshot: 18-panel-favorites
+- tapOn:
+    id: "panel-tab-media"
+- extendedWaitUntil:
+    visible: "example.com"
+    timeout: 10000
+- takeScreenshot: 18-panel-media-links
+- tapOn:
+    id: "panel-tab-activity"
+- takeScreenshot: 18-panel-activity
+- tapOn:
+    id: "panel-tab-media"
+# The arrow next to the link goes back to the chat on that message.
+- tapOn: "Go to the message"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 15000
+- takeScreenshot: 18-jumped-to-link-message

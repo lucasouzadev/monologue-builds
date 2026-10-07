@@ -1,0 +1,34 @@
+# Spatial: "+" creates a throwaway conversation and selects it; the footer buttons (red Duplicate, red-title Delete) and the Delete balloon.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "More creation options"
+    timeout: 60000
+- tapOn: "More creation options"
+- tapOn: "Timeline"
+- extendedWaitUntil:
+    visible: "Close conversation previews"
+    timeout: 10000
+- tapOn:
+    id: "spatial-create"
+- takeScreenshot: 23-spatial-footer
+- tapOn:
+    id: "spatial-delete"
+- extendedWaitUntil:
+    visible:
+      id: "callout"
+    timeout: 10000
+- takeScreenshot: 23-delete-balloon
+# Tapping outside closes the balloon without deleting; ask again and confirm.
+- tapOn:
+    id: "callout-scrim"
+- takeScreenshot: 23-balloon-dismissed
+- tapOn:
+    id: "spatial-delete"
+- tapOn:
+    id: "callout-action-delete"
+- takeScreenshot: 23-after-delete
+- tapOn: "Close conversation previews"
+- takeScreenshot: 23-home-after-delete
+- assertVisible: "Open personal space"

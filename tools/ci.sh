@@ -16,8 +16,8 @@ set -euo pipefail
 
 REPO="${BUILDS_REPO:-lucasouzadev/monologue-builds}"
 BRANCH_DEFAULT="${SOURCE_REF:-claude/m1-native-009f1-liquid-morph-foundation}"
-BASELINE="${NATIVE_BASELINE:-07}"
-APK_BUILD_RUN="${APK_BUILD_RUN:-37483731148}" # build.yml run whose APK the Android E2E installs (old APK + OTA warm-up)
+BASELINE="${NATIVE_BASELINE:-08}"
+APK_BUILD_RUN="${APK_BUILD_RUN:-37700302745}" # build.yml run whose APK the Android E2E installs (baseline 08: camera + scanner; OTA warm-up on top)
 
 dispatch() { # workflow-file key=value...
   local wf="$1"; shift

@@ -1,0 +1,32 @@
+# Home selection: the pill itself asks before deleting. Deletes "Novidades" (the conversation of flows 16–20), restoring the shared state.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Novidades.*"
+    timeout: 60000
+- longPressOn: ".*Novidades.*"
+- takeScreenshot: 24-row-menu
+- tapOn:
+    text: "Delete"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: "conversation-selection-bar"
+    timeout: 10000
+- takeScreenshot: 24-selection-pill
+- tapOn: "Delete 1"
+- extendedWaitUntil:
+    visible:
+      id: "selection-confirm-action"
+    timeout: 10000
+- takeScreenshot: 24-pill-asks
+# Back out of the question, ask again, confirm.
+- tapOn:
+    id: "selection-confirm-back"
+- takeScreenshot: 24-pill-back
+- tapOn: "Delete 1"
+- tapOn:
+    id: "selection-confirm-action"
+- takeScreenshot: 24-after-delete
+- assertNotVisible: ".*Novidades.*"

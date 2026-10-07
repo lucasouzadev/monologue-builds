@@ -1,0 +1,55 @@
+# Baseline 08: the composer "+" menu has Camera and Scan document; the app's own camera opens (permission screen or preview). The system
+# scanner needs a real device (the CI emulators have no camera scene and the Android emulator no Google Play services), so it is only
+# opened here and judged from the screenshot / the failure message.
+appId: app.monologue.mobile
+---
+- launchApp:
+    permissions:
+      camera: allow
+- extendedWaitUntil:
+    visible: ".*Ola.*"
+    timeout: 60000
+- tapOn: ".*Ola.*"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 20000
+- tapOn:
+    id: "composer-tools-trigger"
+- takeScreenshot: 25-plus-menu-08
+- assertVisible:
+    id: "composer-tools-tool-scan"
+- tapOn:
+    id: "composer-tools-tool-camera"
+- extendedWaitUntil:
+    visible:
+      id: "camera-modal"
+    timeout: 15000
+- takeScreenshot: 25-camera-open
+- tapOn:
+    id: "camera-options"
+    optional: true
+- takeScreenshot: 25-camera-options
+- tapOn:
+    id: "camera-flash"
+    optional: true
+- takeScreenshot: 25-camera-flash
+- tapOn:
+    id: "camera-flip"
+    optional: true
+- takeScreenshot: 25-camera-flipped
+- tapOn:
+    id: "camera-shutter"
+    optional: true
+- takeScreenshot: 25-after-shutter
+- tapOn:
+    id: "camera-close"
+    optional: true
+- takeScreenshot: 25-camera-closed
+# Scan document from the menu.
+- tapOn:
+    id: "composer-tools-trigger"
+    optional: true
+- tapOn:
+    id: "composer-tools-tool-scan"
+    optional: true
+- takeScreenshot: 25-scanner

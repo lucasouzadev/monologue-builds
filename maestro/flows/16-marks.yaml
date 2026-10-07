@@ -1,0 +1,56 @@
+# New conversation "Novidades" for the features of the 2026-10-07 branch (it is deleted by flow 24, so the older flows keep their
+# data). Here: three messages, Favorite from the "More" face of the message menu, Pin from the first face, the pinned chip.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "New conversation"
+    timeout: 60000
+- tapOn: "New conversation"
+- extendedWaitUntil:
+    visible: ".*(First note|Write your first note).*"
+    timeout: 15000
+- tapOn: ".*(First note|Write your first note).*"
+- inputText: "Novidades"
+- extendedWaitUntil:
+    visible: "Create conversation"
+    timeout: 8000
+- tapOn: "Create conversation"
+- extendedWaitUntil:
+    visible: ".*Novidades.*"
+    timeout: 20000
+- tapOn: ".*Novidades.*"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 20000
+- tapOn: "Message.*"
+- inputText: "Marca A"
+- tapOn: "Send message"
+- tapOn: "Message.*"
+- inputText: "Marca B"
+- tapOn: "Send message"
+- tapOn: "Message.*"
+- inputText: "Veja https://example.com/e2e agora"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*Veja.*"
+    timeout: 10000
+- takeScreenshot: 16-three-messages
+# Favorite "Marca B": the keyboard is up while the menu opens (the mark actions must keep the keyboard hold).
+- longPressOn: ".*Marca B.*"
+- takeScreenshot: 16-menu-first-face
+- tapOn:
+    text: "More.*"
+    optional: true
+- takeScreenshot: 16-menu-more-face
+- tapOn:
+    text: "Favorite"
+    optional: true
+- takeScreenshot: 16-favorited
+# Pin "Marca A": the chip appears under the header.
+- longPressOn: ".*Marca A.*"
+- tapOn:
+    text: "Pin"
+    optional: true
+- takeScreenshot: 16-pinned-chip
+- assertVisible: "Message.*"
