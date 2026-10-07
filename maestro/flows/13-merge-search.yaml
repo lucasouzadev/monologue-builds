@@ -14,6 +14,23 @@ appId: app.monologue.mobile
     text: "Merge"
     optional: true
 - takeScreenshot: 13-merge-reveal
+# Android: select a second message and open the merge reveal (Edit / Combine actions pill).
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          text: ".*Teste.*"
+          optional: true
+      - tapOn:
+          text: "Merge.*"
+          optional: true
+      - takeScreenshot: 13-merge-actions
+      - runFlow:
+          when:
+            visible: "Combine messages"
+          commands:
+            - pressKey: back
 - runFlow:
     when:
       platform: iOS
