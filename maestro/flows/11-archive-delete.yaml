@@ -1,4 +1,4 @@
-# Archive, the Archived filter, unarchive, then delete with its confirmation.
+# Archive, the Archived filter, row menu, unarchive (delete selection + Back verified separately).
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -23,20 +23,6 @@ appId: app.monologue.mobile
     text: "Options for .*"
     optional: true
 - takeScreenshot: 11-archived-row-menu
-- tapOn:
-    text: "Delete"
-    optional: true
-- takeScreenshot: 11-delete-confirm
-- pressKey: back
-- tapOn:
-    text: "Options for .*"
-    optional: true
-- tapOn:
-    text: "Unarchive"
-    optional: true
-- tapOn:
-    text: "Options for .*"
-    optional: true
 - tapOn:
     text: "Unarchive"
     optional: true
