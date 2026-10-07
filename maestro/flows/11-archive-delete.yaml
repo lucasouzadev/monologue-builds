@@ -34,6 +34,12 @@ appId: app.monologue.mobile
 - tapOn:
     text: "Unarchive"
     optional: true
+- tapOn:
+    text: "Options for .*"
+    optional: true
+- tapOn:
+    text: "Unarchive"
+    optional: true
 - takeScreenshot: 11-after-unarchive
 - pressKey: back
 - takeScreenshot: 11-end
