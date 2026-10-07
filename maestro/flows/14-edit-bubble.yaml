@@ -1,0 +1,43 @@
+# Android: the edit balloon grows with the text (up to its cap) and the message is removed again, so the
+# shared state the other flows depend on ("Ola" as the conversation preview) is untouched.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Ola.*"
+    timeout: 60000
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: ".*Ola.*"
+      - extendedWaitUntil:
+          visible: "Message.*"
+          timeout: 20000
+      - tapOn: "Message.*"
+      - inputText: "Edit balloon check, a long single line that wraps onto several lines of the bubble on a narrow phone screen so it can grow"
+      - tapOn: "Send message"
+      - extendedWaitUntil:
+          visible: "Edit balloon check.*"
+          timeout: 10000
+      - longPressOn: "Edit balloon check.*"
+      - tapOn:
+          text: "More"
+          optional: true
+      - tapOn:
+          text: "Edit"
+          optional: true
+      - takeScreenshot: 14-edit-bubble-start
+      - inputText: " and then a lot more words to wrap onto further lines of the balloon so that it keeps growing with the text until it reaches its cap and the text scrolls inside it instead of leaving the screen, which is the behaviour we want"
+      - takeScreenshot: 14-edit-bubble-grown
+      - tapOn:
+          text: "Cancel editing"
+          optional: true
+      - longPressOn:
+          text: "Edit balloon check.*"
+          optional: true
+      - tapOn:
+          text: "Delete"
+          optional: true
+      - takeScreenshot: 14-edit-bubble-cleaned
+      - pressKey: back
