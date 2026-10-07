@@ -11,4 +11,13 @@ appId: app.monologue.mobile
     visible: "Close conversation previews"
     timeout: 10000
 - takeScreenshot: 04-spatial
+# Footer Duplicate (red) copies the selected conversation and the deck moves to the copy; "+" does the same for a new one.
+- tapOn:
+    id: "spatial-duplicate"
+    optional: true
+- takeScreenshot: 04-spatial-duplicated
+- tapOn:
+    id: "spatial-create"
+    optional: true
+- takeScreenshot: 04-spatial-created
 - tapOn: "Close conversation previews"
