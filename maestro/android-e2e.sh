@@ -27,6 +27,13 @@ rm -rf maestro/flows-dark; mkdir -p maestro/flows-dark
 for f in 02-home-controls 07-home-list 08-message-actions 09-profile 05-composer-plus-menu 03-conversation-tools 10-rename-pin 12-editor-select 13-merge-search; do sed 's/takeScreenshot: /takeScreenshot: dark-/' maestro/flows/$f.yaml > maestro/flows-dark/$f.yaml; done
 FLOWS_DIR="$PWD/maestro/flows-dark" SHOT_PREFIX=dark- bash maestro/run.sh || true
 adb shell cmd uimode night no >/dev/null 2>&1
+# Font-scale pass (Material 3 phase 6): home, home list, conversation tools and profile at 200 % system font size, screenshots
+# prefixed "big-". Informational (never fails the run): the look is judged from the images.
+adb shell settings put system font_scale 2.0 >/dev/null 2>&1
+rm -rf maestro/flows-big; mkdir -p maestro/flows-big
+for f in 02-home-controls 07-home-list 09-profile; do sed 's/takeScreenshot: /takeScreenshot: big-/' maestro/flows/$f.yaml > maestro/flows-big/$f.yaml; done
+FLOWS_DIR="$PWD/maestro/flows-big" SHOT_PREFIX=big- bash maestro/run.sh || true
+adb shell settings put system font_scale 1.0 >/dev/null 2>&1
 echo; echo "=== logcat crash buffer ==="
 timeout 30 adb logcat -d -b crash | tail -80
 echo; echo "=== app errors (ReactNativeJS / FATAL) ==="
