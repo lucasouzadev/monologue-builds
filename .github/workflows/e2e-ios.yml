@@ -80,7 +80,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ${{ runner.temp }}/sim/Monologue.tar.gz
-          key: sim-${{ inputs.native_baseline }}-${{ hashFiles('src/pnpm-lock.yaml', 'src/apps/mobile/modules/**', 'src/apps/mobile/app.config.*', 'src/apps/mobile/package.json') }}
+          key: sim-stresslab-${{ inputs.native_baseline }}-${{ hashFiles('src/pnpm-lock.yaml', 'src/apps/mobile/modules/**', 'src/apps/mobile/app.config.*', 'src/apps/mobile/package.json') }}
       - name: Compile the app for the iOS simulator (EAS --local, no signing)
         id: compile
         if: steps.simcache.outputs.cache-hit != 'true'
