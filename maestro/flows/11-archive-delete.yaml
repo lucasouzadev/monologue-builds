@@ -35,10 +35,5 @@ appId: app.monologue.mobile
     text: "Unarchive"
     optional: true
 - takeScreenshot: 11-after-unarchive
-- tapOn:
-    text: "Filter conversations.*"
-    optional: true
-- tapOn:
-    text: "All"
-    optional: true
+- pressKey: back
 - takeScreenshot: 11-end

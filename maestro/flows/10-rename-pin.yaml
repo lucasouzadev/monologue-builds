@@ -12,11 +12,12 @@ appId: app.monologue.mobile
     text: "Rename"
     optional: true
 - takeScreenshot: 10-rename-dialog
+- tapOn:
+    point: "50%,66%"
 - inputText: "Projeto"
 - takeScreenshot: 10-rename-typed
 - tapOn:
-    text: "Save|Rename|Done|OK"
-    optional: true
+    point: "87%,59%"
 - takeScreenshot: 10-after-rename
 - tapOn:
     text: "Options for .*"
