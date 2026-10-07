@@ -12,7 +12,7 @@ adb logcat -c
 bash maestro/run.sh
 code=$?
 echo; echo "=== logcat crash buffer ==="
-adb logcat -d -b crash | tail -80
+timeout 30 adb logcat -d -b crash | tail -80
 echo; echo "=== app errors (ReactNativeJS / FATAL) ==="
-adb logcat -d | grep -E "FATAL EXCEPTION|ReactNativeJS.*(Error|error|Exception)|signal 11|Fatal signal|has died|Force finishing" | tail -60
+timeout 30 adb logcat -d | grep -E "FATAL EXCEPTION|ReactNativeJS.*(Error|error|Exception)|signal 11|Fatal signal|has died|Force finishing" | tail -60
 exit $code
