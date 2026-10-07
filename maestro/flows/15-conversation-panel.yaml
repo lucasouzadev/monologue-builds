@@ -1,0 +1,33 @@
+# The conversation panel: a full page behind the chat header (avatar, title, tab cards, one panel per tab). Read-only: it never
+# changes the shared state the other flows rely on.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Ola.*"
+    timeout: 60000
+- tapOn: ".*Ola.*"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 20000
+- tapOn:
+    id: "conversation-title-button"
+- extendedWaitUntil:
+    visible:
+      id: "panel-tab-pins"
+    timeout: 15000
+- takeScreenshot: 15-panel-pins
+- tapOn:
+    id: "panel-tab-media"
+- takeScreenshot: 15-panel-media
+- tapOn:
+    id: "panel-tab-activity"
+- takeScreenshot: 15-panel-activity
+- tapOn:
+    id: "panel-tab-settings"
+- takeScreenshot: 15-panel-settings
+- tapOn:
+    id: "panel-back"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 15000
