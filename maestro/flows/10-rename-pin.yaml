@@ -1,0 +1,34 @@
+# Rename (dialog) and pin from the row menu.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Untitled, .*"
+    timeout: 60000
+- tapOn:
+    text: "Options for Untitled.*"
+    optional: true
+- tapOn:
+    text: "Rename"
+    optional: true
+- takeScreenshot: 10-rename-dialog
+- inputText: "Projeto"
+- takeScreenshot: 10-rename-typed
+- tapOn:
+    text: "Save|Rename|Done|OK"
+    optional: true
+- takeScreenshot: 10-after-rename
+- tapOn:
+    text: "Options for .*"
+    optional: true
+- tapOn:
+    text: "Pin"
+    optional: true
+- takeScreenshot: 10-after-pin
+- tapOn:
+    text: "Options for .*"
+    optional: true
+- tapOn:
+    text: "Unpin"
+    optional: true
+- takeScreenshot: 10-after-unpin

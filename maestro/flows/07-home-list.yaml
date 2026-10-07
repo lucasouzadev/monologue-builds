@@ -3,7 +3,7 @@ appId: app.monologue.mobile
 ---
 - launchApp
 - extendedWaitUntil:
-    visible: "Untitled, .*"
+    visible: ".*Ola.*"
     timeout: 60000
 - takeScreenshot: 07-home
 - tapOn:
@@ -11,11 +11,11 @@ appId: app.monologue.mobile
     optional: true
 - takeScreenshot: 07-filter-menu
 - pressKey: back
-- longPressOn: "Untitled, .*"
+- longPressOn: ".*Ola.*"
 - takeScreenshot: 07-long-press-preview
 - pressKey: back
 - tapOn:
-    text: "Options for Untitled.*"
+    text: "Options for .*"
     optional: true
 - takeScreenshot: 07-row-menu
 - pressKey: back

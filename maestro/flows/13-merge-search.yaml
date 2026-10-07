@@ -1,0 +1,30 @@
+# Merge reveal from the message menu, then Home search results with chips.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Ola.*"
+    timeout: 60000
+- tapOn: ".*Ola.*"
+- extendedWaitUntil:
+    visible: "Message"
+    timeout: 20000
+- longPressOn: "Ola, .*"
+- tapOn:
+    text: "Merge"
+    optional: true
+- takeScreenshot: 13-merge-reveal
+- pressKey: back
+- pressKey: back
+- extendedWaitUntil:
+    visible: "Search.*"
+    timeout: 20000
+- tapOn: "Search.*"
+- inputText: "Ola"
+- takeScreenshot: 13-search-typed
+- hideKeyboard
+- takeScreenshot: 13-search-results
+- tapOn:
+    text: "Archived"
+    optional: true
+- takeScreenshot: 13-search-archived

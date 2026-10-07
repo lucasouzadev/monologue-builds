@@ -1,0 +1,44 @@
+# Archive, the Archived filter, unarchive, then delete with its confirmation.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Ola.*"
+    timeout: 60000
+- tapOn:
+    text: "Options for .*"
+    optional: true
+- tapOn:
+    text: "Archive"
+    optional: true
+- takeScreenshot: 11-after-archive
+- tapOn:
+    text: "Filter conversations.*"
+    optional: true
+- tapOn:
+    text: "Archived"
+    optional: true
+- takeScreenshot: 11-archived-filter
+- tapOn:
+    text: "Options for .*"
+    optional: true
+- takeScreenshot: 11-archived-row-menu
+- tapOn:
+    text: "Delete"
+    optional: true
+- takeScreenshot: 11-delete-confirm
+- pressKey: back
+- tapOn:
+    text: "Options for .*"
+    optional: true
+- tapOn:
+    text: "Unarchive"
+    optional: true
+- takeScreenshot: 11-after-unarchive
+- tapOn:
+    text: "Filter conversations.*"
+    optional: true
+- tapOn:
+    text: "All"
+    optional: true
+- takeScreenshot: 11-end

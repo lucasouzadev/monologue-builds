@@ -1,0 +1,32 @@
+# Expanded editor and message selection mode.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Ola.*"
+    timeout: 60000
+- tapOn: ".*Ola.*"
+- extendedWaitUntil:
+    visible: "Message"
+    timeout: 20000
+- tapOn:
+    text: "Tools.*"
+    optional: true
+- tapOn:
+    text: "Expand editor"
+    optional: true
+- takeScreenshot: 12-expanded-editor
+- inputText: "Linha um"
+- takeScreenshot: 12-expanded-typed
+- pressKey: back
+- pressKey: back
+- takeScreenshot: 12-after-editor
+- tapOn:
+    text: "More.*"
+    optional: true
+- tapOn:
+    text: "Select messages"
+    optional: true
+- takeScreenshot: 12-selection-mode
+- pressKey: back
+- takeScreenshot: 12-end

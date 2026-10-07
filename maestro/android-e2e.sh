@@ -24,7 +24,7 @@ code=$?
 # Dark pass: the same key flows with the system in dark mode, screenshots prefixed "dark-".
 adb shell cmd uimode night yes >/dev/null 2>&1
 rm -rf maestro/flows-dark; mkdir -p maestro/flows-dark
-for f in 02-home-controls 07-home-list 08-message-actions 09-profile 05-composer-plus-menu 03-conversation-tools; do sed 's/takeScreenshot: /takeScreenshot: dark-/' maestro/flows/$f.yaml > maestro/flows-dark/$f.yaml; done
+for f in 02-home-controls 07-home-list 08-message-actions 09-profile 05-composer-plus-menu 03-conversation-tools 10-rename-pin 12-editor-select 13-merge-search; do sed 's/takeScreenshot: /takeScreenshot: dark-/' maestro/flows/$f.yaml > maestro/flows-dark/$f.yaml; done
 FLOWS_DIR="$PWD/maestro/flows-dark" SHOT_PREFIX=dark- bash maestro/run.sh || true
 adb shell cmd uimode night no >/dev/null 2>&1
 echo; echo "=== logcat crash buffer ==="
