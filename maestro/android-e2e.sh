@@ -34,6 +34,9 @@ rm -rf maestro/flows-big; mkdir -p maestro/flows-big
 for f in 02-home-controls 07-home-list 09-profile; do sed 's/takeScreenshot: /takeScreenshot: big-/' maestro/flows/$f.yaml > maestro/flows-big/$f.yaml; done
 FLOWS_DIR="$PWD/maestro/flows-big" SHOT_PREFIX=big- bash maestro/run.sh || true
 adb shell settings put system font_scale 1.0 >/dev/null 2>&1
+# Stress pass (owner request: performance on both platforms): burst sends and limit-sized messages through the real conversation
+# screen (the lab opens on the development update channel), then Reply Focus and a fast history scroll. Informational.
+FLOWS_DIR="$PWD/maestro/stress" SHOT_PREFIX=stress- FLOW_TIMEOUT=420 bash maestro/run.sh || true
 echo; echo "=== logcat crash buffer ==="
 timeout 30 adb logcat -d -b crash | tail -80
 echo; echo "=== app errors (ReactNativeJS / FATAL) ==="

@@ -115,7 +115,7 @@ jobs:
 
       - name: Run the stress flow (burst sends, 100k-char messages, Reply Focus, history scroll)
         if: always()
-        run: FLOWS_DIR="$PWD/builds/maestro/stress" SHOT_PREFIX=stress- bash builds/maestro/run.sh "$SIM_UDID"
+        run: FLOWS_DIR="$PWD/builds/maestro/stress" SHOT_PREFIX=stress- FLOW_TIMEOUT=420 bash builds/maestro/run.sh "$SIM_UDID"
 
       - name: Publish screenshots (test data only) to a screens branch
         if: always()

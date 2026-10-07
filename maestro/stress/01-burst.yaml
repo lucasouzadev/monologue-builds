@@ -1,5 +1,5 @@
-# Stress (iOS simulator job only; needs EXPO_PUBLIC_ENABLE_STRESS_LAB=1, set by e2e-ios.yml). The lab creates a conversation and
-# sends one 100k-char message, 300 short messages as fast as the JS thread allows, then another 100k-char message, through the
+# Stress (iOS simulator and Android emulator jobs; the lab is on for the development update channel). The lab creates a conversation and
+# sends one limit-sized (10k-char) message, 300 short messages as fast as the JS thread allows, then another limit-sized message, through the
 # real conversation screen; the on-screen report carries send latency percentiles and the worst JS-thread stall.
 appId: app.monologue.mobile
 ---
