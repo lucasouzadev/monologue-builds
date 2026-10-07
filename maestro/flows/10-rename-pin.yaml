@@ -6,7 +6,7 @@ appId: app.monologue.mobile
     visible: "Untitled, .*"
     timeout: 60000
 - tapOn:
-    text: "Options for Untitled.*"
+    text: "Options for .*"
     optional: true
 - tapOn:
     text: "Rename"
