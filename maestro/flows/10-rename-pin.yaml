@@ -3,7 +3,7 @@ appId: app.monologue.mobile
 ---
 - launchApp
 - extendedWaitUntil:
-    visible: "Untitled, .*"
+    visible: ".*Ola.*"
     timeout: 60000
 - tapOn:
     text: "Options for .*"
