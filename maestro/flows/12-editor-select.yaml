@@ -20,6 +20,7 @@ appId: app.monologue.mobile
     point: "50%,20%"
 - inputText: "Linha um"
 - takeScreenshot: 12-expanded-typed
+- eraseText: 20
 - pressKey: back
 - pressKey: back
 - takeScreenshot: 12-after-editor
