@@ -36,7 +36,10 @@ FLOWS_DIR="$PWD/maestro/flows-big" SHOT_PREFIX=big- bash maestro/run.sh || true
 adb shell settings put system font_scale 1.0 >/dev/null 2>&1
 # Stress pass (owner request: performance on both platforms): burst sends and limit-sized messages through the real conversation
 # screen (the lab opens on the development update channel), then Reply Focus and a fast history scroll. Informational.
-FLOWS_DIR="$PWD/maestro/stress" SHOT_PREFIX=stress- FLOW_TIMEOUT=420 bash maestro/run.sh || true
+adb shell am force-stop app.monologue.mobile >/dev/null 2>&1
+adb shell am start -W -a android.intent.action.VIEW -d "monologue://__diagnostics/stress" app.monologue.mobile >/dev/null 2>&1
+sleep 8
+FLOWS_DIR="$PWD/maestro/stress-android" SHOT_PREFIX=stress- FLOW_TIMEOUT=420 bash maestro/run.sh || true
 echo; echo "=== logcat crash buffer ==="
 timeout 30 adb logcat -d -b crash | tail -80
 echo; echo "=== app errors (ReactNativeJS / FATAL) ==="
