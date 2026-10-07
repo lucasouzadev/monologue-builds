@@ -9,12 +9,23 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Message.*"
     timeout: 20000
-- longPressOn: "Ola, .*"
+- longPressOn: ".*Ola.*"
 - takeScreenshot: 08-message-menu
 - tapOn:
     text: "Reply"
     optional: true
 - takeScreenshot: 08-reply-focus
-- pressKey: back
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: "Done|Close.*"
+          optional: true
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
 - takeScreenshot: 08-after-reply-header
 - assertVisible: "Back"

@@ -10,10 +10,23 @@ appId: app.monologue.mobile
     text: "Filter conversations.*"
     optional: true
 - takeScreenshot: 07-filter-menu
-- pressKey: back
+- tapOn:
+    text: "All"
+    optional: true
 - longPressOn: ".*Ola.*"
 - takeScreenshot: 07-long-press-preview
-- pressKey: back
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: "Done"
+          optional: true
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
 - tapOn:
     text: "Options for .*"
     optional: true

@@ -9,13 +9,27 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Message.*"
     timeout: 20000
-- longPressOn: "Ola, .*"
+- longPressOn: ".*Ola.*"
 - tapOn:
     text: "Merge"
     optional: true
 - takeScreenshot: 13-merge-reveal
-- pressKey: back
-- pressKey: back
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: "Cancel selection"
+          optional: true
+      - tapOn:
+          text: "Back"
+          optional: true
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
+      - pressKey: back
 - extendedWaitUntil:
     visible: "Search.*"
     timeout: 20000
