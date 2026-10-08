@@ -6,7 +6,7 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "${FLOWS_DIR:-$ROOT/flows}"
 PFX="${SHOT_PREFIX:-}"
 status=0
-if command -v timeout >/dev/null; then TMO="timeout ${FLOW_TIMEOUT:-240}"; T30="timeout 30"; elif command -v gtimeout >/dev/null; then TMO="gtimeout ${FLOW_TIMEOUT:-240}"; T30="gtimeout 30"; else TMO=""; T30=""; fi
+if command -v timeout >/dev/null; then TMO="timeout ${FLOW_TIMEOUT:-360}"; T30="timeout 30"; elif command -v gtimeout >/dev/null; then TMO="gtimeout ${FLOW_TIMEOUT:-360}"; T30="gtimeout 30"; else TMO=""; T30=""; fi
 SH="$ROOT/shots"; mkdir -p "$SH"
 for flow in *.yaml; do
   echo; echo "=== $flow ($(date +%H:%M:%S)) ==="
