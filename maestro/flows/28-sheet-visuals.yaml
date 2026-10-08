@@ -1,0 +1,67 @@
+# Owner corrections 2026-10-08 (round 4) — what must be visible in the screenshots of this flow (light and dark via the audit passes):
+#  - panel action buttons + Details/Media switch: NEUTRAL fill, WHITE icons and labels (no red buttons, no red icons);
+#  - ONE progressive edge at the top of the sheet: no colour band at the handle, no second gradient shape, the content passes under it;
+#  - Pinned / Favorites page: the header (Back + title) sits ON the progressive blur and the list scrolls under both.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*(Novidades|Veja|Ola).*"
+    timeout: 60000
+- tapOn: ".*(Novidades|Veja|Ola).*"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 20000
+- tapOn:
+    id: "conversation-title-button"
+- extendedWaitUntil:
+    visible:
+      id: "panel-details"
+    timeout: 15000
+- takeScreenshot: 28-panel-top
+- swipe:
+    from:
+      id: "panel-details"
+    direction: UP
+- takeScreenshot: 28-panel-scrolled
+- swipe:
+    from:
+      id: "panel-details"
+    direction: DOWN
+- tapOn:
+    id: "panel-tab-media"
+- takeScreenshot: 28-panel-media
+- tapOn:
+    id: "panel-tab-details"
+- tapOn:
+    id: "panel-open-pinned"
+- takeScreenshot: 28-pinned-page
+- tapOn:
+    id: "marks-back"
+- tapOn:
+    id: "panel-open-favorites"
+- takeScreenshot: 28-favorites-page
+- tapOn:
+    id: "marks-back"
+- swipe:
+    direction: DOWN
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 15000
+- tapOn:
+    text: "Back"
+    optional: true
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 15000
+- tapOn: "Open personal space"
+- extendedWaitUntil:
+    visible: ".*Activity.*|.*Atividade.*"
+    timeout: 10000
+- takeScreenshot: 28-drawer-home
+- tapOn: "Settings.*|Ajustes.*"
+- extendedWaitUntil:
+    visible:
+      id: "font-options"
+    timeout: 10000
+- takeScreenshot: 28-drawer-settings
