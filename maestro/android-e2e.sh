@@ -21,8 +21,11 @@ for perm in READ_MEDIA_IMAGES READ_MEDIA_VISUAL_USER_SELECTED READ_EXTERNAL_STOR
 adb logcat -c
 bash maestro/run.sh
 code=$?
+# Re-seed: the light pass ends with deleted/renamed conversations (flows 11, 23, 24), and the later passes look for the "Ola" row. Flow 01 creates it again.
+reseed() { rm -rf maestro/flows-seed; mkdir -p maestro/flows-seed; cp maestro/flows/01-create-open-send.yaml maestro/flows-seed/; FLOWS_DIR="$PWD/maestro/flows-seed" SHOT_PREFIX=seed- bash maestro/run.sh || true; }
 # Dark pass: the same key flows with the system in dark mode, screenshots prefixed "dark-".
 adb shell cmd uimode night yes >/dev/null 2>&1
+reseed
 rm -rf maestro/flows-dark; mkdir -p maestro/flows-dark
 for f in 02-home-controls 07-home-list 08-message-actions 09-profile 05-composer-plus-menu 03-conversation-tools 10-rename-pin 12-editor-select 13-merge-search; do sed 's/takeScreenshot: /takeScreenshot: dark-/' maestro/flows/$f.yaml > maestro/flows-dark/$f.yaml; done
 FLOWS_DIR="$PWD/maestro/flows-dark" SHOT_PREFIX=dark- bash maestro/run.sh || true
