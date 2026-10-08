@@ -84,10 +84,10 @@ appId: app.monologue.mobile
       platform: Android
     commands:
       - tapOn: "Open personal space"
-- extendedWaitUntil:
-    visible:
+- scrollUntilVisible:
+    element:
       id: "build-stamp"
-    timeout: 15000
+    timeout: 20000
 - takeScreenshot: 28-drawer-home
 - tapOn:
     text: "Settings.*|Ajustes.*"
