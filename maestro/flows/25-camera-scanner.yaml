@@ -1,4 +1,4 @@
-# Baseline 08: the composer "+" menu has Camera and Scan document; the app's own camera opens (permission screen or preview). The system
+# Baseline 08: the composer "+" menu has Camera and Scan document; each opens as a PANEL inside the tray's morphing surface (like Photos). The system
 # scanner needs a real device (the CI emulators have no camera scene and the Android emulator no Google Play services), so it is only
 # opened here and judged from the screenshot / the failure message.
 appId: app.monologue.mobile
@@ -22,7 +22,7 @@ appId: app.monologue.mobile
     id: "composer-tools-tool-camera"
 - extendedWaitUntil:
     visible:
-      id: "camera-modal"
+      id: "camera-panel"
     timeout: 15000
 - takeScreenshot: 25-camera-open
 - tapOn:
@@ -42,7 +42,7 @@ appId: app.monologue.mobile
     optional: true
 - takeScreenshot: 25-after-shutter
 - tapOn:
-    id: "camera-close"
+    id: "camera-back"
     optional: true
 - takeScreenshot: 25-camera-closed
 # Scan document from the menu.
@@ -52,4 +52,12 @@ appId: app.monologue.mobile
 - tapOn:
     id: "composer-tools-tool-scan"
     optional: true
-- takeScreenshot: 25-scanner
+- extendedWaitUntil:
+    visible:
+      id: "scan-panel"
+    timeout: 15000
+- takeScreenshot: 25-scan-panel
+- tapOn:
+    id: "scan-back"
+    optional: true
+- takeScreenshot: 25-scan-closed
