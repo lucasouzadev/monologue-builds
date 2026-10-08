@@ -17,7 +17,7 @@ permissions:
 jobs:
   e2e:
     runs-on: ubuntu-24.04
-    timeout-minutes: 75
+    timeout-minutes: 110
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -62,7 +62,7 @@ jobs:
         if: always()
         run: |
           mkdir -p /tmp/shots
-          cp maestro/flows/*.png maestro/flows-dark/*.png maestro/flows-big/*.png maestro/stress-android/*.png maestro/shots/* /tmp/shots/ 2>/dev/null || true
+          cp maestro/flows/*.png maestro/audit-*/*.png maestro/stress-android/*.png maestro/shots/* /tmp/shots/ 2>/dev/null || true
           find ~/.maestro/tests -name "*.png" 2>/dev/null | while read -r f; do cp "$f" /tmp/shots/ 2>/dev/null || true; done
           cd /tmp/shots
           ls

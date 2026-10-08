@@ -36,20 +36,8 @@ echo "=== light pass: crash / JS errors from logcat ==="
 adb logcat -d -b all 2>/dev/null | grep -E "FATAL EXCEPTION|AndroidRuntime|ReactNativeJS|Process: app.monologue|Force finishing|died|ANR in" | grep -v "Choreographer" | tail -60
 # Re-seed: the light pass ends with deleted/renamed conversations (flows 11, 23, 24), and the later passes look for the "Ola" row. Flow 01 creates it again.
 reseed() { rm -rf maestro/flows-seed; mkdir -p maestro/flows-seed; cp maestro/flows/01-create-open-send.yaml maestro/flows-seed/; FLOWS_DIR="$PWD/maestro/flows-seed" SHOT_PREFIX=seed- bash maestro/run.sh || true; }
-# Dark pass: the same key flows with the system in dark mode, screenshots prefixed "dark-".
-adb shell cmd uimode night yes >/dev/null 2>&1
-reseed
-rm -rf maestro/flows-dark; mkdir -p maestro/flows-dark
-for f in 02-home-controls 07-home-list 08-message-actions 09-profile 05-composer-plus-menu 03-conversation-tools 10-rename-pin 12-editor-select 13-merge-search; do sed 's/takeScreenshot: /takeScreenshot: dark-/' maestro/flows/$f.yaml > maestro/flows-dark/$f.yaml; done
-FLOWS_DIR="$PWD/maestro/flows-dark" SHOT_PREFIX=dark- bash maestro/run.sh || true
-adb shell cmd uimode night no >/dev/null 2>&1
-# Font-scale pass (Material 3 phase 6): home, home list, conversation tools and profile at 200 % system font size, screenshots
-# prefixed "big-". Informational (never fails the run): the look is judged from the images.
-adb shell settings put system font_scale 2.0 >/dev/null 2>&1
-rm -rf maestro/flows-big; mkdir -p maestro/flows-big
-for f in 02-home-controls 07-home-list 09-profile; do sed 's/takeScreenshot: /takeScreenshot: big-/' maestro/flows/$f.yaml > maestro/flows-big/$f.yaml; done
-FLOWS_DIR="$PWD/maestro/flows-big" SHOT_PREFIX=big- bash maestro/run.sh || true
-adb shell settings put system font_scale 1.0 >/dev/null 2>&1
+# Audit passes (dark, large text, huge text): see maestro/audit-passes.sh. Informational: the look is judged from the images.
+bash maestro/audit-passes.sh android
 # Stress pass (owner request: performance on both platforms): burst sends and limit-sized messages through the real conversation
 # screen (the lab opens on the development update channel), then Reply Focus and a fast history scroll. Informational.
 adb shell am force-stop app.monologue.mobile >/dev/null 2>&1

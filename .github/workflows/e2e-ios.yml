@@ -113,6 +113,10 @@ jobs:
       - name: Run Maestro flows
         run: bash builds/maestro/run.sh "$SIM_UDID"
 
+      - name: Audit passes (dark, large text, huge text)
+        if: always()
+        run: bash builds/maestro/audit-passes.sh ios "$SIM_UDID"
+
       - name: Run the stress flow (burst sends, 100k-char messages, Reply Focus, history scroll)
         if: always()
         run: FLOWS_DIR="$PWD/builds/maestro/stress" SHOT_PREFIX=stress- FLOW_TIMEOUT=420 bash builds/maestro/run.sh "$SIM_UDID"
@@ -121,7 +125,7 @@ jobs:
         if: always()
         run: |
           mkdir -p /tmp/shots
-          cp builds/maestro/flows/*.png builds/maestro/stress/*.png builds/maestro/shots/* /tmp/shots/ 2>/dev/null || true
+          cp builds/maestro/flows/*.png builds/maestro/stress/*.png builds/maestro/audit-*/*.png builds/maestro/shots/* /tmp/shots/ 2>/dev/null || true
           find ~/.maestro/tests -name "*.png" 2>/dev/null | while read -r f; do cp "$f" /tmp/shots/ 2>/dev/null || true; done
           cd /tmp/shots
           ls
