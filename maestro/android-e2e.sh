@@ -24,7 +24,10 @@ if [ -f maestro/quick.txt ]; then
   rm -rf maestro/flows-quick; mkdir -p maestro/flows-quick
   while read -r f; do [ -n "$f" ] && cp "maestro/flows/$f.yaml" maestro/flows-quick/; done < maestro/quick.txt
   FLOWS_DIR="$PWD/maestro/flows-quick" bash maestro/run.sh; code=$?
-  echo "=== quick: app log ==="; timeout 30 adb logcat -d -t 1500 | grep -E "ReactNativeJS|FATAL|AndroidRuntime|JavascriptException|Hermes|ANR in|Fatal signal|libc|expo|Expo" | tail -120
+  echo "=== quick: app state ==="
+  echo "pid: $(adb shell pidof app.monologue.mobile)"; adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" | head -3
+  echo "=== quick: app log (pid) ==="; PID=$(adb shell pidof app.monologue.mobile | tr -d '\r'); [ -n "$PID" ] && timeout 30 adb logcat -d --pid="$PID" | tail -150
+  echo "=== quick: events ==="; timeout 30 adb logcat -d -b events | grep -E "am_crash|am_anr|am_proc_died|am_proc_start|app.monologue" | tail -40
   exit $code
 fi
 bash maestro/run.sh
