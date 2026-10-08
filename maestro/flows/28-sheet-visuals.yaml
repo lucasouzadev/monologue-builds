@@ -43,21 +43,27 @@ appId: app.monologue.mobile
 - takeScreenshot: 28-favorites-page
 - tapOn:
     id: "marks-back"
-- swipe:
-    direction: DOWN
-- extendedWaitUntil:
-    visible: "Message.*"
-    timeout: 15000
 - runFlow:
     when:
       platform: Android
     commands:
+      # The platform back closes the panel sheet (a swipe leaves it open behind the scrim); the header arrow then leaves the chat.
+      - pressKey: back
+      - extendedWaitUntil:
+          visible:
+            id: "conversation-title-button"
+          timeout: 10000
       - tapOn:
           point: "7%,8.3%"
 - runFlow:
     when:
       platform: iOS
     commands:
+      - swipe:
+          direction: DOWN
+      - extendedWaitUntil:
+          visible: "Message.*"
+          timeout: 15000
       - tapOn:
           text: "Back"
           optional: true
