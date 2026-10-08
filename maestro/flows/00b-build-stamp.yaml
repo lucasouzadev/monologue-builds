@@ -1,0 +1,21 @@
+# GATE CHECK (mandatory, runs first): which JS is this build really running? The drawer prints "<channel> · <update id> · <time>Z" or
+# "<channel> · embedded" (= NO update was applied: the E2E would be testing the old embedded bundle, so every later result is void).
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Monologue"
+    timeout: 60000
+- tapOn:
+    text: "Open personal space"
+    optional: true
+- swipe:
+    start: "96%,50%"
+    end: "30%,50%"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: "build-stamp"
+    timeout: 15000
+- takeScreenshot: 00b-build-stamp
+- assertNotVisible: ".*embedded.*"
