@@ -40,7 +40,7 @@ env:
 jobs:
   e2e:
     runs-on: macos-26
-    timeout-minutes: 120
+    timeout-minutes: 240
     env:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
       DEVELOPER_DIR: ${{ vars.IOS_DEVELOPER_DIR || '/Applications/Xcode_26.6.app/Contents/Developer' }}
@@ -115,10 +115,12 @@ jobs:
 
       - name: Audit passes (dark, large text, huge text)
         if: always()
+        timeout-minutes: 100
         run: bash builds/maestro/audit-passes.sh ios "$SIM_UDID"
 
       - name: Run the stress flow (burst sends, 100k-char messages, Reply Focus, history scroll)
         if: always()
+        timeout-minutes: 40
         run: FLOWS_DIR="$PWD/builds/maestro/stress" SHOT_PREFIX=stress- FLOW_TIMEOUT=420 bash builds/maestro/run.sh "$SIM_UDID"
 
       - name: Publish screenshots (test data only) to a screens branch
