@@ -48,12 +48,34 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Message.*"
     timeout: 15000
-- tapOn:
-    text: "Back|Voltar"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          point: "7%,8.3%"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: "Back"
+          optional: true
 - extendedWaitUntil:
-    visible: "Open personal space"
-    timeout: 15000
-- tapOn: "Open personal space"
+    visible: "Monologue"
+    timeout: 30000
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      # The Home header is a SwiftUI control; its accessibility label is not always in the tree right after launch/return, so open by position.
+      - tapOn:
+          point: "88%,9%"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "Open personal space"
 - extendedWaitUntil:
     visible:
       id: "build-stamp"
