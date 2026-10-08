@@ -25,17 +25,7 @@ appId: app.monologue.mobile
       id: "font-options"
     direction: LEFT
     optional: true
-- tapOn:
-    id: "font-option-mono"
-- takeScreenshot: 21-mono
-- swipe:
-    from:
-      id: "font-options"
-    direction: LEFT
-    optional: true
-- tapOn:
-    id: "font-option-atkinson"
-- takeScreenshot: 21-atkinson
+- takeScreenshot: 21-carousel-scrolled
 - swipe:
     from:
       id: "font-options"
