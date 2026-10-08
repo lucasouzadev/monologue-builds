@@ -13,8 +13,7 @@ appId: app.monologue.mobile
 - tapOn:
     id: "spatial-create"
 - takeScreenshot: 23-spatial-footer
-- tapOn:
-    id: "spatial-delete"
+- tapOn: "Delete"
 - extendedWaitUntil:
     visible:
       id: "callout"
@@ -24,8 +23,7 @@ appId: app.monologue.mobile
 - tapOn:
     point: "50%,30%"
 - takeScreenshot: 23-balloon-dismissed
-- tapOn:
-    id: "spatial-delete"
+- tapOn: "Delete"
 - tapOn:
     id: "callout-action-delete"
 - takeScreenshot: 23-after-delete

@@ -3,9 +3,9 @@ appId: app.monologue.mobile
 ---
 - launchApp
 - extendedWaitUntil:
-    visible: ".*Novidades.*"
+    visible: ".*(Novidades|Veja).*"
     timeout: 60000
-- longPressOn: ".*Novidades.*"
+- longPressOn: ".*(Novidades|Veja).*"
 - takeScreenshot: 24-row-menu
 - tapOn:
     text: "Delete"
@@ -29,4 +29,4 @@ appId: app.monologue.mobile
 - tapOn:
     id: "selection-confirm-action"
 - takeScreenshot: 24-after-delete
-- assertNotVisible: ".*Novidades.*"
+- assertNotVisible: ".*(Novidades|Veja).*"
