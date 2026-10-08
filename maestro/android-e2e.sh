@@ -26,7 +26,7 @@ if [ -f maestro/quick.txt ]; then
   FLOWS_DIR="$PWD/maestro/flows-quick" bash maestro/run.sh; code=$?
   echo "=== quick: app state ==="
   echo "pid: $(adb shell pidof app.monologue.mobile)"; adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" | head -3
-  echo "=== quick: app log (pid) ==="; PID=$(adb shell pidof app.monologue.mobile | tr -d '\r'); [ -n "$PID" ] && timeout 30 adb logcat -d --pid="$PID" | grep -v "Tried to enqueue runnable" | grep -E "ReactNativeJS|FATAL|Exception|Error|error|expo|Expo|Hermes|JS " | head -120
+  echo "=== quick: app log (pid) ==="; PID=$(adb shell pidof app.monologue.mobile | tr -d '\r'); [ -n "$PID" ] && timeout 30 adb logcat -d --pid="$PID" | grep -v "Tried to enqueue runnable\|embeddedAssetFileMap\|OpenGLRenderer\|FrameTracker" | tail -260
   echo "=== quick: events ==="; timeout 30 adb logcat -d -b events | grep -E "am_crash|am_anr|am_proc_died|am_proc_start|app.monologue" | tail -40
   exit $code
 fi
