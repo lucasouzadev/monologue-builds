@@ -21,6 +21,8 @@ for perm in READ_MEDIA_IMAGES READ_MEDIA_VISUAL_USER_SELECTED READ_EXTERNAL_STOR
 adb logcat -c
 bash maestro/run.sh
 code=$?
+echo "=== light pass: crash / JS errors from logcat ==="
+adb logcat -d -b all 2>/dev/null | grep -E "FATAL EXCEPTION|AndroidRuntime|ReactNativeJS|Process: app.monologue|Force finishing|died|ANR in" | grep -v "Choreographer" | tail -60
 # Re-seed: the light pass ends with deleted/renamed conversations (flows 11, 23, 24), and the later passes look for the "Ola" row. Flow 01 creates it again.
 reseed() { rm -rf maestro/flows-seed; mkdir -p maestro/flows-seed; cp maestro/flows/01-create-open-send.yaml maestro/flows-seed/; FLOWS_DIR="$PWD/maestro/flows-seed" SHOT_PREFIX=seed- bash maestro/run.sh || true; }
 # Dark pass: the same key flows with the system in dark mode, screenshots prefixed "dark-".
