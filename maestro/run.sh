@@ -10,7 +10,15 @@ if command -v timeout >/dev/null; then TMO="timeout ${FLOW_TIMEOUT:-240}"; T30="
 SH="$ROOT/shots"; mkdir -p "$SH"
 for flow in *.yaml; do
   echo; echo "=== $flow ($(date +%H:%M:%S)) ==="
-  if $TMO maestro ${1:+--device "$1"} test --no-ansi "$flow"; then echo "RESULT $flow: PASS"; else echo "RESULT $flow: FAIL"; status=1; fi
+  if $TMO maestro ${1:+--device "$1"} test --no-ansi "$flow"; then echo "RESULT $flow: PASS"; else
+    echo "RESULT $flow: FAIL"; status=1
+    # Android: what the app logged just now (the circular buffer rolls over within minutes, so it is read per failure).
+    if command -v adb >/dev/null && [ -z "${1:-}" ]; then
+      echo "--- logcat after $flow (app, JS, crashes) ---"
+      timeout 20 adb logcat -d -t 600 2>/dev/null | grep -E "ReactNativeJS|FATAL|AndroidRuntime|JavascriptException|Hermes|ANR in|Fatal signal|libc|Choreographer.*Skipped|app.monologue.mobile" | grep -v "wm_\|am_" | tail -50
+      echo "--- end logcat ---"
+    fi
+  fi
   if command -v xcrun >/dev/null && [ -n "${1:-}" ]; then xcrun simctl io "$1" screenshot "$SH/${PFX}${flow%.yaml}-end.png" >/dev/null 2>&1 || true
   elif command -v adb >/dev/null; then
     $T30 adb ${1:+-s "$1"} exec-out screencap -p > "$SH/${PFX}${flow%.yaml}-end.png" 2>/dev/null || true

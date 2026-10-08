@@ -19,6 +19,14 @@ for i in 1 2 3 4; do adb push /tmp/fx$i.png /sdcard/Pictures/fx$i.png >/dev/null
 sleep 3
 for perm in READ_MEDIA_IMAGES READ_MEDIA_VISUAL_USER_SELECTED READ_EXTERNAL_STORAGE; do adb shell pm grant app.monologue.mobile android.permission.$perm >/dev/null 2>&1 || true; done
 adb logcat -c
+if [ -f maestro/quick.txt ]; then
+  # Quick diagnosis: only the flows listed in maestro/quick.txt, then the app's log.
+  rm -rf maestro/flows-quick; mkdir -p maestro/flows-quick
+  while read -r f; do [ -n "$f" ] && cp "maestro/flows/$f.yaml" maestro/flows-quick/; done < maestro/quick.txt
+  FLOWS_DIR="$PWD/maestro/flows-quick" bash maestro/run.sh; code=$?
+  echo "=== quick: app log ==="; timeout 30 adb logcat -d -t 1500 | grep -E "ReactNativeJS|FATAL|AndroidRuntime|JavascriptException|Hermes|ANR in|Fatal signal|libc|expo|Expo" | tail -120
+  exit $code
+fi
 bash maestro/run.sh
 code=$?
 echo "=== light pass: crash / JS errors from logcat ==="
