@@ -34,5 +34,8 @@ appId: app.monologue.mobile
 - tapOn:
     id: "spatial-close"
     optional: true
+- tapOn:
+    text: "Close conversation previews"
+    optional: true
 - takeScreenshot: 23-home-after-delete
 - assertVisible: "Open personal space"

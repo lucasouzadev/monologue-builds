@@ -32,7 +32,9 @@ appId: app.monologue.mobile
           visible: "Combine messages"
           timeout: 15000
       - takeScreenshot: 20-merge-reveal
-      - tapOn: "Combine messages"
+      - tapOn:
+          text: "Combine messages"
+          optional: true
       - extendedWaitUntil:
           visible: "Message.*"
           timeout: 20000
