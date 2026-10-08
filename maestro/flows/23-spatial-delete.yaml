@@ -22,7 +22,7 @@ appId: app.monologue.mobile
 - takeScreenshot: 23-delete-balloon
 # Tapping outside closes the balloon without deleting; ask again and confirm.
 - tapOn:
-    id: "callout-scrim"
+    point: "50%,30%"
 - takeScreenshot: 23-balloon-dismissed
 - tapOn:
     id: "spatial-delete"
