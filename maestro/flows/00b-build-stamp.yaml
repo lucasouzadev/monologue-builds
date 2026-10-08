@@ -13,17 +13,25 @@ appId: app.monologue.mobile
     when:
       platform: iOS
     commands:
-      # The Home header is a SwiftUI control; its accessibility label is not always in the tree right after launch/return, so open by position.
-      - tapOn:
-          point: "88%,9%"
+      # The Home header is a SwiftUI control; its accessibility label is not always in the tree right after launch/return, so open by
+      # position — and retry: the first tap can land before the header is interactive.
+      - retry:
+          maxRetries: 3
+          commands:
+            - tapOn:
+                point: "88%,9%"
+            - extendedWaitUntil:
+                visible:
+                  id: "build-stamp"
+                timeout: 6000
 - runFlow:
     when:
       platform: Android
     commands:
       - tapOn: "Open personal space"
-- extendedWaitUntil:
-    visible:
-      id: "build-stamp"
-    timeout: 20000
+      - extendedWaitUntil:
+          visible:
+            id: "build-stamp"
+          timeout: 20000
 - takeScreenshot: 00b-build-stamp
 - assertNotVisible: ".*embedded.*"

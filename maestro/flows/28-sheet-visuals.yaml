@@ -47,12 +47,14 @@ appId: app.monologue.mobile
     when:
       platform: Android
     commands:
-      # The platform back closes the panel sheet (a swipe leaves it open behind the scrim); the header arrow then leaves the chat.
-      - pressKey: back
-      - extendedWaitUntil:
-          visible:
-            id: "conversation-title-button"
-          timeout: 10000
+      # Tap the scrim above the sheet to close it (a swipe leaves it open), then the header arrow leaves the chat.
+      - retry:
+          maxRetries: 3
+          commands:
+            - tapOn:
+                point: "50%,15%"
+            - assertNotVisible:
+                id: "panel-details"
       - tapOn:
           point: "7%,8.3%"
 - runFlow:
