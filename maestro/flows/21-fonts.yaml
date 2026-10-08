@@ -1,4 +1,4 @@
-# Settings > Font: each packaged face, then back to the system font (the choice is saved, so the flow restores it).
+# Settings > Font: each packaged face previewed (cards + live preview), Apply, then the size slider and back to the system font (the choice is saved, so the flow restores it).
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -24,6 +24,14 @@ appId: app.monologue.mobile
 - tapOn:
     id: "font-option-inter"
 - takeScreenshot: 21-inter
+- scrollUntilVisible:
+    element:
+      id: "settings-apply"
+    optional: true
+- tapOn:
+    id: "settings-apply"
+    optional: true
+- takeScreenshot: 21-inter-applied
 # Home and the chat in a packaged face (the Composer input too): relaunch with Inter saved, look, then restore the system font.
 - launchApp
 - extendedWaitUntil:
@@ -43,4 +51,11 @@ appId: app.monologue.mobile
 - tapOn: "Settings.*"
 - tapOn:
     id: "font-option-system"
+- scrollUntilVisible:
+    element:
+      id: "settings-apply"
+    optional: true
+- tapOn:
+    id: "settings-apply"
+    optional: true
 - takeScreenshot: 21-back-to-system
