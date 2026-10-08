@@ -1,5 +1,5 @@
 # New conversation "Novidades" for the features of the 2026-10-07 branch (it is deleted by flow 24, so the older flows keep their
-# data). Here: three messages, Favorite from the "More" face of the message menu, Pin from the first face, the pinned chip.
+# data). Here: three messages, Favorite and Pin from the "Organize" dropdown of the message menu, the pinned chip.
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -40,15 +40,18 @@ appId: app.monologue.mobile
 - longPressOn: ".*Marca B.*"
 - takeScreenshot: 16-menu-first-face
 - tapOn:
-    text: "More.*"
+    text: "Organize.*"
     optional: true
-- takeScreenshot: 16-menu-more-face
+- takeScreenshot: 16-menu-organise
 - tapOn:
     text: "Favorite"
     optional: true
 - takeScreenshot: 16-favorited
 # Pin "Marca A": the chip appears under the header.
 - longPressOn: ".*Marca A.*"
+- tapOn:
+    text: "Organize.*"
+    optional: true
 - tapOn:
     text: "Pin"
     optional: true
