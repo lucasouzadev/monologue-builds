@@ -16,6 +16,8 @@ appId: app.monologue.mobile
       id: "panel-details"
     timeout: 15000
 - takeScreenshot: 18-panel-first-screen
+- tapOn:
+    id: "panel-tab-media"
 - extendedWaitUntil:
     visible: "example.com"
     timeout: 10000

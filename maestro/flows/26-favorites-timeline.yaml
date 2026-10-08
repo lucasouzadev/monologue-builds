@@ -32,6 +32,7 @@ appId: app.monologue.mobile
 - tapOn:
     id: "favorites-select"
     optional: true
-- swipe:
-    direction: DOWN
+- tapOn:
+    id: "marks-back"
+    optional: true
 - takeScreenshot: 26-back-to-panel
