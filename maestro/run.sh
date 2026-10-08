@@ -15,7 +15,7 @@ for flow in *.yaml; do
     # Android: what the app logged just now (the circular buffer rolls over within minutes, so it is read per failure).
     if command -v adb >/dev/null && [ -z "${1:-}" ]; then
       echo "--- logcat after $flow (app, JS, crashes) ---"
-      timeout 20 adb logcat -d -t 600 2>/dev/null | grep -E "ReactNativeJS|FATAL|AndroidRuntime|JavascriptException|Hermes|ANR in|Fatal signal|libc|Choreographer.*Skipped|app.monologue.mobile" | grep -v "wm_\|am_" | tail -50
+      timeout 20 adb logcat -d 2>/dev/null | grep -E "ReactNativeJS|FATAL|AndroidRuntime: |JavascriptException|FabricUIManager|windowRecomposer|IllegalStateException|handleHostException|ErrorRecovery|Unhandled" | grep -v "Maestro\|Tried to enqueue" | tail -30
       echo "--- end logcat ---"
     fi
   fi
