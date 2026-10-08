@@ -12,11 +12,11 @@ on:
         required: true
         default: false
       native_baseline:
-        description: Native baseline label embedded in the binaries (08 = baseline 07 + expo-camera + react-native-document-scanner-plugin)
+        description: Native baseline label embedded in the binaries (09 = 08 + Android NativeSurfaceHost attach guard; 08 = baseline 07 + expo-camera + react-native-document-scanner-plugin)
         type: choice
         required: true
         default: '08'
-        options: ['08', '07', '06']
+        options: ['09', '08', '07', '06']
       platforms:
         description: Both by default; choose one only for an explicit scope or failed-platform retry
         type: choice
