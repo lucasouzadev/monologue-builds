@@ -13,23 +13,18 @@ appId: app.monologue.mobile
     id: "conversation-title-button"
 - extendedWaitUntil:
     visible:
-      id: "panel-tab-pins"
+      id: "panel-tab-details"
     timeout: 15000
-- takeScreenshot: 18-panel-pins
+- takeScreenshot: 18-panel-first-tab
 - tapOn:
     id: "panel-tab-favorites"
 - takeScreenshot: 18-panel-favorites
 - tapOn:
-    id: "panel-tab-media"
+    id: "panel-tab-details"
 - extendedWaitUntil:
     visible: "example.com"
     timeout: 10000
 - takeScreenshot: 18-panel-media-links
-- tapOn:
-    id: "panel-tab-activity"
-- takeScreenshot: 18-panel-activity
-- tapOn:
-    id: "panel-tab-media"
 # The arrow next to the link goes back to the chat on that message.
 - tapOn: "Go to the message"
 - extendedWaitUntil:

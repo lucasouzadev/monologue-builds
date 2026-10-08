@@ -14,18 +14,18 @@ appId: app.monologue.mobile
     id: "conversation-title-button"
 - extendedWaitUntil:
     visible:
-      id: "panel-tab-pins"
+      id: "panel-tab-details"
     timeout: 15000
+- takeScreenshot: 15-panel-first-tab
+- tapOn:
+    id: "panel-tab-pins"
 - takeScreenshot: 15-panel-pins
 - tapOn:
-    id: "panel-tab-media"
-- takeScreenshot: 15-panel-media
+    id: "panel-tab-favorites"
+- takeScreenshot: 15-panel-favorites
 - tapOn:
-    id: "panel-tab-activity"
-- takeScreenshot: 15-panel-activity
-- tapOn:
-    id: "panel-tab-settings"
-- takeScreenshot: 15-panel-settings
+    id: "panel-tab-details"
+- takeScreenshot: 15-panel-details
 - tapOn:
     id: "panel-back"
 - extendedWaitUntil:
