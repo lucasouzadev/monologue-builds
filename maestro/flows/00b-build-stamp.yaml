@@ -9,13 +9,9 @@ appId: app.monologue.mobile
 - tapOn:
     text: "Open personal space"
     optional: true
-- swipe:
-    start: "96%,50%"
-    end: "30%,50%"
-    optional: true
-- extendedWaitUntil:
-    visible:
+- scrollUntilVisible:
+    element:
       id: "build-stamp"
-    timeout: 15000
+    timeout: 20000
 - takeScreenshot: 00b-build-stamp
 - assertNotVisible: ".*embedded.*"
