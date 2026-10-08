@@ -11,6 +11,9 @@ appId: app.monologue.mobile
     timeout: 20000
 - longPressOn: ".*Ola.*"
 - tapOn:
+    text: "Write.*"
+    optional: true
+- tapOn:
     text: "Merge"
     optional: true
 - takeScreenshot: 13-merge-reveal
