@@ -22,6 +22,12 @@ on:
         required: true
         default: '07'
         options: ['07', '08', '06']
+      channel:
+        description: development = the owner's devices' stream; preview = STAGING (validate a round here before it is promoted to development)
+        type: choice
+        required: true
+        default: development
+        options: [development, preview]
 
 permissions:
   contents: write
@@ -82,14 +88,14 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ${{ runner.temp }}/sim/Monologue.tar.gz
-          key: sim-stresslab-${{ inputs.native_baseline }}-${{ hashFiles('src/pnpm-lock.yaml', 'src/apps/mobile/modules/**', 'src/apps/mobile/app.config.*', 'src/apps/mobile/package.json') }}
+          key: sim-stresslab-${{ inputs.channel }}-${{ inputs.native_baseline }}-${{ hashFiles('src/pnpm-lock.yaml', 'src/apps/mobile/modules/**', 'src/apps/mobile/app.config.*', 'src/apps/mobile/package.json') }}
       - name: Compile the app for the iOS simulator (EAS --local, no signing)
         id: compile
         if: steps.simcache.outputs.cache-hit != 'true'
         working-directory: src/apps/mobile
         run: |
           mkdir -p "$RUNNER_TEMP/sim"
-          eas build --local --platform ios --profile github-simulator --non-interactive --output "$RUNNER_TEMP/sim/Monologue.tar.gz"
+          eas build --local --platform ios --profile ${{ inputs.channel == 'preview' && 'github-simulator-staging' || 'github-simulator' }} --non-interactive --output "$RUNNER_TEMP/sim/Monologue.tar.gz"
       - name: Save the simulator build for reruns
         if: always() && steps.simcache.outputs.cache-hit != 'true' && steps.compile.outcome == 'success'
         uses: actions/cache/save@v4
