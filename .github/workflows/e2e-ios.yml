@@ -22,6 +22,11 @@ on:
         required: true
         default: '07'
         options: ['07', '08', '06']
+      only:
+        description: Verification subset — space-separated flow names (e.g. '00-warm-update 00b-build-stamp 01-create-open-send 15-conversation-panel 28-sheet-visuals'); empty = the full suite + audit + stress
+        type: string
+        required: false
+        default: ''
       channel:
         description: development = the owner's devices' stream; preview = STAGING (validate a round here before it is promoted to development)
         type: choice
@@ -117,15 +122,17 @@ jobs:
       - name: Install Maestro
         run: curl -Ls "https://get.maestro.mobile.dev" | bash
       - name: Run Maestro flows
+        env:
+          FLOW_ONLY: ${{ inputs.only }}
         run: bash builds/maestro/run.sh "$SIM_UDID"
 
       - name: Audit passes (dark, large text, huge text)
-        if: always()
+        if: always() && inputs.only == ''
         timeout-minutes: 100
         run: bash builds/maestro/audit-passes.sh ios "$SIM_UDID"
 
       - name: Run the stress flow (burst sends, 100k-char messages, Reply Focus, history scroll)
-        if: always()
+        if: always() && inputs.only == ''
         timeout-minutes: 40
         run: FLOWS_DIR="$PWD/builds/maestro/stress" SHOT_PREFIX=stress- FLOW_TIMEOUT=420 bash builds/maestro/run.sh "$SIM_UDID"
 

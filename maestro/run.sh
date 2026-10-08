@@ -9,6 +9,8 @@ status=0
 if command -v timeout >/dev/null; then TMO="timeout ${FLOW_TIMEOUT:-360}"; T30="timeout 30"; elif command -v gtimeout >/dev/null; then TMO="gtimeout ${FLOW_TIMEOUT:-360}"; T30="gtimeout 30"; else TMO=""; T30=""; fi
 SH="$ROOT/shots"; mkdir -p "$SH"
 for flow in *.yaml; do
+  # FLOW_ONLY="00-warm-update 00b-build-stamp 28-sheet-visuals": a verification subset (the staging gate runs this first, then the full suite).
+  if [ -n "${FLOW_ONLY:-}" ] && ! echo " $FLOW_ONLY " | grep -q " ${flow%.yaml} "; then continue; fi
   echo; echo "=== $flow ($(date +%H:%M:%S)) ==="
   if $TMO maestro ${1:+--device "$1"} test --no-ansi "$flow"; then echo "RESULT $flow: PASS"; else
     echo "RESULT $flow: FAIL"; status=1

@@ -51,7 +51,7 @@ case "$cmd" in
   e2e-android)
     dispatch e2e-android.yml "build_run_id=${1:-${STAGING_APK_BUILD_RUN:-$APK_BUILD_RUN}}" ;;
   e2e-ios)
-    dispatch e2e-ios.yml "authorize_native_build=true" "source_ref=${1:-$BRANCH_DEFAULT}" "native_baseline=$BASELINE" "channel=${E2E_CHANNEL:-development}" ;;
+    dispatch e2e-ios.yml "authorize_native_build=true" "source_ref=${1:-$BRANCH_DEFAULT}" "native_baseline=$BASELINE" "channel=${E2E_CHANNEL:-development}" "only=${E2E_ONLY:-}" ;;
   status)
     gh api "repos/$REPO/actions/${1:+workflows/$1/}runs?per_page=5" --jq '.workflow_runs[]|[.id,.name,.status,.conclusion,.created_at]|@tsv' ;;
   wait) wait_run "${1:?run id}" ;;
