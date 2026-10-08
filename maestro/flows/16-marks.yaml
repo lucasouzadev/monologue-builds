@@ -52,5 +52,8 @@ appId: app.monologue.mobile
 - tapOn:
     text: "Pin"
     optional: true
-- takeScreenshot: 16-pinned-chip
+- takeScreenshot: 16-pinned-banner
+- assertVisible:
+    id: "pinned-banner"
+    optional: true
 - assertVisible: "Message.*"
