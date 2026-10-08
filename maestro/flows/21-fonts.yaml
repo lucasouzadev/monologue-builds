@@ -15,12 +15,27 @@ appId: app.monologue.mobile
 - tapOn:
     id: "font-option-lora"
 - takeScreenshot: 21-lora
+- scrollUntilVisible:
+    element:
+      id: "font-option-mono"
+    direction: RIGHT
+    optional: true
 - tapOn:
     id: "font-option-mono"
 - takeScreenshot: 21-mono
+- scrollUntilVisible:
+    element:
+      id: "font-option-atkinson"
+    direction: RIGHT
+    optional: true
 - tapOn:
     id: "font-option-atkinson"
 - takeScreenshot: 21-atkinson
+- scrollUntilVisible:
+    element:
+      id: "font-option-inter"
+    direction: RIGHT
+    optional: true
 - tapOn:
     id: "font-option-inter"
 - takeScreenshot: 21-inter
@@ -49,6 +64,11 @@ appId: app.monologue.mobile
     timeout: 60000
 - tapOn: "Open personal space"
 - tapOn: "Settings.*"
+- scrollUntilVisible:
+    element:
+      id: "font-option-system"
+    direction: RIGHT
+    optional: true
 - tapOn:
     id: "font-option-system"
 - scrollUntilVisible:

@@ -1,35 +1,39 @@
-# Merge two messages ("Marca B" is a favourite): the combined message inherits the star, the sources collapse into it.
+# (Android; the iOS native menu items are not reachable by Maestro) Merge two messages ("Marca B" is a favourite): the combined message inherits the star, the sources collapse into it.
 appId: app.monologue.mobile
 ---
 - launchApp
-- extendedWaitUntil:
-    visible: ".*(Novidades|Veja).*"
-    timeout: 60000
-- tapOn: ".*(Novidades|Veja).*"
-- extendedWaitUntil:
-    visible: "Message.*"
-    timeout: 20000
-- longPressOn: ".*Marca B.*"
-- tapOn:
-    text: "Write.*"
-    optional: true
-- tapOn:
-    text: "Merge"
-    optional: true
-- takeScreenshot: 20-merge-selection
-- tapOn:
-    text: ".*Veja.*"
-    optional: true
-- takeScreenshot: 20-merge-two-selected
-- tapOn:
-    text: "Combine 2"
-    optional: true
-- extendedWaitUntil:
-    visible: "Combine messages"
-    timeout: 15000
-- takeScreenshot: 20-merge-reveal
-- tapOn: "Combine messages"
-- extendedWaitUntil:
-    visible: "Message.*"
-    timeout: 20000
-- takeScreenshot: 20-merged-message
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - extendedWaitUntil:
+          visible: ".*(Novidades|Veja).*"
+          timeout: 60000
+      - tapOn: ".*(Novidades|Veja).*"
+      - extendedWaitUntil:
+          visible: "Message.*"
+          timeout: 20000
+      - longPressOn: ".*Marca B.*"
+      - tapOn:
+          text: "Write.*"
+          optional: true
+      - tapOn:
+          text: "Merge"
+          optional: true
+      - takeScreenshot: 20-merge-selection
+      - tapOn:
+          text: ".*Veja.*"
+          optional: true
+      - takeScreenshot: 20-merge-two-selected
+      - tapOn:
+          text: "Combine 2"
+          optional: true
+      - extendedWaitUntil:
+          visible: "Combine messages"
+          timeout: 15000
+      - takeScreenshot: 20-merge-reveal
+      - tapOn: "Combine messages"
+      - extendedWaitUntil:
+          visible: "Message.*"
+          timeout: 20000
+      - takeScreenshot: 20-merged-message

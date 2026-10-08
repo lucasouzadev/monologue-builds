@@ -26,7 +26,13 @@ appId: app.monologue.mobile
 - tapOn: "Delete"
 - tapOn:
     id: "callout-action-delete"
+    optional: true
+- tapOn:
+    point: "62%,84%"
+    optional: true
 - takeScreenshot: 23-after-delete
-- tapOn: "Close conversation previews"
+- tapOn:
+    id: "spatial-close"
+    optional: true
 - takeScreenshot: 23-home-after-delete
 - assertVisible: "Open personal space"
