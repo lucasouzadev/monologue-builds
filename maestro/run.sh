@@ -16,6 +16,7 @@ for flow in *.yaml; do
     if command -v adb >/dev/null && [ -z "${1:-}" ]; then
       echo "--- logcat after $flow (app, JS, crashes) ---"
       timeout 20 adb logcat -d 2>/dev/null | grep -E "ReactNativeJS|FATAL|AndroidRuntime: |JavascriptException|FabricUIManager|windowRecomposer|IllegalStateException|handleHostException|ErrorRecovery|Unhandled" | grep -v "Maestro\|Tried to enqueue" | tail -30
+      timeout 20 adb logcat -d 2>/dev/null | grep -m1 -A60 "IllegalStateException: Cannot locate" | grep -E "Cannot locate|expo|compose|Compose|morphlet|monologue|keyboardcontroller|swmansion|facebook.react.views|at androidx" | head -40
       echo "--- end logcat ---"
     fi
   fi
