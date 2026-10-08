@@ -14,34 +14,24 @@ appId: app.monologue.mobile
     id: "conversation-title-button"
 - extendedWaitUntil:
     visible:
-      id: "panel-tab-favorites"
+      id: "panel-open-favorites"
     timeout: 15000
 - tapOn:
-    id: "panel-tab-favorites"
-- takeScreenshot: 26-panel-favorites
-- tapOn:
-    id: "panel-see-all-favorites"
-    optional: true
-- extendedWaitUntil:
-    visible:
-      id: "favorites-timeline"
-    timeout: 8000
-    optional: true
-- takeScreenshot: 26-timeline
+    id: "panel-open-favorites"
+- takeScreenshot: 26-favorites-sheet
 - tapOn:
     id: "favorites-search"
     optional: true
 - inputText: "a"
-- takeScreenshot: 26-timeline-search
+- takeScreenshot: 26-sheet-search
 - eraseText
 - tapOn:
     id: "favorites-select"
     optional: true
-- takeScreenshot: 26-timeline-select
+- takeScreenshot: 26-sheet-select
 - tapOn:
     id: "favorites-select"
     optional: true
-- tapOn:
-    id: "favorites-back"
-    optional: true
+- swipe:
+    direction: DOWN
 - takeScreenshot: 26-back-to-panel

@@ -13,14 +13,9 @@ appId: app.monologue.mobile
     id: "conversation-title-button"
 - extendedWaitUntil:
     visible:
-      id: "panel-tab-details"
+      id: "panel-details"
     timeout: 15000
-- takeScreenshot: 18-panel-first-tab
-- tapOn:
-    id: "panel-tab-favorites"
-- takeScreenshot: 18-panel-favorites
-- tapOn:
-    id: "panel-tab-details"
+- takeScreenshot: 18-panel-first-screen
 - extendedWaitUntil:
     visible: "example.com"
     timeout: 10000
