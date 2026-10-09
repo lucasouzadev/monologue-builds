@@ -1,0 +1,31 @@
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Events
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Conversation options"
+- tapOn: "Rename"
+- tapOn: "Conversation title"
+- eraseText
+- inputText: ${output.qaTitle + " renamed"}
+- tapOn: "Rename conversation"
+- extendedWaitUntil:
+    visible:
+      id: timeline-event-conversation-renamed
+    timeout: 15000
+- takeScreenshot: 32-renamed
+- longPressOn: ".*QA root.*"
+- tapOn: "Organize.*"
+- tapOn: "Favorite"
+- assertVisible:
+    id: timeline-event-message-favorited
+- longPressOn: ".*QA root.*"
+- tapOn: "Organize.*"
+- tapOn: "Pin"
+- assertVisible:
+    id: timeline-event-message-pinned
+- takeScreenshot: 32-mark-events
+- assertVisible: "Message.*"
+- hideKeyboard
+- tapOn: "Back"

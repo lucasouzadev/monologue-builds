@@ -1,0 +1,30 @@
+# Called from a Home screen. Creates a distinct fixture and opens it.
+# QA_PREFIX is supplied by each flow. output.qaTitle is retained for later assertions.
+appId: app.monologue.mobile
+---
+- openLink: "monologue:///"
+- runFlow:
+    when:
+      visible: "Open in.*Monologue.*"
+    commands:
+      - tapOn: "Open"
+- evalScript: ${output.qaTitle = QA_PREFIX + " " + Date.now()}
+- extendedWaitUntil:
+    visible: "New conversation"
+    timeout: 60000
+- tapOn: "New conversation"
+- tapOn: "Conversation title"
+- inputText: ${output.qaTitle}
+- tapOn: ".*(First note|Write your first note).*"
+- inputText: "QA root"
+- tapOn: "Create conversation"
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 20000
+# Creation already opens the chat. Tapping its title would open the details sheet.
+- extendedWaitUntil:
+    visible: ".*QA root.*"
+    timeout: 20000
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 20000

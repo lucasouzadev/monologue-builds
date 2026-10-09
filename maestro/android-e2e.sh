@@ -19,6 +19,12 @@ for i in 1 2 3 4; do adb push /tmp/fx$i.png /sdcard/Pictures/fx$i.png >/dev/null
 sleep 3
 for perm in READ_MEDIA_IMAGES READ_MEDIA_VISUAL_USER_SELECTED READ_EXTERNAL_STORAGE; do adb shell pm grant app.monologue.mobile android.permission.$perm >/dev/null 2>&1 || true; done
 adb logcat -c
+if [ -n "${FLOW_ONLY:-}" ]; then
+  # Keep flows in place so their relative support/ imports resolve correctly.
+  # A subset is baseline/targeted evidence only; the final gate uses empty FLOW_ONLY.
+  bash maestro/run.sh
+  exit $?
+fi
 if [ -f maestro/quick.txt ]; then
   # Quick diagnosis: only the flows listed in maestro/quick.txt, then the app's log.
   rm -rf maestro/flows-quick; mkdir -p maestro/flows-quick
@@ -37,7 +43,7 @@ adb logcat -d -b all 2>/dev/null | grep -E "FATAL EXCEPTION|AndroidRuntime|React
 # Re-seed: the light pass ends with deleted/renamed conversations (flows 11, 23, 24), and the later passes look for the "Ola" row. Flow 01 creates it again.
 reseed() { rm -rf maestro/flows-seed; mkdir -p maestro/flows-seed; cp maestro/flows/01-create-open-send.yaml maestro/flows-seed/; FLOWS_DIR="$PWD/maestro/flows-seed" SHOT_PREFIX=seed- bash maestro/run.sh || true; }
 # Audit passes (dark, large text, huge text): see maestro/audit-passes.sh. Informational: the look is judged from the images.
-bash maestro/audit-passes.sh android
+bash maestro/audit-passes.sh android || code=1
 # Stress pass (owner request: performance on both platforms): burst sends and limit-sized messages through the real conversation
 # screen (the lab opens on the development update channel), then Reply Focus and a fast history scroll. Informational.
 adb shell am force-stop app.monologue.mobile >/dev/null 2>&1

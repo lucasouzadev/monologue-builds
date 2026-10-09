@@ -22,6 +22,16 @@ for flow in *.yaml; do
       echo "--- end logcat ---"
     fi
   fi
+  if [ "$flow" = "00-warm-update.yaml" ]; then
+    # A notVisible assertion on an absent node returns immediately; it never
+    # waits for OTA. Keep this real download window outside the UI assertions.
+    sleep 45
+    if command -v xcrun >/dev/null && [ -n "${1:-}" ]; then
+      xcrun simctl terminate "$1" app.monologue.mobile >/dev/null 2>&1 || true
+    elif command -v adb >/dev/null; then
+      adb ${1:+-s "$1"} shell am force-stop app.monologue.mobile >/dev/null 2>&1 || true
+    fi
+  fi
   if command -v xcrun >/dev/null && [ -n "${1:-}" ]; then xcrun simctl io "$1" screenshot "$SH/${PFX}${flow%.yaml}-end.png" >/dev/null 2>&1 || true
   elif command -v adb >/dev/null; then
     $T30 adb ${1:+-s "$1"} exec-out screencap -p > "$SH/${PFX}${flow%.yaml}-end.png" 2>/dev/null || true

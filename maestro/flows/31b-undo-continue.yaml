@@ -1,0 +1,33 @@
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Undo Continue
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- longPressOn: ".*QA root.*"
+- tapOn: "Write.*"
+- tapOn: "Continue"
+- tapOn: "Message.*"
+- inputText: "QA continuation preserved"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*QA continuation preserved.*"
+    timeout: 10000
+- longPressOn: ".*QA continuation preserved.*"
+- tapOn: "Write.*"
+- assertVisible: "Undo continuation"
+- takeScreenshot: 31b-undo-continue-menu
+- tapOn: "Undo continuation"
+- runFlow:
+    when:
+      visible:
+        id: thought-focus-close
+    commands:
+      - tapOn:
+          id: thought-focus-close
+- assertVisible: ".*QA root.*"
+- assertVisible: ".*QA continuation preserved.*"
+- assertNotVisible: "Continued thought.*"
+- takeScreenshot: 31b-restored
+- hideKeyboard
+- tapOn: "Back"

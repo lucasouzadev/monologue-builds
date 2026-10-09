@@ -1,0 +1,52 @@
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Undo Reply
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  # This fixture has one bubble and no keyboard (iPhone 16e).
+                  # Distinguish a stale accessibility target from a missing menu.
+                  - longPressOn:
+                      point: "82%,83%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- tapOn: "Message.*"
+- inputText: "QA reply preserved"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*QA reply preserved.*"
+    timeout: 10000
+- longPressOn: ".*QA reply preserved.*"
+- tapOn: "Write.*"
+- assertVisible: "Undo reply"
+- takeScreenshot: 31a-undo-reply-menu
+- tapOn: "Undo reply"
+- runFlow:
+    when:
+      visible:
+        id: thought-focus-close
+    commands:
+      - tapOn:
+          id: thought-focus-close
+- assertVisible: ".*QA root.*"
+- assertVisible: ".*QA reply preserved.*"
+- assertNotVisible:
+    id: reply-summary
+- takeScreenshot: 31a-restored
+- hideKeyboard
+- tapOn: "Back"
