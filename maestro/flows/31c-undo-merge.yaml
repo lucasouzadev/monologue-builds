@@ -17,9 +17,12 @@ env:
     visible:
       id: merge-provenance
     timeout: 15000
-# Leave and reopen: the test must not use the transient feedback button.
+# Restart and reopen: the test must not use the transient feedback button.
 - hideKeyboard
-- tapOn: "Back"
+- launchApp
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 30000
 - tapOn: ${".*" + output.qaTitle + ".*"}
 - extendedWaitUntil:
     visible:

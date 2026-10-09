@@ -4,6 +4,11 @@ appId: app.monologue.mobile
 ---
 - launchApp:
     clearState: true
-- extendedWaitUntil:
-    visible: "Monologue"
-    timeout: 90000
+- retry:
+    maxRetries: 3
+    commands:
+      # Retry a slow first launch without clearing downloaded updates again.
+      - launchApp
+      - extendedWaitUntil:
+          visible: "Monologue"
+          timeout: 30000
