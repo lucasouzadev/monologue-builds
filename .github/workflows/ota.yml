@@ -1,11 +1,16 @@
 name: Monologue OTA update (private source)
-run-name: OTA ${{ inputs.platform }} / ${{ inputs.channel }} @ ${{ inputs.source_ref }} (baseline ${{ inputs.native_baseline }})
+run-name: ${{ inputs.recover_apk_build_run_id && format('Recover APK upload from {0}', inputs.recover_apk_build_run_id) || format('OTA {0} / {1} @ {2} (baseline {3})', inputs.platform, inputs.channel, inputs.source_ref, inputs.native_baseline) }}
 
 # Manual only. Publishes a JS/asset-only update to the Expo project; never compiles a native binary.
 # The runtime label must match the installed binary (07 = the build that contains morphlet + expo-content-transition).
 on:
   workflow_dispatch:
     inputs:
+      recover_apk_build_run_id:
+        description: Optional signed APK upload recovery ONLY; skips OTA and never builds
+        type: string
+        required: false
+        default: ''
       source_ref:
         description: Branch, tag or SHA of the private lucasouzadev/monologue repository
         type: string
@@ -49,6 +54,7 @@ env:
 
 jobs:
   ota:
+    if: inputs.recover_apk_build_run_id == ''
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
@@ -82,3 +88,65 @@ jobs:
           PLATFORM: ${{ inputs.platform }}
           UPDATE_MESSAGE: ${{ inputs.message }}
         run: eas update --channel "$CHANNEL" --platform "$PLATFORM" --environment "$CHANNEL" --message "$UPDATE_MESSAGE" --non-interactive
+
+  recover-apk-upload:
+    if: inputs.recover_apk_build_run_id != ''
+    name: Recover signed APK only (no build or OTA)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+    env:
+      RECOVERY_BUILD_RUN: ${{ inputs.recover_apk_build_run_id }}
+      RECOVERY_CHANNEL: ${{ inputs.channel }}
+      RECOVERY_BASELINE: ${{ inputs.native_baseline }}
+    steps:
+      - name: Validate recovery identifiers
+        run: |
+          [[ "$RECOVERY_BUILD_RUN" =~ ^[0-9]+$ ]] || exit 1
+          [[ "$RECOVERY_BASELINE" =~ ^[0-9]{2}$ ]] || exit 1
+          case "$RECOVERY_CHANNEL" in development|preview|production) ;; *) exit 1 ;; esac
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          name: monologue-android-${{ inputs.recover_apk_build_run_id }}-1
+          run-id: ${{ inputs.recover_apk_build_run_id }}
+          github-token: ${{ github.token }}
+          path: encrypted-apk
+      - name: Restore the existing signed APK
+        env:
+          ARTIFACT_PASSPHRASE: ${{ secrets.ARTIFACT_PASSPHRASE }}
+        run: |
+          test -n "$ARTIFACT_PASSPHRASE"
+          node tools/decrypt-artifact.mjs encrypted-apk/Monologue.apk.enc "$RUNNER_TEMP/Monologue.apk"
+          unzip -t "$RUNNER_TEMP/Monologue.apk" > /dev/null
+          sha256sum "$RUNNER_TEMP/Monologue.apk"
+      - name: Retry only the R2 upload with a single PutObject
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          AWS_REQUEST_CHECKSUM_CALCULATION: WHEN_REQUIRED
+          AWS_RESPONSE_CHECKSUM_VALIDATION: WHEN_REQUIRED
+          R2_BUCKET: ${{ vars.R2_BUCKET || 'apk' }}
+          R2_PUBLIC_BASE_URL: ${{ vars.R2_PUBLIC_BASE_URL }}
+        run: |
+          test -n "$R2_ACCOUNT_ID" && test -n "$AWS_ACCESS_KEY_ID" && test -n "$AWS_SECRET_ACCESS_KEY"
+          endpoint="https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com"
+          key="releases/baseline-$RECOVERY_BASELINE/$RECOVERY_CHANNEL/$(openssl rand -hex 12)/Monologue-$RECOVERY_BASELINE-$RECOVERY_CHANNEL-$RECOVERY_BUILD_RUN.apk"
+          aws configure set default.s3.addressing_style path
+          aws s3api put-object --bucket "$R2_BUCKET" --key "$key" --body "$RUNNER_TEMP/Monologue.apk" --endpoint-url "$endpoint" --content-type application/vnd.android.package-archive > /dev/null
+          case "$R2_PUBLIC_BASE_URL" in
+            https://*) echo "APK: ${R2_PUBLIC_BASE_URL%/}/$key" ;;
+            *) echo 'APK (signed, 7 days):'; aws s3 presign "s3://$R2_BUCKET/$key" --endpoint-url "$endpoint" --expires-in 604800 ;;
+          esac
+      - name: Remove the restored plaintext APK
+        if: always()
+        run: rm -f "$RUNNER_TEMP/Monologue.apk"
