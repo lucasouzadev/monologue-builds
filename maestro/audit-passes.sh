@@ -9,8 +9,8 @@ set -u
 PLATFORM="${1:?android|ios}"; UDID="${2:-}"
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT/.."
-DARK_FLOWS="02-home-controls 03-conversation-tools 05-composer-plus-menu 06-photos-panel 07-home-list 08-message-actions 09-profile 10-rename-pin 12-editor-select 13-merge-search 10a-menu-keyboard 15-conversation-panel 28-sheet-visuals 19-search-marks 21-fonts 22-activity 25-camera-scanner 26-favorites-timeline 29-drawer-morph"
-SCALE_FLOWS="02-home-controls 03-conversation-tools 05-composer-plus-menu 07-home-list 08-message-actions 09-profile 10a-menu-keyboard 15-conversation-panel 28-sheet-visuals 19-search-marks 22-activity 25-camera-scanner 26-favorites-timeline 29-drawer-morph"
+DARK_FLOWS="02-home-controls 03-conversation-tools 05-composer-plus-menu 06-photos-panel 07-home-list 08-message-actions 09-profile 10-rename-pin 12-editor-select 13-merge-search 10a-menu-keyboard 15-conversation-panel 28-sheet-visuals 19-search-marks 21-fonts 22-activity 25-camera-scanner 26-favorites-timeline 29-drawer-morph 30-scroll-edge-calibration"
+SCALE_FLOWS="02-home-controls 03-conversation-tools 05-composer-plus-menu 07-home-list 08-message-actions 09-profile 10a-menu-keyboard 15-conversation-panel 28-sheet-visuals 19-search-marks 22-activity 25-camera-scanner 26-favorites-timeline 29-drawer-morph 30-scroll-edge-calibration"
 
 appearance() { # light|dark
   if [ "$PLATFORM" = android ]; then adb shell cmd uimode night "$([ "$1" = dark ] && echo yes || echo no)" >/dev/null 2>&1

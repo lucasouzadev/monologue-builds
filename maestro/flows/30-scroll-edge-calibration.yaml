@@ -1,0 +1,26 @@
+# Synthetic calibration only; the route remains absent from the product drawer.
+# Native binding is necessary evidence, not visual/performance acceptance.
+appId: app.monologue.mobile
+---
+- launchApp
+- openLink: "monologue://__diagnostics/scroll-edge"
+- extendedWaitUntil:
+    visible: "Desfoque progressivo"
+    timeout: 15000
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - extendedWaitUntil:
+          visible: "UIKit: lista e cabeçalho vinculados"
+          timeout: 15000
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - assertVisible: "Fallback: sem vínculo UIKit"
+- takeScreenshot: 30-edge-calibration-top
+- swipe:
+    direction: UP
+- takeScreenshot: 30-edge-calibration-scrolled
+- tapOn: "Voltar"
