@@ -42,11 +42,9 @@ env:
 - assertVisible: "Undo combine"
 - takeScreenshot: 31c-permanent-undo-menu
 - tapOn: "Undo combine"
-- assertVisible:
-    id: undo-merge-confirm
+- assertVisible: "Restore originals"
 - takeScreenshot: 31c-confirm
-- tapOn:
-    id: undo-merge-confirm
+- tapOn: "Restore originals"
 - assertVisible: ".*QA root.*"
 - assertVisible: ".*QA second original.*"
 - assertNotVisible:
