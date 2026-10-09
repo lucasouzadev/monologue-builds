@@ -1,0 +1,36 @@
+# Owner request 2026-10-09: Settings -> Storage manages the account-free folder; the cloud is shown as coming soon.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "New conversation"
+    timeout: 60000
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - retry:
+          maxRetries: 3
+          commands:
+            - tapOn:
+                point: "88%,9%"
+            - extendedWaitUntil:
+                visible:
+                  id: "profile-section-storage"
+                timeout: 6000
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "Open personal space"
+- tapOn:
+    id: "profile-section-storage"
+- extendedWaitUntil:
+    visible:
+      id: "storage-panel"
+    timeout: 15000
+- assertVisible: ".*Folder on this device.*"
+- assertVisible:
+    id: "storage-choose"
+- assertVisible: ".*Cloud.*"
+- takeScreenshot: 42-storage-panel
