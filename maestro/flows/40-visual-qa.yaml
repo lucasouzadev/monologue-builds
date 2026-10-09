@@ -28,7 +28,11 @@ appId: app.monologue.mobile
 - inputText: "Ola"
 - tapOn: "Send message"
 - assertVisible: ".*Ola.*"
-- hideKeyboard
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
 - takeScreenshot: 40-chat-after-send
 - swipe:
     direction: DOWN

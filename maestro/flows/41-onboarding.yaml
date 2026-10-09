@@ -7,6 +7,11 @@ appId: app.monologue.mobile
     visible: "New conversation"
     timeout: 60000
 - openLink: "monologue:///onboarding"
+- runFlow:
+    when:
+      visible: "Open in.*Monologue.*"
+    commands:
+      - tapOn: "Open"
 - extendedWaitUntil:
     visible: ".*Welcome to Monologue.*"
     timeout: 20000
