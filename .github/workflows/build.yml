@@ -16,7 +16,7 @@ on:
         type: choice
         required: true
         default: '08'
-        options: ['11', '10', '09', '08', '07', '06']
+        options: ['12', '11', '10', '09', '08', '07', '06']
       platforms:
         description: Both by default; choose one only for an explicit scope or failed-platform retry
         type: choice
