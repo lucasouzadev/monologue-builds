@@ -16,7 +16,10 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: ${".*" + output.qaTitle + ".*"}
     timeout: 20000
-- tapOn: ${".*" + output.qaTitle + ".*"}
+# Creation already opens the chat. Tapping its title would open the details sheet.
+- extendedWaitUntil:
+    visible: ".*QA root.*"
+    timeout: 20000
 - extendedWaitUntil:
     visible: "Message.*"
     timeout: 20000

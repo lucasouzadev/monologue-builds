@@ -3,7 +3,7 @@
 appId: app.monologue.mobile
 ---
 - launchApp
-- openLink: "monologue://__diagnostics/scroll-edge"
+- openLink: "monologue:///__diagnostics/scroll-edge"
 - extendedWaitUntil:
     visible: "Desfoque progressivo"
     timeout: 15000

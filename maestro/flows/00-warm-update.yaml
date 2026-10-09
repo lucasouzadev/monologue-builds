@@ -1,4 +1,5 @@
-# First launch downloads the newest OTA; it is applied on the NEXT launch. Wait, then stop so flow 01+ run the current JS.
+# First launch downloads the newest OTA. run.sh leaves the app running for the
+# download window, then terminates it before 00b checks the NEXT launch.
 appId: app.monologue.mobile
 ---
 - launchApp:
@@ -6,7 +7,3 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Monologue"
     timeout: 90000
-- extendedWaitUntil:
-    notVisible: "__sleep__"
-    timeout: 25000
-- stopApp
