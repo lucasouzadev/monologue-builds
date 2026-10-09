@@ -12,8 +12,20 @@ appId: app.monologue.mobile
     when:
       platform: iOS
     commands:
-      - tapOn:
-          point: "88%,9%"
+      - retry:
+          maxRetries: 3
+          commands:
+            - runFlow:
+                when:
+                  notVisible:
+                    id: profile-section-settings
+                commands:
+                  - tapOn:
+                      point: "88%,9%"
+            - extendedWaitUntil:
+                visible:
+                  id: profile-section-settings
+                timeout: 8000
 - runFlow:
     when:
       platform: Android

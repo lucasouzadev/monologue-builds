@@ -3,6 +3,11 @@
 appId: app.monologue.mobile
 ---
 - openLink: "monologue:///"
+- runFlow:
+    when:
+      visible: "Open in.*Monologue.*"
+    commands:
+      - tapOn: "Open"
 - evalScript: ${output.qaTitle = QA_PREFIX + " " + Date.now()}
 - extendedWaitUntil:
     visible: "New conversation"
