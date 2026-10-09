@@ -4,7 +4,25 @@ env:
 ---
 - launchApp
 - runFlow: support/new-chat.yaml
-- longPressOn: ".*QA root.*"
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  # This fixture has one bubble and no keyboard (iPhone 16e).
+                  # Distinguish a stale accessibility target from a missing menu.
+                  - longPressOn:
+                      point: "82%,83%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
 - tapOn: "Write.*"
 - tapOn: "Reply"
 - tapOn: "Message.*"
