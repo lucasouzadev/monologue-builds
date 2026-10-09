@@ -43,7 +43,7 @@ adb logcat -d -b all 2>/dev/null | grep -E "FATAL EXCEPTION|AndroidRuntime|React
 # Re-seed: the light pass ends with deleted/renamed conversations (flows 11, 23, 24), and the later passes look for the "Ola" row. Flow 01 creates it again.
 reseed() { rm -rf maestro/flows-seed; mkdir -p maestro/flows-seed; cp maestro/flows/01-create-open-send.yaml maestro/flows-seed/; FLOWS_DIR="$PWD/maestro/flows-seed" SHOT_PREFIX=seed- bash maestro/run.sh || true; }
 # Audit passes (dark, large text, huge text): see maestro/audit-passes.sh. Informational: the look is judged from the images.
-bash maestro/audit-passes.sh android
+bash maestro/audit-passes.sh android || code=1
 # Stress pass (owner request: performance on both platforms): burst sends and limit-sized messages through the real conversation
 # screen (the lab opens on the development update channel), then Reply Focus and a fast history scroll. Informational.
 adb shell am force-stop app.monologue.mobile >/dev/null 2>&1

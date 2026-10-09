@@ -11,6 +11,9 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT/.."
 DARK_FLOWS="02-home-controls 03-conversation-tools 05-composer-plus-menu 06-photos-panel 07-home-list 08-message-actions 09-profile 10-rename-pin 12-editor-select 13-merge-search 10a-menu-keyboard 15-conversation-panel 28-sheet-visuals 19-search-marks 21-fonts 22-activity 25-camera-scanner 26-favorites-timeline 29-drawer-morph 30-scroll-edge-calibration"
 SCALE_FLOWS="02-home-controls 03-conversation-tools 05-composer-plus-menu 07-home-list 08-message-actions 09-profile 10a-menu-keyboard 15-conversation-panel 28-sheet-visuals 19-search-marks 22-activity 25-camera-scanner 26-favorites-timeline 29-drawer-morph 30-scroll-edge-calibration"
+DARK_FLOWS="$DARK_FLOWS 31a-undo-reply 31b-undo-continue 31c-undo-merge 32-system-events 33-local-folder"
+SCALE_FLOWS="$SCALE_FLOWS 31a-undo-reply 31b-undo-continue 31c-undo-merge 32-system-events 33-local-folder"
+audit_status=0
 
 appearance() { # light|dark
   if [ "$PLATFORM" = android ]; then adb shell cmd uimode night "$([ "$1" = dark ] && echo yes || echo no)" >/dev/null 2>&1
@@ -24,7 +27,7 @@ text_size() { # normal|large|huge
   fi
 }
 run_dir() { # dir prefix
-  FLOWS_DIR="$ROOT/../$1" SHOT_PREFIX="$2" bash "$ROOT/run.sh" ${UDID:+"$UDID"} || true
+  if ! FLOWS_DIR="$ROOT/../$1" SHOT_PREFIX="$2" bash "$ROOT/run.sh" ${UDID:+"$UDID"}; then audit_status=1; fi
 }
 reseed() { # the deleting flows (11, 23, 24) remove the "Ola" conversation: flow 01 creates it again
   rm -rf maestro/audit-seed; mkdir -p maestro/audit-seed; cp maestro/flows/01-create-open-send.yaml maestro/audit-seed/
@@ -33,6 +36,8 @@ reseed() { # the deleting flows (11, 23, 24) remove the "Ola" conversation: flow
 make_pass() { # name flows...
   local name="$1"; shift; local dir="maestro/audit-$name"
   rm -rf "$dir"; mkdir -p "$dir"
+  # Numbered flows keep their relative fixture imports in every audit condition.
+  if [ -d maestro/flows/support ]; then cp -R maestro/flows/support "$dir/support"; fi
   for f in "$@"; do [ -f "maestro/flows/$f.yaml" ] && sed "s/takeScreenshot: /takeScreenshot: $name-/" "maestro/flows/$f.yaml" > "$dir/$f.yaml"; done
 }
 
@@ -41,3 +46,4 @@ appearance dark;  text_size normal; make_pass dark  $DARK_FLOWS;  run_dir maestr
 appearance light; text_size large;  make_pass large $SCALE_FLOWS; run_dir maestro/audit-large large-
 text_size huge;                     make_pass huge  $SCALE_FLOWS; run_dir maestro/audit-huge  huge-
 appearance light; text_size normal
+exit "$audit_status"
