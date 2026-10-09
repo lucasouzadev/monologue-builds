@@ -32,7 +32,7 @@ env:
 - extendedWaitUntil:
     visible: ${".*" + output.qaTitle + ".*"}
     timeout: 30000
-- tapOn: ${".*" + output.qaTitle + ".*"}
+- tapOn: ${"^" + output.qaTitle + ".*"}
 - extendedWaitUntil:
     visible:
       id: merge-provenance
