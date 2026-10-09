@@ -28,7 +28,7 @@ on:
         type: choice
         required: true
         default: '07'
-        options: ['07', '08', '09', '06']
+        options: ['10', '09', '08', '07', '06']
       message:
         description: Update message
         type: string

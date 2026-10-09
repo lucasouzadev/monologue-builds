@@ -1,0 +1,50 @@
+# Review endpoints in light/dark/large text; physical video QA certifies continuity.
+# Create stays fixed across sections. Capsule contracts toward trailing X.
+# Drawer corners/insets return; content passes behind the sharp header.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: Monologue
+    timeout: 60000
+- takeScreenshot: 29-home-capsule
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "88%,9%"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "Open personal space"
+- extendedWaitUntil:
+    visible:
+      id: profile-create-conversation
+    timeout: 15000
+- takeScreenshot: 29-drawer-create-and-x
+- tapOn:
+    id: profile-section-activity
+- assertVisible:
+    id: profile-create-conversation
+- takeScreenshot: 29-drawer-activity-create
+- tapOn: "Back|Voltar"
+- tapOn:
+    id: profile-section-integrations
+- assertVisible:
+    id: profile-create-conversation
+- takeScreenshot: 29-drawer-integrations-create
+- tapOn: "Back|Voltar"
+- tapOn:
+    id: profile-section-settings
+- assertVisible:
+    id: settings-apply
+- takeScreenshot: 29-drawer-settings-apply
+- tapOn: "Back|Voltar"
+- assertVisible:
+    id: profile-create-conversation
+- takeScreenshot: 29-drawer-create-return
+- tapOn:
+    point: "10%,50%"
+- takeScreenshot: 29-home-capsule-return
