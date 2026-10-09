@@ -20,6 +20,15 @@ env:
 # Restart and reopen: the test must not use the transient feedback button.
 - hideKeyboard
 - launchApp
+- openLink: "monologue:///"
+- runFlow:
+    when:
+      visible: "Open in.*Monologue.*"
+    commands:
+      - tapOn: "Open"
+- extendedWaitUntil:
+    visible: "New conversation"
+    timeout: 30000
 - extendedWaitUntil:
     visible: ${".*" + output.qaTitle + ".*"}
     timeout: 30000

@@ -76,5 +76,7 @@ jobs:
           if [ -n "$(ls)" ]; then
             git init -q && git checkout -q -b screens-android
             git -c user.email=ci@example.invalid -c user.name=ci add . && git -c user.email=ci@example.invalid -c user.name=ci commit -q -m "screenshots android ${{ github.run_id }}"
+            # Preserve evidence when another run later replaces the convenience branch.
+            git push -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:refs/heads/screens-android-${{ github.run_id }}
             git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:refs/heads/screens-android
           fi
