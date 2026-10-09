@@ -9,6 +9,11 @@ on:
         description: Run id of the build.yml run that produced monologue-android-<id>-1
         type: string
         required: true
+      only:
+        description: Optional space-separated baseline flow names; empty runs the full suite and audits
+        type: string
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -45,6 +50,8 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - uses: reactivecircus/android-emulator-runner@v2
+        env:
+          FLOW_ONLY: ${{ inputs.only }}
         with:
           api-level: 34
           arch: x86_64

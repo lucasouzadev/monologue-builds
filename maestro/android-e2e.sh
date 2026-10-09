@@ -19,6 +19,12 @@ for i in 1 2 3 4; do adb push /tmp/fx$i.png /sdcard/Pictures/fx$i.png >/dev/null
 sleep 3
 for perm in READ_MEDIA_IMAGES READ_MEDIA_VISUAL_USER_SELECTED READ_EXTERNAL_STORAGE; do adb shell pm grant app.monologue.mobile android.permission.$perm >/dev/null 2>&1 || true; done
 adb logcat -c
+if [ -n "${FLOW_ONLY:-}" ]; then
+  # Keep flows in place so their relative support/ imports resolve correctly.
+  # A subset is baseline/targeted evidence only; the final gate uses empty FLOW_ONLY.
+  bash maestro/run.sh
+  exit $?
+fi
 if [ -f maestro/quick.txt ]; then
   # Quick diagnosis: only the flows listed in maestro/quick.txt, then the app's log.
   rm -rf maestro/flows-quick; mkdir -p maestro/flows-quick
