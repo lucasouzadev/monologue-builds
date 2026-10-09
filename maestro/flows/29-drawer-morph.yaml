@@ -1,5 +1,5 @@
 # Review endpoints in light/dark/large text; physical video QA certifies continuity.
-# Create stays fixed across sections. Capsule contracts toward trailing X.
+# Create stays fixed across sections. The close X sits beside Create and emerges from it; the Home capsule keeps its shape.
 # Drawer corners/insets return; content passes behind the sharp header.
 appId: app.monologue.mobile
 ---
@@ -35,6 +35,8 @@ appId: app.monologue.mobile
     visible:
       id: profile-create-conversation
     timeout: 15000
+- assertVisible:
+    id: profile-footer-close
 - takeScreenshot: 29-drawer-create-and-x
 - tapOn:
     id: profile-section-activity

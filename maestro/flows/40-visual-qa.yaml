@@ -1,0 +1,112 @@
+# Owner QA round 2026-10-09 (variable blur, long note above the keyboard, details panel as one scroll, drawer close emerging from Create).
+# Evidence flow: every step takes a screenshot to be READ; the assertions only guard that the surfaces exist. It creates its own conversation.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "New conversation"
+    timeout: 60000
+- takeScreenshot: 40-home
+# 1) A long first note: the writing field must stay above the keyboard and scroll inside itself.
+- tapOn: "New conversation"
+- tapOn: "Conversation title"
+- inputText: "QA visual"
+- tapOn: ".*(First note|Write your first note).*"
+- repeat:
+    times: 45
+    commands:
+      - inputText: "texto longo de teste para encher o campo "
+- takeScreenshot: 40-long-note-keyboard
+- assertVisible: "Create conversation"
+- tapOn: "Create conversation"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 25000
+# 2) The chat: the long bubble runs under the header; its lower part carries the haze; a second message gives the Composer something to blur.
+- takeScreenshot: 40-chat-header-blur
+- tapOn: "Message.*"
+- inputText: "Ola"
+- tapOn: "Send message"
+- assertVisible: ".*Ola.*"
+- hideKeyboard
+- takeScreenshot: 40-chat-after-send
+- swipe:
+    direction: DOWN
+- takeScreenshot: 40-chat-scrolled-up
+# 3) The details panel is one scroll: identity block, actions, tabs and cards move together under a blurred grabber zone.
+- tapOn:
+    id: "conversation-title-button"
+- extendedWaitUntil:
+    visible:
+      id: "panel-details"
+    timeout: 15000
+- takeScreenshot: 40-panel-top
+- swipe:
+    from:
+      id: "panel-details"
+    direction: UP
+- takeScreenshot: 40-panel-scrolled
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - retry:
+          maxRetries: 4
+          commands:
+            - pressKey: back
+            - assertNotVisible:
+                id: "panel-details"
+      - pressKey: back
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          direction: DOWN
+      - extendedWaitUntil:
+          visible: "Message.*"
+          timeout: 15000
+      - tapOn:
+          text: "Back"
+# 4) The drawer: close control beside Create (it emerges from it), content behind the title blur when scrolled.
+- extendedWaitUntil:
+    visible: "Monologue"
+    timeout: 30000
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - retry:
+          maxRetries: 3
+          commands:
+            - runFlow:
+                when:
+                  notVisible:
+                    id: profile-section-settings
+                commands:
+                  - tapOn:
+                      point: "88%,9%"
+            - extendedWaitUntil:
+                visible:
+                  id: profile-section-settings
+                timeout: 8000
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "Open personal space"
+- extendedWaitUntil:
+    visible:
+      id: profile-create-conversation
+    timeout: 15000
+- assertVisible:
+    id: profile-footer-close
+- takeScreenshot: 40-drawer
+- swipe:
+    from:
+      id: profile-section-settings
+    direction: UP
+- takeScreenshot: 40-drawer-scrolled
+- tapOn:
+    id: profile-footer-close
+- takeScreenshot: 40-home-after-close
