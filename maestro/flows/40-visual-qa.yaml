@@ -1,4 +1,4 @@
-# Owner QA round 2026-10-09 (variable blur, long note above the keyboard, details panel as one scroll, drawer close emerging from Create).
+# Owner QA round 2026-10-09 (variable blur, long note above the keyboard, details panel as one scroll, drawer as in 0.0.20).
 # Evidence flow: every step takes a screenshot to be READ; the assertions only guard that the surfaces exist. It creates its own conversation.
 appId: app.monologue.mobile
 ---
@@ -103,14 +103,9 @@ appId: app.monologue.mobile
     visible:
       id: profile-create-conversation
     timeout: 15000
-- assertVisible:
-    id: profile-footer-close
 - takeScreenshot: 40-drawer
 - swipe:
     from:
       id: profile-section-settings
     direction: UP
 - takeScreenshot: 40-drawer-scrolled
-- tapOn:
-    id: profile-footer-close
-- takeScreenshot: 40-home-after-close

@@ -13,7 +13,7 @@ appId: app.monologue.mobile
     commands:
       - tapOn: "Open"
 - extendedWaitUntil:
-    visible: ".*Welcome to Monologue.*"
+    visible: ".*Write your first thought.*"
     timeout: 20000
 - takeScreenshot: 41-onboarding-welcome
 - tapOn:
@@ -23,7 +23,7 @@ appId: app.monologue.mobile
 - tapOn:
     id: "onboarding-send"
 - extendedWaitUntil:
-    visible: ".*Now try what you can do.*"
+    visible: ".*Saved. Try it.*"
     timeout: 10000
 - tapOn:
     id: "onboarding-try-continue"
@@ -35,7 +35,7 @@ appId: app.monologue.mobile
 - tapOn:
     id: "onboarding-next"
 - extendedWaitUntil:
-    visible: ".*Last step.*"
+    visible: ".*Where should we keep.*"
     timeout: 10000
 - assertVisible: ".*Cloud \\(coming soon\\).*"
 - assertVisible: ".*Folder on this device.*"
