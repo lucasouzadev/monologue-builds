@@ -1,0 +1,44 @@
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Undo Merge
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Message.*"
+- inputText: "QA second original"
+- tapOn: "Send message"
+- longPressOn: ".*QA root.*"
+- tapOn: "Write.*"
+- tapOn: "Merge"
+- tapOn: ".*QA second original.*"
+- tapOn: "Combine 2"
+- tapOn: "Combine messages"
+- extendedWaitUntil:
+    visible:
+      id: merge-provenance
+    timeout: 15000
+# Leave and reopen: the test must not use the transient feedback button.
+- hideKeyboard
+- tapOn: "Back"
+- tapOn: ${".*" + output.qaTitle + ".*"}
+- extendedWaitUntil:
+    visible:
+      id: merge-provenance
+    timeout: 15000
+- longPressOn: ".*QA root.*"
+- tapOn: "Write.*"
+- assertVisible: "Undo combine"
+- takeScreenshot: 31c-permanent-undo-menu
+- tapOn: "Undo combine"
+- assertVisible:
+    id: undo-merge-confirm
+- takeScreenshot: 31c-confirm
+- tapOn:
+    id: undo-merge-confirm
+- assertVisible: ".*QA root.*"
+- assertVisible: ".*QA second original.*"
+- assertNotVisible:
+    id: merge-provenance
+- takeScreenshot: 31c-restored
+- hideKeyboard
+- tapOn: "Back"

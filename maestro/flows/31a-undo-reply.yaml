@@ -1,0 +1,34 @@
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Undo Reply
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- longPressOn: ".*QA root.*"
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- tapOn: "Message.*"
+- inputText: "QA reply preserved"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*QA reply preserved.*"
+    timeout: 10000
+- longPressOn: ".*QA reply preserved.*"
+- tapOn: "Write.*"
+- assertVisible: "Undo reply"
+- takeScreenshot: 31a-undo-reply-menu
+- tapOn: "Undo reply"
+- runFlow:
+    when:
+      visible:
+        id: thought-focus-close
+    commands:
+      - tapOn:
+          id: thought-focus-close
+- assertVisible: ".*QA root.*"
+- assertVisible: ".*QA reply preserved.*"
+- assertNotVisible:
+    id: reply-summary
+- takeScreenshot: 31a-restored
+- hideKeyboard
+- tapOn: "Back"

@@ -1,0 +1,50 @@
+appId: app.monologue.mobile
+---
+- launchApp
+- openLink: "monologue:///"
+- extendedWaitUntil:
+    visible: Monologue
+    timeout: 60000
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "88%,9%"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "Open personal space"
+- tapOn:
+    id: profile-section-settings
+- assertVisible:
+    id: storage-settings
+- tapOn:
+    id: storage-settings
+- assertVisible:
+    id: storage-choose-folder
+- assertVisible:
+    id: storage-save-status
+- takeScreenshot: 33-local-folder-settings
+- tapOn:
+    id: storage-choose-folder
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: "Cancel|Cancelar"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
+- assertVisible:
+    id: storage-choose-folder
+- assertVisible:
+    id: storage-save-status
+- takeScreenshot: 33-picker-cancelled
+- tapOn: "Back"
+- tapOn: "Back"
+- tapOn:
+    point: "10%,50%"
