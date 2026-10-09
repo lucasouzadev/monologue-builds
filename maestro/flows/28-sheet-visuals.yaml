@@ -55,8 +55,8 @@ appId: app.monologue.mobile
             - pressKey: back
             - assertNotVisible:
                 id: "panel-details"
-      - tapOn:
-          point: "7%,8.3%"
+      # A second platform back leaves the chat (the header arrow's point tap did not navigate reliably on Android).
+      - pressKey: back
 - runFlow:
     when:
       platform: iOS
