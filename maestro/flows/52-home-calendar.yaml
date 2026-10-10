@@ -1,0 +1,14 @@
+# Owner QA 2026-10-09 #8: Home Reveal with the calendar of activity (header Calendar button; the pull-down shares the same host).
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Activity calendar"
+    timeout: 60000
+- takeScreenshot: 52-home-header
+- tapOn: "Activity calendar"
+- takeScreenshot: 52-home-calendar
+- swipe:
+    direction: UP
+    duration: 400
+- takeScreenshot: 52-home-after-close
