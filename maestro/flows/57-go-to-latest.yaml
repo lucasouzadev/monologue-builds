@@ -1,0 +1,26 @@
+# Owner QA 2026-10-10 #1.1: away from the latest message a round button takes the reader back.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Latest
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- repeat:
+    times: 12
+    commands:
+      - inputText: "Mensagem de enchimento para criar historico no chat"
+      - tapOn: "Send message"
+- swipe:
+    direction: DOWN
+    duration: 400
+- swipe:
+    direction: DOWN
+    duration: 400
+- extendedWaitUntil:
+    visible:
+      id: "go-to-latest-button"
+    timeout: 8000
+- takeScreenshot: 57-away
+- tapOn:
+    id: "go-to-latest-button"
+- takeScreenshot: 57-back-at-latest

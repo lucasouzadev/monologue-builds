@@ -1,4 +1,5 @@
-# Home > Calendar (a top Reveal; the header Calendar button and the pull-down share it): the month calendar selects a day and lists what happened.
+# Home > Calendar (a top Reveal; the header Calendar button and the pull-down share it): the calendar the conversation used to have, across every
+# conversation. A day with messages opens that day's first message.
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -10,8 +11,11 @@ appId: app.monologue.mobile
     visible:
       id: "activity-month-controls"
     timeout: 10000
-- takeScreenshot: 22-activity
+- takeScreenshot: 22-calendar
+- assertVisible:
+    id: "home-calendar-today"
+- assertVisible:
+    id: "home-calendar-done"
 - tapOn:
-    id: "activity-month-day-.*"
-    optional: true
-- takeScreenshot: 22-activity-day-selected
+    id: "home-calendar-done"
+- takeScreenshot: 22-calendar-closed

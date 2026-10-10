@@ -1,14 +1,41 @@
-# Owner QA 2026-10-09 #8: Home Reveal with the calendar of activity (header Calendar button; the pull-down shares the same host).
+# Owner QA 2026-10-10 #4/#5/#6: the calendar Reveal opens from the first try (button and pull-down), is the conversation's old calendar and fits its card.
 appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Calendar
 ---
 - launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Back"
 - extendedWaitUntil:
     visible: "Activity calendar"
     timeout: 60000
 - takeScreenshot: 52-home-header
+# 1) the header button, first try
 - tapOn: "Activity calendar"
-- takeScreenshot: 52-home-calendar
+- extendedWaitUntil:
+    visible:
+      id: "home-calendar-today"
+    timeout: 8000
+- takeScreenshot: 52-calendar-button
+- tapOn:
+    id: "home-calendar-done"
+- extendedWaitUntil:
+    visible: "Activity calendar"
+    timeout: 8000
+# 2) the pull-down on the list, first try
 - swipe:
-    direction: UP
-    duration: 400
-- takeScreenshot: 52-home-after-close
+    start: 50%, 30%
+    end: 50%, 75%
+    duration: 500
+- extendedWaitUntil:
+    visible:
+      id: "home-calendar-today"
+    timeout: 8000
+- takeScreenshot: 52-calendar-pull
+# 3) today has a message: picking it opens the conversation
+- tapOn:
+    id: "home-calendar-today"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 20000
+- takeScreenshot: 52-opened-from-calendar
