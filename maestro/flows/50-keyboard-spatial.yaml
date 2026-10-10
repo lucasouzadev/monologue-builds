@@ -1,8 +1,13 @@
 # Owner QA 2026-10-09 #2: create a conversation in the Spatial overview, enter it, send a message, switch the keyboard layout —
 # the Composer and the messages must stay above the keyboard. Evidence flow: screenshots are READ.
 appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Spatial
 ---
 - launchApp
+# Home with no conversation has no creation tray: make one first, then go back to Home.
+- runFlow: support/new-chat.yaml
+- tapOn: "Back"
 - extendedWaitUntil:
     visible: "More creation options"
     timeout: 60000
