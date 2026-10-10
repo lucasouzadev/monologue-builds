@@ -1,4 +1,4 @@
-# Home > Activity calendar (a top Reveal; the header Calendar button and the pull-down share it): the year map is display only; the monthly calendar selects the day.
+# Home > Calendar (a top Reveal; the header Calendar button and the pull-down share it): the month calendar selects a day and lists what happened.
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -8,7 +8,7 @@ appId: app.monologue.mobile
 - tapOn: "Activity calendar"
 - extendedWaitUntil:
     visible:
-      id: "activity-grid"
+      id: "activity-month-controls"
     timeout: 10000
 - takeScreenshot: 22-activity
 - tapOn:
