@@ -2,7 +2,3 @@
 00b-build-stamp
 01-create-open-send
 07-home-list
-08-message-actions
-09-profile
-15-conversation-panel
-28-sheet-visuals
