@@ -31,6 +31,6 @@ appId: app.monologue.mobile
     timeout: 15000
 - assertVisible: ".*Folder on this device.*"
 - assertVisible:
-    id: "storage-choose"
+    id: "storage-create"
 - assertVisible: ".*Cloud.*"
 - takeScreenshot: 42-storage-panel
