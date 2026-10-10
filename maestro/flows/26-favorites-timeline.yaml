@@ -1,5 +1,4 @@
-# The dedicated Favorites timeline: panel > Favorites > "See all in the timeline" opens a screen of favorite bubbles with date separators,
-# a search field and Select mode. Needs at least one favorite (flow 16 leaves one); if there is none the screens show the empty state.
+# The conversation Reveal's Favorites page (needs at least one favorite — flow 16 leaves one; otherwise it shows the empty line).
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -10,29 +9,14 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Message.*"
     timeout: 20000
-- tapOn:
-    id: "conversation-title-button"
+- tapOn: "Conversation info"
 - extendedWaitUntil:
     visible:
-      id: "panel-open-favorites"
+      id: "info-favorites"
     timeout: 15000
 - tapOn:
-    id: "panel-open-favorites"
-- takeScreenshot: 26-favorites-sheet
+    id: "info-favorites"
+- takeScreenshot: 26-favorites-page
 - tapOn:
-    id: "favorites-search"
-    optional: true
-- inputText: "a"
-- takeScreenshot: 26-sheet-search
-- eraseText
-- tapOn:
-    id: "favorites-select"
-    optional: true
-- takeScreenshot: 26-sheet-select
-- tapOn:
-    id: "favorites-select"
-    optional: true
-- tapOn:
-    id: "marks-back"
-    optional: true
-- takeScreenshot: 26-back-to-panel
+    id: "favorites-back"
+- takeScreenshot: 26-back-to-info

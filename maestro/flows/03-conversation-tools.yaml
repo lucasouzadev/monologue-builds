@@ -1,4 +1,4 @@
-# Inside a conversation: calendar reveal open, gesture close, button close, options menu (the app stopped after this on the owner's Android).
+# Inside a conversation: the info Reveal opens (button, title), closes by the gesture, and the options menu still opens (the app stopped after this on the owner's Android).
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -9,38 +9,32 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Message.*"
     timeout: 20000
-- tapOn: "Dates of messages"
+- tapOn: "Conversation info"
 - extendedWaitUntil:
-    visible: "Today"
+    visible:
+      id: "conversation-info-title"
     timeout: 10000
-- takeScreenshot: 03-calendar-reveal
-# Android: the compact month/year picker (replaces the full-screen Material date dialog).
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - tapOn:
-          text: ".*Choose month and year.*"
-          optional: true
-      - takeScreenshot: 03-month-picker
-      - tapOn: ".*December 2026.*"
-      - assertVisible: "December 2026, Choose month and year"
-      - takeScreenshot: 03-month-chosen
+- takeScreenshot: 03-info-reveal
 # Close by dragging the lifted conversation card back up (the gesture the owner could not use on Android).
 - swipe:
     start: "50%,62%"
     end: "50%,12%"
     duration: 400
-- takeScreenshot: 03-calendar-after-swipe
+- takeScreenshot: 03-info-after-swipe
 - extendedWaitUntil:
     visible: "Message.*"
     timeout: 10000
-# Reopen and close with the button as well.
-- tapOn: "Dates of messages"
+# The title opens the same Reveal.
+- tapOn:
+    id: "conversation-title-button"
 - extendedWaitUntil:
-    visible: "Today"
+    visible:
+      id: "conversation-info-title"
     timeout: 10000
-- tapOn: "Close dates of messages"
+- swipe:
+    start: "50%,62%"
+    end: "50%,12%"
+    duration: 400
 - extendedWaitUntil:
     visible: "Message.*"
     timeout: 10000

@@ -37,41 +37,31 @@ appId: app.monologue.mobile
 - swipe:
     direction: DOWN
 - takeScreenshot: 40-chat-scrolled-up
-# 3) The details panel is one scroll: identity block, actions, tabs and cards move together under a blurred grabber zone.
-- tapOn:
-    id: "conversation-title-button"
+# 3) The conversation Reveal: info page, then the dots/pages.
+- tapOn: "Conversation info"
 - extendedWaitUntil:
     visible:
-      id: "panel-details"
+      id: "conversation-info-title"
     timeout: 15000
-- takeScreenshot: 40-panel-top
+- takeScreenshot: 40-info-top
 - swipe:
-    from:
-      id: "panel-details"
-    direction: UP
-- takeScreenshot: 40-panel-scrolled
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - retry:
-          maxRetries: 4
-          commands:
-            - pressKey: back
-            - assertNotVisible:
-                id: "panel-details"
-      - pressKey: back
+    start: "50%,62%"
+    end: "50%,12%"
+    duration: 400
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 15000
 - runFlow:
     when:
       platform: iOS
     commands:
-      - swipe:
-          direction: DOWN
-      - extendedWaitUntil:
-          visible: "Message.*"
-          timeout: 15000
       - tapOn:
           text: "Back"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
 # 4) The drawer: close control beside Create (it emerges from it), content behind the title blur when scrolled.
 - extendedWaitUntil:
     visible: "Monologue"
