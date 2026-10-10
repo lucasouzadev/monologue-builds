@@ -1,0 +1,41 @@
+# Owner 2026-10-10: list sheets open at "medium" and one drag up takes them almost to the top (native sheet detents). Evidence flow.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Detents
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Message.*"
+- inputText: "Outra"
+- tapOn: "Send message"
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            notVisible: "Write.*"
+          commands:
+            - longPressOn:
+                point: "82%,60%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- tapOn: "Organize.*"
+- tapOn: "Move"
+- tapOn:
+    text: "Move 1.*"
+- extendedWaitUntil:
+    visible: "Move to.*"
+    timeout: 15000
+- takeScreenshot: 55-sheet-medium
+- swipe:
+    start: "50%,56%"
+    end: "50%,8%"
+    duration: 500
+- takeScreenshot: 55-sheet-large
+- swipe:
+    start: "50%,12%"
+    end: "50%,60%"
+    duration: 500
+- takeScreenshot: 55-sheet-back-to-medium
