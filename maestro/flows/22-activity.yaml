@@ -1,12 +1,11 @@
-# Profile > Activity: the year map is display only; the monthly calendar selects the day.
+# Home > Activity calendar (a top Reveal; the header Calendar button and the pull-down share it): the year map is display only; the monthly calendar selects the day.
 appId: app.monologue.mobile
 ---
 - launchApp
 - extendedWaitUntil:
-    visible: "Open personal space"
+    visible: "Activity calendar"
     timeout: 60000
-- tapOn: "Open personal space"
-- tapOn: "Activity.*"
+- tapOn: "Activity calendar"
 - extendedWaitUntil:
     visible:
       id: "activity-grid"

@@ -1,5 +1,5 @@
-# The conversation panel: a sheet over the chat (avatar, title, four actions, Details/Media pills; Pinned and Favorites replace its content). Read-only: it never
-# changes the shared state the other flows rely on.
+# The conversation Reveal (info button, title or pull-down): page 1 info + Search/Favorites/Pinned/Share, then Favorites and Pinned pages with dots.
+# Read-only: it never changes the shared state the other flows rely on.
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -10,28 +10,24 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Message.*"
     timeout: 20000
-- tapOn:
-    id: "conversation-title-button"
+- tapOn: "Conversation info"
 - extendedWaitUntil:
     visible:
-      id: "panel-details"
+      id: "conversation-info-title"
     timeout: 15000
-- takeScreenshot: 15-panel
+- takeScreenshot: 15-info
 - tapOn:
-    id: "panel-open-pinned"
+    id: "info-pinned"
 - takeScreenshot: 15-pinned-page
 - tapOn:
-    id: "marks-back"
+    id: "pinned-back"
 - tapOn:
-    id: "panel-open-favorites"
+    id: "info-favorites"
 - takeScreenshot: 15-favorites-page
 - tapOn:
-    id: "marks-back"
-- tapOn:
-    id: "panel-tab-media"
-- takeScreenshot: 15-panel-media
+    id: "favorites-back"
 - swipe:
-    direction: DOWN
+    direction: UP
 - extendedWaitUntil:
     visible: "Message.*"
     timeout: 15000

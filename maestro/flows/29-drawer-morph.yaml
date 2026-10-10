@@ -37,12 +37,6 @@ appId: app.monologue.mobile
     timeout: 15000
 - takeScreenshot: 29-drawer-create-and-x
 - tapOn:
-    id: profile-section-activity
-- assertVisible:
-    id: profile-create-conversation
-- takeScreenshot: 29-drawer-activity-create
-- tapOn: "Back|Voltar"
-- tapOn:
     id: profile-section-integrations
 - assertVisible:
     id: profile-create-conversation

@@ -1,5 +1,5 @@
-# Owner request 2026-10-09: first access is a simulated conversation (first thought -> try Continue / Reply / Select text -> storage choice).
-# Opened on demand by deep link (the staging channel never shows it unprompted). Ends with "Decide later" so no folder picker is needed.
+# Owner request 2026-10-09 (rev. 2026-10-10): first access is ONE real chat in which the Monologue guide answers; skipping leaves a summary,
+# then the storage step and Home. Opened on demand by deep link (the staging channel never shows it unprompted).
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -13,37 +13,34 @@ appId: app.monologue.mobile
     commands:
       - tapOn: "Open"
 - extendedWaitUntil:
-    visible: ".*Write your first thought.*"
-    timeout: 20000
-- takeScreenshot: 41-onboarding-welcome
-- tapOn:
-    id: "onboarding-input"
-- inputText: "Minha primeira ideia"
-- takeScreenshot: 41-onboarding-typing
-- tapOn:
-    id: "onboarding-send"
+    visible: ".*I.m Monologue.*"
+    timeout: 25000
 - extendedWaitUntil:
-    visible: ".*Saved. Try it.*"
-    timeout: 10000
+    visible: ".*writing your first idea.*"
+    timeout: 15000
+- takeScreenshot: 41-guide-hello
+- tapOn: "Message.*"
+- inputText: "Minha primeira ideia"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*choose Reply.*"
+    timeout: 20000
+- takeScreenshot: 41-guide-reply-step
 - tapOn:
-    id: "onboarding-try-continue"
-- tapOn:
-    id: "onboarding-try-reply"
-- tapOn:
-    id: "onboarding-try-select"
-- takeScreenshot: 41-onboarding-tour
-- tapOn:
-    id: "onboarding-next"
+    id: "onboarding-skip"
+- extendedWaitUntil:
+    visible: ".*What you can do here.*"
+    timeout: 15000
+- takeScreenshot: 41-guide-skipped-summary
 - extendedWaitUntil:
     visible: ".*Where should we keep.*"
-    timeout: 10000
+    timeout: 20000
 - assertVisible: ".*Cloud \\(coming soon\\).*"
 - assertVisible: ".*Folder on this device.*"
 - takeScreenshot: 41-onboarding-storage
 - tapOn:
     id: "onboarding-later"
 - extendedWaitUntil:
-    visible: "Message.*"
+    visible: "New conversation"
     timeout: 25000
-- assertVisible: ".*Minha primeira ideia.*"
-- takeScreenshot: 41-onboarding-first-conversation
+- takeScreenshot: 41-home-after-onboarding
