@@ -38,6 +38,17 @@ on:
         required: true
         default: development
         options: [development, preview]
+      appearance:
+        description: Simulator appearance for the whole run (reference captures)
+        type: choice
+        required: false
+        default: light
+        options: [light, dark]
+      reduce_transparency:
+        description: Turn on Reduce Transparency (the app's no-Liquid fallback) for reference captures
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: write
@@ -127,6 +138,13 @@ jobs:
           xcrun simctl boot "$UDID"
           xcrun simctl bootstatus "$UDID" -b
           xcrun simctl install "$UDID" "$APP"
+          xcrun simctl ui "$UDID" appearance "${{ inputs.appearance }}" || true
+          if [ "${{ inputs.reduce_transparency }}" = true ]; then
+            xcrun simctl spawn "$UDID" defaults write com.apple.Accessibility ReduceTransparencyEnabled -bool true || true
+            xcrun simctl spawn "$UDID" defaults write com.apple.universalaccess reduceTransparency -bool true || true
+            xcrun simctl shutdown "$UDID" && xcrun simctl boot "$UDID" && xcrun simctl bootstatus "$UDID" -b
+            xcrun simctl ui "$UDID" appearance "${{ inputs.appearance }}" || true
+          fi
           echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
       - name: Install Maestro
         run: curl -Ls "https://get.maestro.mobile.dev" | bash
