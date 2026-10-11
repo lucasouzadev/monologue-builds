@@ -1,7 +1,5 @@
 00-warm-update
 00b-build-stamp
 01-create-open-send
-08-message-actions
-09-profile
-15-conversation-panel
-28-sheet-visuals
+02-home-controls
+05-composer-plus-menu
