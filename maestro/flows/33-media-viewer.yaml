@@ -1,0 +1,69 @@
+# M2-E04: the media viewer (tap a photo, zoom, close by swiping down) and the long press over a photo bubble (the message menu must open on it).
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Visor"
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- tapOn: "Photos"
+- tapOn:
+    point: "20%,47%"
+- tapOn:
+    point: "55%,47%"
+- tapOn:
+    point: "86%,90%"
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 20000
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: "Photo.*"
+    timeout: 20000
+- takeScreenshot: 33-two-photos
+# Long press over the photos: the message menu opens (Android: JS menu; iOS: native menu, which Maestro may not read).
+- longPressOn:
+    text: "Photo.*"
+    index: 0
+- takeScreenshot: 33-long-press-menu
+- assertVisible:
+    text: ".*(Reply|Copy|Delete|Favorite).*"
+    optional: true
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "50%,12%"
+- takeScreenshot: 33-after-menu
+# Tap opens the viewer.
+- tapOn:
+    text: "Photo.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Close viewer"
+    timeout: 10000
+- takeScreenshot: 33-viewer
+- doubleTapOn:
+    point: "50%,50%"
+- takeScreenshot: 33-viewer-zoomed
+- doubleTapOn:
+    point: "50%,50%"
+# Swipe down closes it.
+- swipe:
+    start: "50%,45%"
+    end: "50%,92%"
+    duration: 300
+- extendedWaitUntil:
+    notVisible: "Close viewer"
+    timeout: 10000
+- takeScreenshot: 33-viewer-closed
