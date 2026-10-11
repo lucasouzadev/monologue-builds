@@ -3,6 +3,11 @@
 appId: app.monologue.mobile
 ---
 - openLink: "monologue:///"
+# iOS asks "Open in Monologue?" a moment after the link: wait for it (optional) so the check below does not race it.
+- extendedWaitUntil:
+    visible: "Open in.*Monologue.*"
+    timeout: 4000
+    optional: true
 - runFlow:
     when:
       visible: "Open in.*Monologue.*"
