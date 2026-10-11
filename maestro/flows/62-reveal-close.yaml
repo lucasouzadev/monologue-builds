@@ -1,0 +1,46 @@
+# Owner QA 2026-10-11: closing the merge Reveal and the Home calendar Reveal on Android (drag of the lowered/lifted card, tap on it, Back).
+# Evidence flow: screenshots are READ.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Close
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Message.*"
+- inputText: "Um"
+- tapOn: "Send message"
+- inputText: "Dois"
+- tapOn: "Send message"
+- hideKeyboard
+- longPressOn: ".*Um.*"
+- tapOn:
+    text: "Write.*"
+    optional: true
+- tapOn:
+    text: "Merge"
+    optional: true
+- tapOn:
+    text: ".*Dois.*"
+    optional: true
+- takeScreenshot: 62-merge-selected
+- tapOn:
+    text: "Merge.*"
+    optional: true
+- takeScreenshot: 62-merge-open
+- swipe:
+    start: "50%,12%"
+    end: "50%,60%"
+    duration: 500
+- takeScreenshot: 62-merge-after-drag-down
+- runFlow:
+    when:
+      visible: "Combine messages"
+    commands:
+      - tapOn: "50%,10%"
+      - takeScreenshot: 62-merge-after-tap-card
+- runFlow:
+    when:
+      visible: "Combine messages"
+    commands:
+      - pressKey: back
+      - takeScreenshot: 62-merge-after-back
