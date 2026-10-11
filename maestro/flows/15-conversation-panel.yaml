@@ -20,12 +20,12 @@ appId: app.monologue.mobile
     id: "info-pinned"
 - takeScreenshot: 15-pinned-page
 - tapOn:
-    id: "pinned-back"
+    id: "pin-back"
 - tapOn:
     id: "info-favorites"
 - takeScreenshot: 15-favorites-page
 - tapOn:
-    id: "favorites-back"
+    id: "favorite-back"
 - swipe:
     direction: UP
 - extendedWaitUntil:
