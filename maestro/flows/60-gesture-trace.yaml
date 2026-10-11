@@ -1,0 +1,57 @@
+# Android gesture diagnosis (owner QA 2026-10-11 #9): turns the touch trace on (long-press of the drawer build stamp) and performs the pull / swipe
+# gestures; the overlay + logcat show whether each touch ENDs or is CANCELled by a native recognizer. Evidence flow: screenshots are READ.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Trace
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Message.*"
+- inputText: "Um"
+- tapOn: "Send message"
+- inputText: "Dois"
+- tapOn: "Send message"
+- inputText: "Tres"
+- tapOn: "Send message"
+- hideKeyboard
+- back
+- tapOn: "Open personal space"
+- scrollUntilVisible:
+    element:
+      id: "build-stamp"
+    timeout: 20000
+- longPressOn:
+    id: "build-stamp"
+- back
+- assertVisible:
+    id: "touch-trace-overlay"
+- swipe:
+    direction: DOWN
+    duration: 400
+- takeScreenshot: 60-home-pull-down
+- swipe:
+    direction: UP
+    duration: 400
+- takeScreenshot: 60-home-swipe-up
+- tapOn: ${".*" + output.qaTitle + ".*"}
+- takeScreenshot: 60-chat
+- swipe:
+    start: "50%,35%"
+    end: "50%,75%"
+    duration: 500
+- takeScreenshot: 60-chat-pull-down
+- swipe:
+    start: "50%,35%"
+    end: "50%,75%"
+    duration: 900
+- takeScreenshot: 60-chat-slow-pull-down
+- swipe:
+    start: "50%,12%"
+    end: "50%,55%"
+    duration: 500
+- takeScreenshot: 60-chat-pull-from-header
+- swipe:
+    start: "50%,75%"
+    end: "50%,35%"
+    duration: 500
+- takeScreenshot: 60-chat-swipe-up
