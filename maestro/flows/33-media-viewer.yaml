@@ -31,7 +31,7 @@ appId: app.monologue.mobile
     index: 0
 - takeScreenshot: 33-long-press-menu
 - assertVisible:
-    text: ".*(Reply|Copy|Delete|Favorite).*"
+    text: ".*(Reply|Write|Organize|Delete).*"
     optional: true
 - runFlow:
     when:
@@ -55,6 +55,8 @@ appId: app.monologue.mobile
 - takeScreenshot: 33-viewer
 - doubleTapOn:
     point: "50%,50%"
+- waitForAnimationToEnd:
+    timeout: 2000
 - takeScreenshot: 33-viewer-zoomed
 - doubleTapOn:
     point: "50%,50%"
