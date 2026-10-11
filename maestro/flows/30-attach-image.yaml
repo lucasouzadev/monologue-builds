@@ -1,0 +1,38 @@
+# M2 Rich Capture: choose a photo in the composer "+" menu, see it in the tray, send it, see it in the Timeline, then remove one from the tray.
+# Fixtures are the generated PNGs in the device gallery (the same ones flow 06 uses).
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Anexo"
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- tapOn: "Photos"
+- takeScreenshot: 30-gallery
+- tapOn:
+    point: "20%,47%"
+- tapOn:
+    point: "55%,47%"
+- takeScreenshot: 30-two-selected
+# Add the selection (check button at the panel's lower right).
+- tapOn:
+    point: "86%,90%"
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 20000
+- takeScreenshot: 30-tray
+- assertVisible: "Remove attachment.*"
+# One removed, one stays; the send button is enabled by the attachment alone (no text typed).
+- tapOn: "Remove attachment.*"
+- assertVisible: "Attachments"
+- takeScreenshot: 30-tray-one-left
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: "Photo.*"
+    timeout: 20000
+- assertNotVisible: "Attachments"
+- takeScreenshot: 30-sent-bubble
