@@ -45,8 +45,7 @@ appId: app.monologue.mobile
     visible: "Formatting"
     timeout: 10000
 - takeScreenshot: 39-edit-pill
-- longPressOn:
-    point: "50%,50%"
+- longPressOn: "Message.*"
 - tapOn: "Select [Aa]ll"
 - tapOn: "Formatting"
 - extendedWaitUntil:
