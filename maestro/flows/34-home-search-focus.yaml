@@ -1,11 +1,22 @@
 # Owner report 2026-10-12 (Android phone): tapping the Home search field opens the keyboard and it closes again at once.
-# The field must keep focus: typed text stays in it and the keyboard stays up.
+# The field must keep focus: typed text stays in it and the keyboard stays up. The search bar only exists once there is a conversation.
 appId: app.monologue.mobile
 ---
 - launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Busca"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
+      - pressKey: back
 - extendedWaitUntil:
-    visible: ".*(Search|Buscar).*"
-    timeout: 60000
+    visible:
+      id: "home-search-input"
+    timeout: 20000
 - tapOn:
     id: "home-search-input"
 - takeScreenshot: 34-search-tapped
@@ -14,7 +25,7 @@ appId: app.monologue.mobile
     visible: "never-visible-sentinel"
     timeout: 2500
     optional: true
+- takeScreenshot: 34-search-after-wait
 - inputText: "abc"
 - takeScreenshot: 34-search-typed
 - assertVisible: "abc"
-- hideKeyboard
