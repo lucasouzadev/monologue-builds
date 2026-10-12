@@ -44,8 +44,10 @@ appId: app.monologue.mobile
       - doubleTapOn:
           point: "24%,44%"
 - takeScreenshot: 40-select-word
-- assertVisible: "Copy"
-- tapOn: "Copy"
+- assertVisible:
+    id: "text-selection-copy"
+- tapOn:
+    id: "text-selection-copy"
 - assertNotVisible:
     id: "text-selection-bubble"
 - takeScreenshot: 40-select-closed
