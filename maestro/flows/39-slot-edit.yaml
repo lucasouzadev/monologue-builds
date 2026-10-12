@@ -47,13 +47,7 @@ appId: app.monologue.mobile
 - takeScreenshot: 39-edit-pill
 - longPressOn: "Message.*"
 - tapOn: "Select [Aa]ll"
-# iOS: the system selection menu (Cut, Copy, ...) opens over the tools pill; tap an empty spot of the timeline to dismiss it first.
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - tapOn:
-          point: "50%,25%"
+# iOS: with text selected the system menu stays hidden (Cut/Copy/Paste are in the panel), so the pill is reachable.
 - tapOn: "Formatting"
 - extendedWaitUntil:
     visible: "Bold"
