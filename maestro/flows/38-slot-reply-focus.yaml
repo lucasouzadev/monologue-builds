@@ -33,6 +33,13 @@ appId: app.monologue.mobile
 - takeScreenshot: 38-reply-pill
 - longPressOn: "reply alpha beta"
 - tapOn: "Select [Aa]ll"
+# iOS: the system selection menu (Cut, Copy, ...) opens over the tools pill; tap an empty spot of the timeline to dismiss it first.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "50%,25%"
 - tapOn: "Formatting"
 - extendedWaitUntil:
     visible: "Italic"
