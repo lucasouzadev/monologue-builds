@@ -1,0 +1,20 @@
+# Owner report 2026-10-12 (Android phone): tapping the Home search field opens the keyboard and it closes again at once.
+# The field must keep focus: typed text stays in it and the keyboard stays up.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*(Search|Buscar).*"
+    timeout: 60000
+- tapOn:
+    id: "home-search-input"
+- takeScreenshot: 34-search-tapped
+# Give any focus-stealing effect time to fire (the phone closes the keyboard within a second).
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 2500
+    optional: true
+- inputText: "abc"
+- takeScreenshot: 34-search-typed
+- assertVisible: "abc"
+- hideKeyboard
