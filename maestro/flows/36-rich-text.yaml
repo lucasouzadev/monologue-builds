@@ -32,6 +32,6 @@ appId: app.monologue.mobile
 - takeScreenshot: 36-keyboard-back
 - tapOn: "Send message"
 - extendedWaitUntil:
-    visible: "alpha beta gamma"
+    visible: ".*alpha beta gamma.*"
     timeout: 15000
 - takeScreenshot: 36-sent-bubble
