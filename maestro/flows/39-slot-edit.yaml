@@ -1,0 +1,26 @@
+# Keyboard Slot while editing a message: the edit keeps the stored formatting, formats change, the save keeps them.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "SlotEdit"
+- longPressOn: ".*QA root.*"
+- tapOn: "Write.*"
+- tapOn: "Edit"
+- extendedWaitUntil:
+    visible: "Formatting"
+    timeout: 10000
+- takeScreenshot: 39-edit-pill
+- longPressOn: "QA root"
+- tapOn: "Select [Aa]ll"
+- tapOn: "Formatting"
+- extendedWaitUntil:
+    visible: "Bold"
+    timeout: 8000
+- tapOn: "Bold"
+- takeScreenshot: 39-edit-panel
+- tapOn: "Close formatting"
+- tapOn: "Save.*"
+- takeScreenshot: 39-edit-saved

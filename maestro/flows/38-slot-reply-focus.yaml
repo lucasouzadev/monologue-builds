@@ -1,0 +1,30 @@
+# Keyboard Slot in Reply Focus (the Composer floats over the Thought Focus): pill, panel, formatted reply sent.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "SlotRep"
+- longPressOn: ".*QA root.*"
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- extendedWaitUntil:
+    visible: "Formatting"
+    timeout: 10000
+- inputText: "reply alpha beta"
+- takeScreenshot: 38-reply-pill
+- longPressOn: "reply alpha beta"
+- tapOn: "Select [Aa]ll"
+- tapOn: "Formatting"
+- extendedWaitUntil:
+    visible: "Italic"
+    timeout: 8000
+- tapOn: "Italic"
+- takeScreenshot: 38-reply-panel
+- tapOn: "Close formatting"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*reply alpha beta.*"
+    timeout: 15000
+- takeScreenshot: 38-reply-sent
