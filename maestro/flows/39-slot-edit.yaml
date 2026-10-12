@@ -23,7 +23,13 @@ appId: app.monologue.mobile
       - extendedWaitUntil:
           visible: "Write.*"
           timeout: 5000
-- tapOn: "Write.*"
+- retry:
+    maxRetries: 3
+    commands:
+      - tapOn: "Write.*"
+      - extendedWaitUntil:
+          visible: "Edit"
+          timeout: 4000
 - tapOn: "Edit"
 - extendedWaitUntil:
     visible: "Cancel editing"
