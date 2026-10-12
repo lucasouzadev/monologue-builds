@@ -1,0 +1,26 @@
+# M2 Rich Capture: select a word in the composer, format it bold, and see the format row, the styled draft and the styled bubble.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Rico"
+- tapOn: "Message.*"
+- inputText: "alpha beta gamma"
+- takeScreenshot: 36-typed
+# A long press selects the word under the finger on both platforms.
+- longPressOn: "alpha beta gamma"
+- extendedWaitUntil:
+    visible: "Bold"
+    timeout: 8000
+- takeScreenshot: 36-selected
+- tapOn: "Bold"
+- takeScreenshot: 36-bold-in-draft
+- tapOn: "Italic"
+- takeScreenshot: 36-bold-italic-in-draft
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: "alpha beta gamma"
+    timeout: 15000
+- takeScreenshot: 36-sent-bubble
