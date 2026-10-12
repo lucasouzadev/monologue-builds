@@ -6,7 +6,23 @@ appId: app.monologue.mobile
     file: support/new-chat.yaml
     env:
       QA_PREFIX: "SlotRep"
-- longPressOn: ".*QA root.*"
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  - longPressOn:
+                      point: "82%,83%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
 - tapOn: "Write.*"
 - tapOn: "Reply"
 - tapOn: "Message.*"
