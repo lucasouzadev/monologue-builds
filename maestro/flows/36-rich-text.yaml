@@ -9,8 +9,9 @@ appId: app.monologue.mobile
 - tapOn: "Message.*"
 - inputText: "alpha beta gamma"
 - takeScreenshot: 36-typed
-# A long press selects the word under the finger on both platforms.
+# A long press in the field offers "Select all" on both platforms (the press lands mid-field, not on a word).
 - longPressOn: "alpha beta gamma"
+- tapOn: "Select [Aa]ll"
 - extendedWaitUntil:
     visible: "Bold"
     timeout: 8000
