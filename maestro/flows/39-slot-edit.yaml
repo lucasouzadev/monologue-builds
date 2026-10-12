@@ -25,12 +25,22 @@ appId: app.monologue.mobile
           timeout: 5000
 - tapOn: "Write.*"
 - tapOn: "Edit"
-- tapOn: "QA root"
+- extendedWaitUntil:
+    visible: "Cancel editing"
+    timeout: 10000
+# The edit field focuses with the bubble; when it does not (a stale tap target), tap the bubble at the centre of the screen.
+- runFlow:
+    when:
+      notVisible: "Formatting"
+    commands:
+      - tapOn:
+          point: "50%,50%"
 - extendedWaitUntil:
     visible: "Formatting"
     timeout: 10000
 - takeScreenshot: 39-edit-pill
-- longPressOn: "QA root"
+- longPressOn:
+    point: "50%,50%"
 - tapOn: "Select [Aa]ll"
 - tapOn: "Formatting"
 - extendedWaitUntil:
