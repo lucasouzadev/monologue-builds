@@ -6,16 +6,16 @@ appId: app.monologue.mobile
 - runFlow:
     file: support/new-chat.yaml
     env:
-      QA_PREFIX: "Video"
+      QA_PREFIX: "Clipe"
 - tapOn: "Tools.*"
 - extendedWaitUntil:
     visible: "Expand editor"
     timeout: 10000
 - tapOn: "Photos"
 - takeScreenshot: 70-gallery
-# The video was added last: it is the newest item (first tile).
+# The video fixture is the fifth tile (second row, middle) in the gallery (four generated PNGs come first).
 - tapOn:
-    point: "20%,47%"
+    point: "50%,61%"
 - takeScreenshot: 70-video-selected
 - tapOn:
     point: "86%,90%"
