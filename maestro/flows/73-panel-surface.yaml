@@ -1,0 +1,30 @@
+# M2 QA round 2: the formatting panel is one opaque surface (no conversation showing through between the Composer and the panel); the selection stays visible with the panel open.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Painel"
+- tapOn: "Message.*"
+- inputText: "selecao visivel no painel"
+- extendedWaitUntil:
+    visible: "Formatting"
+    timeout: 8000
+- longPressOn: "selecao visivel no painel"
+- tapOn: "Select [Aa]ll"
+- takeScreenshot: 73-selected
+- retry:
+    maxRetries: 3
+    commands:
+      - tapOn: "Formatting"
+      - extendedWaitUntil:
+          visible: "Bold"
+          timeout: 5000
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 73-panel-surface
+- tapOn: "Underline"
+- takeScreenshot: 73-panel-formatted
+- tapOn: "Close formatting"
+- takeScreenshot: 73-keyboard-back

@@ -22,8 +22,10 @@ def png(path, rgb, size=96):
 for i, c in enumerate([(200, 40, 30), (30, 120, 200), (60, 160, 80), (230, 180, 40)], 1): png(f'/tmp/fx{i}.png', c)
 PY
 for i in 1 2 3 4; do adb push /tmp/fx$i.png /sdcard/Pictures/fx$i.png >/dev/null 2>&1; adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/Pictures/fx$i.png >/dev/null 2>&1; done
+# A short video (37 KB) for the video flows; pushed last, so it is the newest item in the gallery.
+adb push maestro/fixtures/clip.mp4 /sdcard/Movies/fxclip.mp4 >/dev/null 2>&1; adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/Movies/fxclip.mp4 >/dev/null 2>&1
 sleep 3
-for perm in READ_MEDIA_IMAGES READ_MEDIA_VISUAL_USER_SELECTED READ_EXTERNAL_STORAGE; do adb shell pm grant app.monologue.mobile android.permission.$perm >/dev/null 2>&1 || true; done
+for perm in READ_MEDIA_IMAGES READ_MEDIA_VIDEO READ_MEDIA_VISUAL_USER_SELECTED READ_EXTERNAL_STORAGE; do adb shell pm grant app.monologue.mobile android.permission.$perm >/dev/null 2>&1 || true; done
 adb logcat -c
 if [ -n "${FLOW_ONLY:-}" ]; then
   # Keep flows in place so their relative support/ imports resolve correctly.

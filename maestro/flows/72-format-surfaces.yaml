@@ -1,0 +1,85 @@
+# M2 QA round 2: formatting must show wherever the message shows: bubble, Reply quote, Continue card/preview, Reply focus, lineage.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Formas"
+- tapOn: "Message.*"
+- inputText: "origem negrito"
+- extendedWaitUntil:
+    visible: "Formatting"
+    timeout: 8000
+- longPressOn: "origem negrito"
+- tapOn: "Select [Aa]ll"
+- retry:
+    maxRetries: 3
+    commands:
+      - tapOn: "Formatting"
+      - extendedWaitUntil:
+          visible: "Bold"
+          timeout: 5000
+- tapOn: "Bold"
+- tapOn: "Italic"
+- takeScreenshot: 72-origin-panel
+- tapOn: "Close formatting"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*origem negrito.*"
+    timeout: 15000
+- takeScreenshot: 72-origin-sent
+# Reply to the formatted message: the quote above the reply keeps bold and italic.
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*origem negrito.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  - longPressOn:
+                      point: "82%,83%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- tapOn: "Message.*"
+- inputText: "resposta"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*resposta.*"
+    timeout: 15000
+- takeScreenshot: 72-reply-quote
+# Continue from the formatted message.
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*origem negrito.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  - longPressOn:
+                      point: "82%,83%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- tapOn: "Write.*"
+- tapOn: "Continue"
+- tapOn: "Message.*"
+- inputText: "continuacao"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*continuacao.*"
+    timeout: 15000
+- takeScreenshot: 72-continue-card
