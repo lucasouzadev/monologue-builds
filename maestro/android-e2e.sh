@@ -3,6 +3,12 @@
 set -u
 cd "$(dirname "$0")/.."
 adb shell settings put global window_animation_scale 0 >/dev/null 2>&1
+case "${DEVICE_PROFILE:-}" in
+  tall-gestures)
+    # The owner's phone: a taller screen (1080x2460) with gesture navigation (no navigation bar).
+    adb shell wm size 1080x2460 >/dev/null 2>&1
+    adb shell cmd overlay enable com.android.internal.systemui.navbar.gestural >/dev/null 2>&1 || true ;;
+esac
 sleep 25  # let the system finish booting; a loaded emulator ANRs the launcher otherwise
 adb install -r Monologue.apk | tail -1
 # (Media fixtures disabled: pushing/scanning large images killed the emulator in CI. The Photos flow runs against the permission-granted, possibly empty gallery.)

@@ -1,0 +1,44 @@
+# Owner report 2026-10-12 (Android phone): the Photos, Camera and Scan panels open outside their frame (Photos collapsed to a thin strip).
+# Evidence flow: the panel must be a rounded frame of the same size each time, sitting on the composer.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Paineis"
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- takeScreenshot: 35-menu
+- tapOn: "Photos"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: 35-photos
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- tapOn: "Camera"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: 35-camera
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- tapOn: "Scan document"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: 35-scan
