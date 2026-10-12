@@ -19,6 +19,7 @@ appId: app.monologue.mobile
 - longPressOn: "expanded alpha beta"
 - tapOn: "Select [Aa]ll"
 - tapOn: "Formatting"
+- takeScreenshot: 37-after-aa
 - extendedWaitUntil:
     visible: "Bold"
     timeout: 8000

@@ -9,6 +9,7 @@ appId: app.monologue.mobile
 - longPressOn: ".*QA root.*"
 - tapOn: "Write.*"
 - tapOn: "Edit"
+- tapOn: "QA root"
 - extendedWaitUntil:
     visible: "Formatting"
     timeout: 10000
