@@ -33,7 +33,7 @@ on:
         type: choice
         required: true
         default: '15'
-        options: ['15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
+        options: ['16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
       message:
         description: Update message
         type: string

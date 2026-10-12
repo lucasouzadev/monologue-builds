@@ -1,0 +1,37 @@
+# Baseline 16: the system selection menu offers Format (Bold, Italic, ...): select text, choose Format, choose a style, send; the bubble shows it.
+# iOS: the edit menu has a "Format" submenu. Android: the entries sit in the toolbar overflow.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Nativo"
+- tapOn: "Message.*"
+- inputText: "formato nativo"
+- longPressOn: "formato nativo"
+- retry:
+    maxRetries: 3
+    commands:
+      - tapOn: "Select [Aa]ll"
+- takeScreenshot: 75-selected-menu
+# The Keyboard Slot pill is not drawn on this binary.
+- assertNotVisible: "Formatting"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          text: "More options"
+          optional: true
+- tapOn:
+    text: "Format.*"
+    optional: true
+- takeScreenshot: 75-format-submenu
+- tapOn: "Bold"
+- takeScreenshot: 75-bold-applied
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*formato nativo.*"
+    timeout: 15000
+- takeScreenshot: 75-sent-bubble
