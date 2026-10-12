@@ -1,0 +1,40 @@
+# Select text uses the Edit-bubble construction (a centred bubble over the conversation, no sheet): the message, a close button, the actions under it.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "SelText"
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Select text"
+                commands:
+                  - longPressOn:
+                      point: "82%,83%"
+      - extendedWaitUntil:
+          visible: "Select text"
+          timeout: 5000
+- tapOn: "Select text"
+- extendedWaitUntil:
+    visible:
+      id: "text-selection-bubble"
+    timeout: 8000
+- takeScreenshot: 40-select-bubble
+- longPressOn:
+    id: "text-selection-field"
+- tapOn: "Select [Aa]ll"
+- takeScreenshot: 40-select-all
+- assertVisible: "Copy"
+- tapOn: "Copy"
+- assertNotVisible:
+    id: "text-selection-bubble"
+- takeScreenshot: 40-select-closed
