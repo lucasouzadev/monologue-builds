@@ -29,16 +29,20 @@ appId: app.monologue.mobile
       id: "text-selection-bubble"
     timeout: 8000
 - takeScreenshot: 40-select-bubble
-- longPressOn:
-    id: "text-selection-field"
-# iOS: a long press only places the loupe; a double tap selects the word.
+# The field spans the bubble, so a press in its middle lands after the text and only places the caret: press ON the word.
+# Android: a long press selects the word. iOS: a long press only places the loupe; a double tap selects the word.
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - longPressOn:
+          point: "24%,47%"
 - runFlow:
     when:
       platform: iOS
     commands:
       - doubleTapOn:
-          id: "text-selection-field"
-# The field hides the system menu (the actions live under the bubble): a long press selects the word under the finger.
+          point: "24%,44%"
 - takeScreenshot: 40-select-word
 - assertVisible: "Copy"
 - tapOn: "Copy"
