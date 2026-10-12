@@ -1,4 +1,4 @@
-# M2 Rich Capture: select a word in the composer, format it bold, and see the format row, the styled draft and the styled bubble.
+# M2 Rich Capture: the Keyboard Slot. Focus the composer, select text, open the formatting panel from the pill on the keyboard's edge, format, close it and send.
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -8,18 +8,24 @@ appId: app.monologue.mobile
       QA_PREFIX: "Rico"
 - tapOn: "Message.*"
 - inputText: "alpha beta gamma"
-- takeScreenshot: 36-typed
-# A long press in the field offers "Select all" on both platforms (the press lands mid-field, not on a word).
+- extendedWaitUntil:
+    visible: "Formatting"
+    timeout: 8000
+- takeScreenshot: 36-pill
+# A long press in the field offers "Select all" on both platforms.
 - longPressOn: "alpha beta gamma"
 - tapOn: "Select [Aa]ll"
+- takeScreenshot: 36-selected
+- tapOn: "Formatting"
 - extendedWaitUntil:
     visible: "Bold"
     timeout: 8000
-- takeScreenshot: 36-selected
+- takeScreenshot: 36-panel
 - tapOn: "Bold"
-- takeScreenshot: 36-bold-in-draft
 - tapOn: "Italic"
-- takeScreenshot: 36-bold-italic-in-draft
+- takeScreenshot: 36-panel-formatted
+- tapOn: "Close formatting"
+- takeScreenshot: 36-keyboard-back
 - tapOn: "Send message"
 - extendedWaitUntil:
     visible: "alpha beta gamma"
