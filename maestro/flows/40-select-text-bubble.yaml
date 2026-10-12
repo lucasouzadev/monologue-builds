@@ -31,8 +31,8 @@ appId: app.monologue.mobile
 - takeScreenshot: 40-select-bubble
 - longPressOn:
     id: "text-selection-field"
-- tapOn: "Select [Aa]ll"
-- takeScreenshot: 40-select-all
+# The field hides the system menu (the actions live under the bubble): a long press selects the word under the finger.
+- takeScreenshot: 40-select-word
 - assertVisible: "Copy"
 - tapOn: "Copy"
 - assertNotVisible:
