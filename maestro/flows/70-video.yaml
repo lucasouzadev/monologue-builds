@@ -22,6 +22,8 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Attachments"
     timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 4000
 - takeScreenshot: 70-tray-video
 # Tap the tile in the tray: it previews before sending.
 - tapOn:
@@ -38,6 +40,8 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Video.*"
     timeout: 25000
+- waitForAnimationToEnd:
+    timeout: 4000
 - takeScreenshot: 70-bubble-poster
 # Open and play: the in-app viewer, never the device's viewer.
 - tapOn:

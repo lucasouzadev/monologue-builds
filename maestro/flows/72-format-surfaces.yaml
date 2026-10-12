@@ -11,8 +11,11 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Formatting"
     timeout: 8000
-- longPressOn: "origem negrito"
-- tapOn: "Select [Aa]ll"
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: "origem negrito"
+      - tapOn: "Select [Aa]ll"
 - retry:
     maxRetries: 3
     commands:

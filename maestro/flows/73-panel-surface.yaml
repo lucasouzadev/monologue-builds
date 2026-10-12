@@ -11,8 +11,11 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Formatting"
     timeout: 8000
-- longPressOn: "selecao visivel no painel"
-- tapOn: "Select [Aa]ll"
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: "selecao visivel no painel"
+      - tapOn: "Select [Aa]ll"
 - takeScreenshot: 73-selected
 - retry:
     maxRetries: 3
