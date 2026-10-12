@@ -17,7 +17,9 @@ appId: app.monologue.mobile
 - inputText: "expanded alpha beta"
 - takeScreenshot: 37-expanded-pill
 - longPressOn: "expanded alpha beta"
+- takeScreenshot: 37-longpress
 - tapOn: "Select [Aa]ll"
+- takeScreenshot: 37-selected
 - tapOn: "Formatting"
 - takeScreenshot: 37-after-aa
 - extendedWaitUntil:
