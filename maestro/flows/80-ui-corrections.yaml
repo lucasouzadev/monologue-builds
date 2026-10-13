@@ -1,0 +1,202 @@
+# Owner corrections 2026-10-13 (branch claude/app-ui-corrections-ota). Evidence flow: the screenshots are READ against the owner's list.
+#   1 Focus pill sees content behind it · 2 sheets: no solid bands, action buttons off the edge · 3 (iOS) calendar grip closes the card
+#   4 drawer font cards · 5 Merge under Organize, Undo on the first face · 6 hamburger does not morph · 7 entering selection does not blink/crash
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Fixes
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "New conversation"
+    timeout: 60000
+# 2) the New conversation sheet: header and footer are not solid bands
+- tapOn: "New conversation"
+- extendedWaitUntil:
+    visible: "Conversation title"
+    timeout: 15000
+- takeScreenshot: 80-sheet-new
+- evalScript: ${output.qaTitle = QA_PREFIX + " " + Date.now()}
+- tapOn: "Conversation title"
+- inputText: ${output.qaTitle}
+- tapOn: ".*(First note|Write your first note).*"
+- inputText: "Primeira"
+- takeScreenshot: 80-sheet-new-typed
+- tapOn: "Create conversation"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 20000
+- tapOn: "Message.*"
+- inputText: "Segunda"
+- tapOn: "Send message"
+- inputText: "Terceira"
+- tapOn: "Send message"
+- inputText: "Quarta"
+- tapOn: "Send message"
+- inputText: "Quinta"
+- tapOn: "Send message"
+# 5) the message menu: Undo (none yet) / Merge under Organize
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*Primeira.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  - longPressOn:
+                      point: "82%,60%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- takeScreenshot: 80-menu-face
+- tapOn: "Organi[sz]e.*"
+- assertVisible: "Merge"
+- takeScreenshot: 80-menu-organize
+# 7) enter the chat's merge selection (the bubbles must not blink)
+- tapOn: "Merge"
+- takeScreenshot: 80-merge-selection
+- tapOn:
+    text: "Cancel selection"
+    optional: true
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
+# 1) Reply focus with content passing under the pill
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*Primeira.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  - longPressOn:
+                      point: "82%,60%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- inputText: "r1"
+- tapOn: "Send message"
+- inputText: "r2"
+- tapOn: "Send message"
+- inputText: "r3"
+- tapOn: "Send message"
+- inputText: "r4"
+- tapOn: "Send message"
+- inputText: "r5"
+- tapOn: "Send message"
+- swipe:
+    direction: DOWN
+    duration: 600
+- takeScreenshot: 80-focus-scrolled-down
+- swipe:
+    direction: UP
+    duration: 400
+- takeScreenshot: 80-focus-pill
+- tapOn:
+    text: "Done|Close.*"
+    optional: true
+- extendedWaitUntil:
+    visible: "Conversation info"
+    timeout: 10000
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: "Back"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 20000
+# 7) Home selection from the row menu
+- longPressOn: ".*QA Fixes.*"
+- tapOn:
+    text: "Delete"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: "conversation-selection-bar"
+    timeout: 10000
+- takeScreenshot: 80-home-selection
+- tapOn: "Cancel selection"
+# 3) the calendar Reveal: open it, then drag its grip UP (iOS grab band) to close it
+- tapOn: "Activity calendar"
+- extendedWaitUntil:
+    visible:
+      id: "home-calendar-today"
+    timeout: 8000
+- takeScreenshot: 80-calendar-open
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - swipe:
+          start: "50%,${CAL_GRIP_Y || '47%'}"
+          end: "50%,12%"
+          duration: 450
+      - extendedWaitUntil:
+          visible: "Activity calendar"
+          timeout: 8000
+      - takeScreenshot: 80-calendar-closed-by-grip
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          id: "home-calendar-done"
+# 4 + 6) the drawer: hamburger keeps its shape, the font cards are distinct and the selected face is marked
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - retry:
+          maxRetries: 3
+          commands:
+            - runFlow:
+                when:
+                  notVisible:
+                    id: profile-section-settings
+                commands:
+                  - tapOn:
+                      point: "88%,9%"
+            - extendedWaitUntil:
+                visible:
+                  id: profile-section-settings
+                timeout: 8000
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "Open personal space"
+- takeScreenshot: 80-drawer-open-header
+- tapOn:
+    id: "profile-section-settings"
+- extendedWaitUntil:
+    visible:
+      id: "font-options"
+    timeout: 10000
+- takeScreenshot: 80-drawer-fonts
+- tapOn:
+    id: "font-option-lora"
+- assertVisible:
+    id: "font-option-lora-check"
+- takeScreenshot: 80-drawer-font-selected
+# restore: the choice is only pending (no Apply was pressed)
+- tapOn:
+    id: "font-option-system"

@@ -14,7 +14,7 @@ env:
 - hideKeyboard
 - longPressOn: ".*Um.*"
 - tapOn:
-    text: "Write.*"
+    text: "Organi[sz]e.*"
     optional: true
 - tapOn:
     text: "Merge"

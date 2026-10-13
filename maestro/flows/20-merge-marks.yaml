@@ -15,7 +15,7 @@ appId: app.monologue.mobile
           timeout: 20000
       - longPressOn: ".*Marca B.*"
       - tapOn:
-          text: "Write.*"
+          text: "Organi[sz]e.*"
           optional: true
       - tapOn:
           text: "Merge"
