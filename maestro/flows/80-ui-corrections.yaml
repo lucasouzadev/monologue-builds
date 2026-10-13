@@ -147,7 +147,7 @@ env:
       platform: iOS
     commands:
       - swipe:
-          start: "50%,${CAL_GRIP_Y || '47%'}"
+          start: "50%,22%"
           end: "50%,12%"
           duration: 450
       - extendedWaitUntil:
