@@ -14,6 +14,8 @@ env:
 - assertVisible:
     id: app-identity
 - takeScreenshot: 82-identity-conversation
+- tapOn: "Message.*"
+- takeScreenshot: 82-identity-keyboard
 - longPressOn: ".*QA root.*"
 - extendedWaitUntil:
     visible: "Copy"
