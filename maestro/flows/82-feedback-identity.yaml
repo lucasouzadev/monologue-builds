@@ -1,0 +1,39 @@
+# Owner 2026-10-13: permanent localized identity below the safe area; feedback below header chrome.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Identity
+---
+- launchApp
+- openLink: "monologue:///"
+- runFlow:
+    when:
+      visible: "Open in.*Monologue.*"
+    commands:
+      - tapOn: "Open"
+- extendedWaitUntil:
+    visible: "New conversation"
+    timeout: 60000
+- assertVisible:
+    id: app-identity
+- takeScreenshot: 82-identity-home
+- runFlow: support/new-chat.yaml
+- assertVisible:
+    id: app-identity
+- takeScreenshot: 82-identity-conversation
+- longPressOn: ".*QA root.*"
+- extendedWaitUntil:
+    visible: "Copy"
+    timeout: 5000
+- tapOn: "Copy"
+- takeScreenshot: 82-copied-feedback
+- assertVisible:
+    id: app-identity
+- longPressOn: ".*QA root.*"
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- assertVisible:
+    id: app-identity
+- takeScreenshot: 82-identity-focus
+- tapOn:
+    text: "Done|Close.*"
+    optional: true
