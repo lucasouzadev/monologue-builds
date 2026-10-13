@@ -10,59 +10,55 @@ appId: app.monologue.mobile
     env:
       QA_PREFIX: "Atalhos"
 - tapOn: "Message.*"
-- inputText: "*negrito* e _italico_ e ~tachado~ e `mono`"
-- waitForAnimationToEnd:
-    timeout: 800
+- inputText: "*negrito"
+- inputText: "*"
+- runFlow: support/pause.yaml
+- inputText: " e _italico"
+- inputText: "_"
+- runFlow: support/pause.yaml
+- inputText: " e ~tachado"
+- inputText: "~"
+- runFlow: support/pause.yaml
+- inputText: " e `mono"
+- inputText: "`"
+- runFlow: support/pause.yaml
 - takeScreenshot: 77-compose-inline
 - assertNotVisible: ".*\\*negrito.*"
 - pressKey: Enter
 - inputText: "# "
-- waitForAnimationToEnd:
-    timeout: 800
+- runFlow: support/pause.yaml
 - inputText: "Titulo grande"
 - takeScreenshot: 77-compose-heading
 - pressKey: Enter
-- waitForAnimationToEnd:
-    timeout: 800
+- runFlow: support/pause.yaml
 - inputText: "- "
-- waitForAnimationToEnd:
-    timeout: 800
+- runFlow: support/pause.yaml
 - inputText: "primeiro"
 - pressKey: Enter
-- waitForAnimationToEnd:
-    timeout: 800
+- runFlow: support/pause.yaml
 - inputText: "segundo"
 - takeScreenshot: 77-compose-list
 - pressKey: Enter
-- waitForAnimationToEnd:
-    timeout: 800
+- runFlow: support/pause.yaml
 - pressKey: Enter
-- waitForAnimationToEnd:
-    timeout: 800
+- runFlow: support/pause.yaml
 - inputText: "## "
-- waitForAnimationToEnd:
-    timeout: 800
+- runFlow: support/pause.yaml
 - inputText: "Subtitulo"
 - pressKey: Enter
-- waitForAnimationToEnd:
-    timeout: 800
+- runFlow: support/pause.yaml
 - inputText: "> "
-- waitForAnimationToEnd:
-    timeout: 800
+- runFlow: support/pause.yaml
 - inputText: "citacao"
 - pressKey: Enter
-- waitForAnimationToEnd:
-    timeout: 800
+- runFlow: support/pause.yaml
 - inputText: "continua"
 - pressKey: Enter
-- waitForAnimationToEnd:
-    timeout: 800
+- runFlow: support/pause.yaml
 - pressKey: Enter
-- waitForAnimationToEnd:
-    timeout: 800
+- runFlow: support/pause.yaml
 - inputText: "```"
-- waitForAnimationToEnd:
-    timeout: 800
+- runFlow: support/pause.yaml
 - inputText: "codigo *igual*"
 - takeScreenshot: 77-compose-blocks
 - tapOn: "Send message"

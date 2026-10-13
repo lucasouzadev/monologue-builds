@@ -1,0 +1,7 @@
+# A pause of about 700 ms: the app rewrites the field when a typing shortcut triggers, and a machine typing without pauses outruns that rewrite (a person does not).
+appId: app.monologue.mobile
+---
+- extendedWaitUntil:
+    visible: "pause-token-never-on-screen"
+    timeout: 700
+    optional: true
