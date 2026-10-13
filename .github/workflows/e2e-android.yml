@@ -44,7 +44,8 @@ permissions:
 jobs:
   e2e:
     runs-on: ubuntu-24.04
-    timeout-minutes: 110
+    # The light suite alone approached 110 min and prevented dark/large-text audits from finishing.
+    timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
