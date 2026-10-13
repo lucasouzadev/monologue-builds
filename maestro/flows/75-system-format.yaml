@@ -24,6 +24,16 @@ appId: app.monologue.mobile
       - tapOn:
           text: "More options"
           optional: true
+# iOS: the edit menu is paged; Format may sit behind the chevron.
+- runFlow:
+    when:
+      platform: iOS
+      notVisible: "Format.*"
+    commands:
+      - tapOn:
+          point: "85%,50%"
+          optional: true
+- takeScreenshot: 75-menu-page-2
 - tapOn:
     text: "Format.*"
     optional: true
