@@ -1,5 +1,7 @@
 # Typing shortcuts: *bold* _italic_ ~strike~ `mono` become formats as the closing symbol is typed (the symbols go), "# " makes a heading, "- " a bullet list that
-# continues on Enter. Everything renders in the compose before it is sent, and again in the bubble.
+# continues on Enter, "## " a lower title level, "> " a quote and three backticks a code block. Everything renders in the compose before it is sent, and again in
+# the bubble. The text is typed in small steps with a pause after every trigger: the app rewrites the field on a trigger, and a machine typing without pauses
+# outruns that rewrite (a person does not).
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -9,26 +11,58 @@ appId: app.monologue.mobile
       QA_PREFIX: "Atalhos"
 - tapOn: "Message.*"
 - inputText: "*negrito* e _italico_ e ~tachado~ e `mono`"
+- waitForAnimationToEnd:
+    timeout: 800
 - takeScreenshot: 77-compose-inline
 - assertNotVisible: ".*\\*negrito.*"
 - pressKey: Enter
-- inputText: "# Titulo grande"
+- inputText: "# "
+- waitForAnimationToEnd:
+    timeout: 800
+- inputText: "Titulo grande"
 - takeScreenshot: 77-compose-heading
 - pressKey: Enter
-- inputText: "- primeiro"
+- waitForAnimationToEnd:
+    timeout: 800
+- inputText: "- "
+- waitForAnimationToEnd:
+    timeout: 800
+- inputText: "primeiro"
 - pressKey: Enter
+- waitForAnimationToEnd:
+    timeout: 800
 - inputText: "segundo"
 - takeScreenshot: 77-compose-list
 - pressKey: Enter
+- waitForAnimationToEnd:
+    timeout: 800
 - pressKey: Enter
-- inputText: "## Subtitulo"
+- waitForAnimationToEnd:
+    timeout: 800
+- inputText: "## "
+- waitForAnimationToEnd:
+    timeout: 800
+- inputText: "Subtitulo"
 - pressKey: Enter
-- inputText: "> citacao"
+- waitForAnimationToEnd:
+    timeout: 800
+- inputText: "> "
+- waitForAnimationToEnd:
+    timeout: 800
+- inputText: "citacao"
 - pressKey: Enter
+- waitForAnimationToEnd:
+    timeout: 800
 - inputText: "continua"
 - pressKey: Enter
+- waitForAnimationToEnd:
+    timeout: 800
 - pressKey: Enter
+- waitForAnimationToEnd:
+    timeout: 800
 - inputText: "```"
+- waitForAnimationToEnd:
+    timeout: 800
 - inputText: "codigo *igual*"
 - takeScreenshot: 77-compose-blocks
 - tapOn: "Send message"
