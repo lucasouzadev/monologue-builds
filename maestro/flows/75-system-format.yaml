@@ -36,15 +36,20 @@ appId: app.monologue.mobile
 - runFlow:
     when:
       platform: iOS
-      notVisible: "Format.*"
+      notVisible: "Format"
     commands:
       - tapOn:
           point: "85%,50%"
           optional: true
 - takeScreenshot: 75-menu-page-2
-- tapOn:
-    text: "Format.*"
-    optional: true
+# Exact label: "Format.*" would also match the typed text ("formato nativo").
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: "Format"
+          optional: true
 - takeScreenshot: 75-format-submenu
 - tapOn: "Bold"
 - takeScreenshot: 75-bold-applied
