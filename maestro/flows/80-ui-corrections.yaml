@@ -80,6 +80,7 @@ env:
           timeout: 5000
 - tapOn: "Write.*"
 - tapOn: "Reply"
+- tapOn: "Reply….*"
 - inputText: "r1"
 - tapOn: "Send message"
 - inputText: "r2"
