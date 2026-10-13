@@ -36,6 +36,15 @@ appId: app.monologue.mobile
       - tapOn:
           text: "More options"
           optional: true
+# iOS: the styles menu is a paged bar (Bold, Italic, Underline, then a chevron to the rest).
+- runFlow:
+    when:
+      platform: iOS
+      notVisible: ${STYLE}
+    commands:
+      - tapOn:
+          point: "68%,52%"
+          optional: true
 - takeScreenshot: 76-${STYLE}-menu
 - tapOn: ${STYLE}
 - tapOn: "Send message"
