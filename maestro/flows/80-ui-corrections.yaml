@@ -59,14 +59,7 @@ env:
 # 7) enter the chat's merge selection (the bubbles must not blink)
 - tapOn: "Merge"
 - takeScreenshot: 80-merge-selection
-- tapOn:
-    text: "Cancel selection"
-    optional: true
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - pressKey: back
+- tapOn: "Cancel selection"
 # 1) Reply focus with content passing under the pill
 - retry:
     maxRetries: 3
