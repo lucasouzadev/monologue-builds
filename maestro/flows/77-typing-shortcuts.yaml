@@ -1,7 +1,5 @@
-# Typing shortcuts: *bold* _italic_ ~strike~ `mono` become formats as the closing symbol is typed (the symbols go), "# " makes a heading, "- " a bullet list that
-# continues on Enter, "## " a lower title level, "> " a quote and three backticks a code block. Everything renders in the compose before it is sent, and again in
-# the bubble. The text is typed in small steps with a pause after every trigger: the app rewrites the field on a trigger, and a machine typing without pauses
-# outruns that rewrite (a person does not).
+# Typing syntax: the symbols stay in the text while typing, drawn hidden, and the content is formatted in the compose (*bold* _italic_ ~strike~ `mono`, "# " / "## "
+# titles, "> " quote, a ``` line opens a code block, "- " bullets that continue on Enter). Sending turns the symbols into formatting: the bubble shows the result and no symbol.
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -10,34 +8,13 @@ appId: app.monologue.mobile
     env:
       QA_PREFIX: "Atalhos"
 - tapOn: "Message.*"
-- inputText: "*negrito"
-- inputText: "*"
-- runFlow: support/pause.yaml
-- inputText: " e _italico"
-- inputText: "_"
-- runFlow: support/pause.yaml
-- inputText: " e ~tachado"
-- inputText: "~"
-- runFlow: support/pause.yaml
-- inputText: " e `mono"
-- inputText: "`"
-- runFlow: support/pause.yaml
+- inputText: "*negrito* e _italico_ e ~tachado~ e `mono`"
 - takeScreenshot: 77-compose-inline
-- assertNotVisible: ".*\\*negrito.*"
 - pressKey: Enter
-- inputText: "#"
-- runFlow: support/pause.yaml
-- inputText: " "
-- runFlow: support/pause.yaml
-- inputText: "Titulo grande"
+- inputText: "# Titulo grande"
 - takeScreenshot: 77-compose-heading
 - pressKey: Enter
-- runFlow: support/pause.yaml
-- inputText: "-"
-- runFlow: support/pause.yaml
-- inputText: " "
-- runFlow: support/pause.yaml
-- inputText: "primeiro"
+- inputText: "- primeiro"
 - pressKey: Enter
 - runFlow: support/pause.yaml
 - inputText: "segundo"
@@ -46,18 +23,9 @@ appId: app.monologue.mobile
 - runFlow: support/pause.yaml
 - pressKey: Enter
 - runFlow: support/pause.yaml
-- inputText: "##"
-- runFlow: support/pause.yaml
-- inputText: " "
-- runFlow: support/pause.yaml
-- inputText: "Subtitulo"
+- inputText: "## Subtitulo"
 - pressKey: Enter
-- runFlow: support/pause.yaml
-- inputText: ">"
-- runFlow: support/pause.yaml
-- inputText: " "
-- runFlow: support/pause.yaml
-- inputText: "citacao"
+- inputText: "> citacao"
 - pressKey: Enter
 - runFlow: support/pause.yaml
 - inputText: "continua"
@@ -65,10 +33,8 @@ appId: app.monologue.mobile
 - runFlow: support/pause.yaml
 - pressKey: Enter
 - runFlow: support/pause.yaml
-- inputText: "``"
-- runFlow: support/pause.yaml
-- inputText: "`"
-- runFlow: support/pause.yaml
+- inputText: "```"
+- pressKey: Enter
 - inputText: "codigo *igual*"
 - takeScreenshot: 77-compose-blocks
 - tapOn: "Send message"
