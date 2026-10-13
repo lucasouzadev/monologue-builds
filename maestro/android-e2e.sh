@@ -3,6 +3,15 @@
 set -u
 cd "$(dirname "$0")/.."
 adb shell settings put global window_animation_scale 0 >/dev/null 2>&1
+case "${QA_MOTION:-existing}" in
+  normal|reduced)
+    qa_animation_scale=1
+    [ "$QA_MOTION" = reduced ] && qa_animation_scale=0
+    for setting in window_animation_scale transition_animation_scale animator_duration_scale; do
+      adb shell settings put global "$setting" "$qa_animation_scale" >/dev/null 2>&1
+    done ;;
+esac
+adb shell cmd uimode night "$([ "${QA_APPEARANCE:-light}" = dark ] && echo yes || echo no)" >/dev/null 2>&1
 case "${DEVICE_PROFILE:-}" in
   tall-gestures)
     # The owner's phone: a taller screen (1080x2460) with gesture navigation (no navigation bar).
