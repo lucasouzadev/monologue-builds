@@ -187,9 +187,9 @@ env:
     timeout: 10000
 - takeScreenshot: 80-drawer-fonts
 - tapOn:
-    id: "font-option-lora"
+    id: "font-option-inter"
 - assertVisible:
-    id: "font-option-lora-check"
+    id: "font-option-inter-check"
 - takeScreenshot: 80-drawer-font-selected
 # restore: the choice is only pending (no Apply was pressed)
 - tapOn:
