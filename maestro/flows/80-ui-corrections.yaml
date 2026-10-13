@@ -53,6 +53,13 @@ env:
           visible: "Write.*"
           timeout: 5000
 - takeScreenshot: 80-menu-face
+# Android: the long-pressed bubble is lifted and spotlighted (the rest dims around it)
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - assertVisible:
+          id: "context-menu-spotlight"
 - tapOn: "Organi[sz]e.*"
 - assertVisible: "Merge"
 - takeScreenshot: 80-menu-organize
