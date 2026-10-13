@@ -16,7 +16,15 @@ for flow in *.yaml; do
   if $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" "$flow"; then echo "RESULT $flow: PASS"; else
     echo "RESULT $flow: FAIL"; status=1
     # A wrong/embedded OTA makes every later result invalid; publish the failure image and stop.
-    if [ "$flow" = "00b-build-stamp.yaml" ]; then exit "$status"; fi
+    if [ "$flow" = "00b-build-stamp.yaml" ]; then
+      if command -v adb >/dev/null && [ -z "${1:-}" ]; then
+        echo '=== startup diagnostics after OTA gate failure ==='
+        timeout 20 adb logcat -d -b all 2>/dev/null | grep -E 'FATAL|AndroidRuntime|ReactNativeJS|JavascriptException|ExpoBlur|GaussianBlur|ErrorRecovery|Unable to load' | tail -100
+        timeout 20 adb exec-out screencap -p > "$SH/${PFX}${flow%.yaml}-end.png" 2>/dev/null || true
+        adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 && adb pull /sdcard/ui.xml "$SH/${PFX}${flow%.yaml}-end.xml" >/dev/null 2>&1 || true
+      fi
+      exit "$status"
+    fi
     # Android: what the app logged just now (the circular buffer rolls over within minutes, so it is read per failure).
     if command -v adb >/dev/null && [ -z "${1:-}" ]; then
       echo "--- logcat after $flow (app, JS, crashes) ---"
