@@ -6,7 +6,7 @@ Everything is `workflow_dispatch` (manual); nothing runs on push/PR/schedule.
 
 | Workflow | Purpose | Needs owner permission |
 | --- | --- | --- |
-| `ota.yml` | JS/asset-only EAS Update to channel `development` / `preview` / `production`, platform `all/ios/android` | No (standing authorization) |
+| `ota.yml` | JS/asset-only EAS Update to channel `development` / `preview` / `production` / `testers`, platform `all/ios/android` | No (standing authorization) |
 | `build.yml` | Signed native builds (APK, IPA → TestFlight), encrypted artifacts | **Yes, every execution** |
 | `e2e-android.yml` | Installs the APK of a `build.yml` run, warms the OTA, runs Maestro flows on an emulator (light + dark pass) | No (no compile) |
 | `e2e-ios.yml` | Compiles (cached) an iOS **simulator** build and runs the Maestro flows | **Yes** (native build) |
@@ -17,6 +17,10 @@ Maestro flows: `maestro/flows/NN-*.yaml`, runner `maestro/run.sh`, Android harne
 Screenshots of the latest E2E are force-pushed to branches `screens-android` and `screens-ios` of this repo.
 
 Full operating guide for agents: `docs/agents/TOOLING_AND_E2E_RUNBOOK.md` in the private repo.
+
+For tester OTA updates, choose `channel=testers` and the installed binary's `native_baseline`
+(currently `16`, the workflow default). The `testers` channel uses the EAS `production`
+environment; it does not publish to the `production` channel. Publishing an OTA never compiles a native binary.
 
 ## Flows 16–25 (the 2026-10-07 branch)
 

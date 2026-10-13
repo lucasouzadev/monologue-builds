@@ -2,7 +2,7 @@ name: Monologue OTA update (private source)
 run-name: OTA ${{ inputs.platform }} / ${{ inputs.channel }} @ ${{ inputs.source_ref }} (baseline ${{ inputs.native_baseline }})
 
 # Manual only. Publishes a JS/asset-only update to the Expo project; never compiles a native binary.
-# The runtime label must match the installed binary (07 = the build that contains morphlet + expo-content-transition).
+# The runtime label must match the installed binary; the current tester baseline is 16.
 on:
   workflow_dispatch:
     inputs:
@@ -12,11 +12,11 @@ on:
         required: true
         default: main
       channel:
-        description: EAS update channel and matching EAS environment
+        description: EAS update channel (testers uses the production EAS environment)
         type: choice
         required: true
         default: development
-        options: [development, preview, production]
+        options: [development, preview, production, testers]
       platform:
         description: Platform(s) to publish
         type: choice
@@ -27,8 +27,8 @@ on:
         description: Runtime label of the installed binary (must match it)
         type: choice
         required: true
-        default: '07'
-        options: ['07', '08', '09', '06']
+        default: '16'
+        options: ['16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
       message:
         description: Update message
         type: string
@@ -81,4 +81,10 @@ jobs:
           CHANNEL: ${{ inputs.channel }}
           PLATFORM: ${{ inputs.platform }}
           UPDATE_MESSAGE: ${{ inputs.message }}
-        run: eas update --channel "$CHANNEL" --platform "$PLATFORM" --environment "$CHANNEL" --message "$UPDATE_MESSAGE" --non-interactive
+        run: |
+          case "$CHANNEL" in
+            development|preview) eas_environment="$CHANNEL" ;;
+            production|testers) eas_environment=production ;;
+            *) echo "Unsupported OTA channel: $CHANNEL" >&2; exit 1 ;;
+          esac
+          eas update --channel "$CHANNEL" --platform "$PLATFORM" --environment "$eas_environment" --message "$UPDATE_MESSAGE" --non-interactive
