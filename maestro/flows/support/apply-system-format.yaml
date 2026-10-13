@@ -27,6 +27,15 @@ appId: app.monologue.mobile
 - tapOn:
     text: "Format"
     optional: true
+# Android: the fifth style sits behind the toolbar's overflow.
+- runFlow:
+    when:
+      platform: Android
+      notVisible: ${STYLE}
+    commands:
+      - tapOn:
+          text: "More options"
+          optional: true
 - takeScreenshot: 76-${STYLE}-menu
 - tapOn: ${STYLE}
 - tapOn: "Send message"
