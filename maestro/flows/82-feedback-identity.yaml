@@ -4,12 +4,6 @@ env:
   QA_PREFIX: QA Identity
 ---
 - launchApp
-- openLink: "monologue:///"
-- runFlow:
-    when:
-      visible: "Open in.*Monologue.*"
-    commands:
-      - tapOn: "Open"
 - extendedWaitUntil:
     visible: "New conversation"
     timeout: 60000
