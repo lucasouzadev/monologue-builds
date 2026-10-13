@@ -1,0 +1,28 @@
+# Typing shortcuts: *bold* _italic_ ~strike~ `mono` become formats as the closing symbol is typed (the symbols go), "# " makes a heading, "- " a bullet list that
+# continues on Enter. Everything renders in the compose before it is sent, and again in the bubble.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Atalhos"
+- tapOn: "Message.*"
+- inputText: "*negrito* e _italico_ e ~tachado~ e `mono`"
+- takeScreenshot: 77-compose-inline
+- assertNotVisible: ".*\\*negrito.*"
+- pressKey: Enter
+- inputText: "# Titulo grande"
+- takeScreenshot: 77-compose-heading
+- pressKey: Enter
+- inputText: "- primeiro"
+- pressKey: Enter
+- inputText: "segundo"
+- takeScreenshot: 77-compose-list
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*negrito.*"
+    timeout: 15000
+- takeScreenshot: 77-sent-bubble
+- assertNotVisible: ".*\\*negrito.*"
+- assertNotVisible: ".*# Titulo.*"
