@@ -25,13 +25,17 @@ appId: app.monologue.mobile
 - takeScreenshot: 77-compose-inline
 - assertNotVisible: ".*\\*negrito.*"
 - pressKey: Enter
-- inputText: "# "
+- inputText: "#"
+- runFlow: support/pause.yaml
+- inputText: " "
 - runFlow: support/pause.yaml
 - inputText: "Titulo grande"
 - takeScreenshot: 77-compose-heading
 - pressKey: Enter
 - runFlow: support/pause.yaml
-- inputText: "- "
+- inputText: "-"
+- runFlow: support/pause.yaml
+- inputText: " "
 - runFlow: support/pause.yaml
 - inputText: "primeiro"
 - pressKey: Enter
@@ -42,12 +46,16 @@ appId: app.monologue.mobile
 - runFlow: support/pause.yaml
 - pressKey: Enter
 - runFlow: support/pause.yaml
-- inputText: "## "
+- inputText: "##"
+- runFlow: support/pause.yaml
+- inputText: " "
 - runFlow: support/pause.yaml
 - inputText: "Subtitulo"
 - pressKey: Enter
 - runFlow: support/pause.yaml
-- inputText: "> "
+- inputText: ">"
+- runFlow: support/pause.yaml
+- inputText: " "
 - runFlow: support/pause.yaml
 - inputText: "citacao"
 - pressKey: Enter
@@ -57,7 +65,9 @@ appId: app.monologue.mobile
 - runFlow: support/pause.yaml
 - pressKey: Enter
 - runFlow: support/pause.yaml
-- inputText: "```"
+- inputText: "``"
+- runFlow: support/pause.yaml
+- inputText: "`"
 - runFlow: support/pause.yaml
 - inputText: "codigo *igual*"
 - takeScreenshot: 77-compose-blocks
