@@ -1,0 +1,36 @@
+# Types TEXT in the open conversation, selects it, applies STYLE from the system menu's Format entry and sends it.
+appId: app.monologue.mobile
+---
+- tapOn: "Message.*"
+- inputText: ${TEXT}
+- longPressOn: ${TEXT}
+- retry:
+    maxRetries: 3
+    commands:
+      - tapOn: "Select [Aa]ll"
+- runFlow:
+    when:
+      platform: Android
+      notVisible: "Format"
+    commands:
+      - tapOn:
+          text: "More options"
+          optional: true
+- runFlow:
+    when:
+      platform: iOS
+      notVisible: "Format"
+    commands:
+      - tapOn:
+          point: "85%,50%"
+          optional: true
+- tapOn:
+    text: "Format"
+    optional: true
+- takeScreenshot: 76-${STYLE}-menu
+- tapOn: ${STYLE}
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*${TEXT}.*"
+    timeout: 15000
+- takeScreenshot: 76-${STYLE}-sent

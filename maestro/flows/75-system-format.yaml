@@ -17,22 +17,15 @@ appId: app.monologue.mobile
 - takeScreenshot: 75-selected-menu
 # The Keyboard Slot pill is not drawn on this binary.
 - assertNotVisible: "Formatting"
+# Format sits right after Cut / Copy / Paste. If the toolbar or menu paged it away, the chevron / overflow shows it.
 - runFlow:
     when:
       platform: Android
+      notVisible: "Format"
     commands:
       - tapOn:
           text: "More options"
           optional: true
-      - runFlow:
-          when:
-            notVisible: "Bold"
-          commands:
-            - tapOn:
-                point: "68%,53%"
-                optional: true
-      - takeScreenshot: 75-android-overflow
-# iOS: the edit menu is paged; Format may sit behind the chevron.
 - runFlow:
     when:
       platform: iOS
@@ -43,13 +36,9 @@ appId: app.monologue.mobile
           optional: true
 - takeScreenshot: 75-menu-page-2
 # Exact label: "Format.*" would also match the typed text ("formato nativo").
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - tapOn:
-          text: "Format"
-          optional: true
+- tapOn:
+    text: "Format"
+    optional: true
 - takeScreenshot: 75-format-submenu
 - tapOn: "Bold"
 - takeScreenshot: 75-bold-applied
