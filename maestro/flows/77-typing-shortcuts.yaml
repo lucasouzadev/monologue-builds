@@ -19,6 +19,18 @@ appId: app.monologue.mobile
 - pressKey: Enter
 - inputText: "segundo"
 - takeScreenshot: 77-compose-list
+- pressKey: Enter
+- pressKey: Enter
+- inputText: "## Subtitulo"
+- pressKey: Enter
+- inputText: "> citacao"
+- pressKey: Enter
+- inputText: "continua"
+- pressKey: Enter
+- pressKey: Enter
+- inputText: "```"
+- inputText: "codigo *igual*"
+- takeScreenshot: 77-compose-blocks
 - tapOn: "Send message"
 - extendedWaitUntil:
     visible: ".*negrito.*"
@@ -26,3 +38,5 @@ appId: app.monologue.mobile
 - takeScreenshot: 77-sent-bubble
 - assertNotVisible: ".*\\*negrito.*"
 - assertNotVisible: ".*# Titulo.*"
+- assertNotVisible: ".*## Subtitulo.*"
+- assertNotVisible: ".*> citacao.*"
