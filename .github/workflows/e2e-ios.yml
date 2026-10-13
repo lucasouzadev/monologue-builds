@@ -155,6 +155,10 @@ jobs:
           FLOW_ONLY: ${{ inputs.only }}
         run: bash builds/maestro/run.sh "$SIM_UDID"
 
+      - name: App log lines from the text-format module
+        if: always()
+        run: xcrun simctl spawn "$SIM_UDID" log show --last 90m --style compact --predicate 'eventMessage CONTAINS "MonologueTextFormat"' | tail -60 || true
+
       - name: Audit passes (dark, large text, huge text)
         if: always() && inputs.only == ''
         timeout-minutes: 100
