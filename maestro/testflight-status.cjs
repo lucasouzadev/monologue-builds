@@ -29,20 +29,27 @@ async function main() {
   const builds = await get('/v1/builds', { 'filter[app]': apps.data[0].id, 'filter[version]': buildNumber, include: 'buildBetaDetail,preReleaseVersion', limit: '10' });
   const included = new Map((builds.included || []).map((item) => [item.id, item]));
   const results = [];
+  const unavailable = [];
   for (const build of builds.data) {
     const version = included.get(build.relationships.preReleaseVersion?.data?.id)?.attributes;
     if (version?.platform !== 'IOS') continue;
     const detail = included.get(build.relationships.buildBetaDetail?.data?.id)?.attributes;
-    const groups = await get(`/v1/builds/${build.id}/betaGroups`, { 'fields[betaGroups]': 'isInternalGroup', limit: '200' });
-    const internalGroups = groups.data.filter((group) => group.attributes.isInternalGroup).length;
-    const externalGroups = groups.data.length - internalGroups;
+    let groups = null;
+    try {
+      groups = await get(`/v1/builds/${build.id}/betaGroups`, { 'fields[betaGroups]': 'isInternalGroup', limit: '200' });
+    } catch (error) {
+      if (!/HTTP 403/.test(error.message)) throw error;
+      unavailable.push('betaGroups: HTTP403');
+    }
+    const internalGroups = groups ? groups.data.filter((group) => group.attributes.isInternalGroup).length : null;
+    const externalGroups = groups ? groups.data.length - internalGroups : null;
     results.push({ version: version.version, buildNumber: build.attributes.version, processingState: build.attributes.processingState, expired: build.attributes.expired,
       internalBuildState: detail?.internalBuildState, externalBuildState: detail?.externalBuildState,
       assignedInternalGroups: internalGroups, assignedExternalGroups: externalGroups,
-      availableToInternalTesters: !build.attributes.expired && detail?.internalBuildState === 'IN_BETA_TESTING' && internalGroups > 0,
-      availableToExternalTesters: !build.attributes.expired && detail?.externalBuildState === 'IN_BETA_TESTING' && externalGroups > 0 });
+      availableToAssignedInternalGroups: groups ? !build.attributes.expired && detail?.internalBuildState === 'IN_BETA_TESTING' && internalGroups > 0 : null,
+      availableToAssignedExternalGroups: groups ? !build.attributes.expired && detail?.externalBuildState === 'IN_BETA_TESTING' && externalGroups > 0 : null });
   }
-  const report = { status: 'READ_OK', checkedAt: new Date().toISOString(), requestedBuild: buildNumber, builds: results };
+  const report = { status: unavailable.length ? 'READ_PARTIAL' : 'READ_OK', checkedAt: new Date().toISOString(), requestedBuild: buildNumber, builds: results, unavailable };
   writeFileSync('testflight-status.json', JSON.stringify(report, null, 2));
   console.log(JSON.stringify(report, null, 2));
 }
