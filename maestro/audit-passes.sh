@@ -11,8 +11,8 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT/.."
 DARK_FLOWS="02-home-controls 03-conversation-tools 05-composer-plus-menu 06-photos-panel 07-home-list 08-message-actions 09-profile 10-rename-pin 12-editor-select 13-merge-search 10a-menu-keyboard 15-conversation-panel 28-sheet-visuals 19-search-marks 21-fonts 22-activity 25-camera-scanner 26-favorites-timeline 29-drawer-morph 30-scroll-edge-calibration"
 SCALE_FLOWS="02-home-controls 03-conversation-tools 05-composer-plus-menu 07-home-list 08-message-actions 09-profile 10a-menu-keyboard 15-conversation-panel 28-sheet-visuals 19-search-marks 22-activity 25-camera-scanner 26-favorites-timeline 29-drawer-morph 30-scroll-edge-calibration"
-DARK_FLOWS="$DARK_FLOWS 31a-undo-reply 31b-undo-continue 31c-undo-merge 32-system-events 33-local-folder 80-ui-corrections 81-android-touch-focus"
-SCALE_FLOWS="$SCALE_FLOWS 31a-undo-reply 31b-undo-continue 31c-undo-merge 32-system-events 33-local-folder"
+DARK_FLOWS="$DARK_FLOWS 31a-undo-reply 31b-undo-continue 31c-undo-merge 32-system-events 33-local-folder 80-ui-corrections 81-android-touch-focus 83-selection-compose 84-character-typing 85-draft-style-reentry"
+SCALE_FLOWS="$SCALE_FLOWS 31a-undo-reply 31b-undo-continue 31c-undo-merge 32-system-events 33-local-folder 83-selection-compose"
 audit_status=0
 
 appearance() { # light|dark
