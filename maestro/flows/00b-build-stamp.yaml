@@ -2,7 +2,10 @@
 # "<channel> · embedded" (= NO update was applied: the E2E would be testing the old embedded bundle, so every later result is void).
 appId: app.monologue.mobile
 ---
-- launchApp
+- launchApp:
+    # Inspect the JS that is running now. Another cold restart here could hide a
+    # previous flow's rollback and unnecessarily restarts the app twice per flow.
+    stopApp: false
 - openLink: "monologue:///"
 - extendedWaitUntil:
     visible: "Open in.*Monologue.*"

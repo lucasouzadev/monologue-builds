@@ -54,7 +54,17 @@ if [ -n "${FLOW_ONLY:-}" ] && [ -n "${EXPECTED_UPDATE_ID:-}" ] && [ "$flow" != "
   if $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" 00b-build-stamp.yaml; then
     echo 'RESULT post-flow OTA stamp: PASS'
   else
-    echo 'RESULT post-flow OTA stamp: FAIL'; exit 1
+    echo 'RESULT post-flow OTA stamp: FAIL'
+    # A driver/launch timeout needs evidence too; previously it exited before
+    # saving the screen or crash buffer and could not be diagnosed.
+    if command -v adb >/dev/null && [ -z "${1:-}" ]; then
+      timeout 20 adb logcat -d -b all 2>/dev/null | grep -E 'FATAL|AndroidRuntime|ANR in|JavascriptException|ErrorRecovery|Unable to load' | tail -80
+      timeout 10 adb exec-out screencap -p > "$SH/${PFX}post-source-failure.png" 2>/dev/null || true
+      timeout 10 adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 && adb pull /sdcard/ui.xml "$SH/${PFX}post-source-failure.xml" >/dev/null 2>&1 || true
+    elif command -v xcrun >/dev/null && [ -n "${1:-}" ]; then
+      xcrun simctl io "$1" screenshot "$SH/${PFX}post-source-failure.png" >/dev/null 2>&1 || true
+    fi
+    exit 1
   fi
 fi
 done
