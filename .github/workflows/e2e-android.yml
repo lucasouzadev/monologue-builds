@@ -19,6 +19,23 @@ on:
         type: string
         required: false
         default: ''
+      appearance:
+        description: Appearance for the baseline or targeted capture (full runs still execute all audits)
+        type: choice
+        required: false
+        default: light
+        options: [light, dark]
+      motion:
+        description: Keep existing harness settings, or explicitly verify normal/reduced animation behavior
+        type: choice
+        required: false
+        default: existing
+        options: [existing, normal, reduced]
+      expected_update_id:
+        description: Required OTA stamp prefix for this run; fails before later flows if another update was loaded
+        type: string
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -27,7 +44,8 @@ permissions:
 jobs:
   e2e:
     runs-on: ubuntu-24.04
-    timeout-minutes: 110
+    # The light suite alone approached 110 min and prevented dark/large-text audits from finishing.
+    timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -58,6 +76,9 @@ jobs:
         env:
           FLOW_ONLY: ${{ inputs.only }}
           DEVICE_PROFILE: ${{ inputs.profile }}
+          QA_APPEARANCE: ${{ inputs.appearance }}
+          QA_MOTION: ${{ inputs.motion }}
+          EXPECTED_UPDATE_ID: ${{ inputs.expected_update_id }}
         with:
           api-level: 34
           arch: x86_64

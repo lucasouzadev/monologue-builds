@@ -26,21 +26,19 @@ appId: app.monologue.mobile
 - tapOn: "Write.*"
 - tapOn: "Reply"
 - tapOn: "Message.*"
-- extendedWaitUntil:
-    visible: "Formatting"
-    timeout: 10000
 - inputText: "reply alpha beta"
 - takeScreenshot: 38-reply-pill
 - longPressOn: "reply alpha beta"
 - tapOn: "Select [Aa]ll"
-# iOS: with text selected the system menu stays hidden (Cut/Copy/Paste are in the panel), so the pill is reachable.
-- tapOn: "Formatting"
+# The app toolbar keeps the keyboard and native selection handles.
+- tapOn: "Format"
 - extendedWaitUntil:
     visible: "Italic"
     timeout: 8000
 - tapOn: "Italic"
 - takeScreenshot: 38-reply-panel
-- tapOn: "Close formatting"
+- tapOn:
+    id: "selection-close"
 - tapOn: "Send message"
 - extendedWaitUntil:
     visible: ".*reply alpha beta.*"

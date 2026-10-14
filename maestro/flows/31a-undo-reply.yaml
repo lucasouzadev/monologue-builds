@@ -32,7 +32,6 @@ env:
     visible: ".*QA reply preserved.*"
     timeout: 10000
 - longPressOn: ".*QA reply preserved.*"
-- tapOn: "Write.*"
 - assertVisible: "Undo reply"
 - takeScreenshot: 31a-undo-reply-menu
 - tapOn: "Undo reply"

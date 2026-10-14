@@ -26,11 +26,20 @@ appId: app.monologue.mobile
     direction: LEFT
     optional: true
 - takeScreenshot: 21-carousel-scrolled
-- swipe:
-    from:
-      id: "font-options"
-    direction: RIGHT
-    optional: true
+- retry:
+    maxRetries: 4
+    commands:
+      - runFlow:
+          when:
+            notVisible:
+              id: "font-option-inter"
+          commands:
+            - swipe:
+                from:
+                  id: "font-options"
+                direction: RIGHT
+      - assertVisible:
+          id: "font-option-inter"
 - tapOn:
     id: "font-option-inter"
 - takeScreenshot: 21-inter
@@ -59,11 +68,20 @@ appId: app.monologue.mobile
     timeout: 60000
 - tapOn: "Open personal space"
 - tapOn: "Settings.*"
-- swipe:
-    from:
-      id: "font-options"
-    direction: RIGHT
-    optional: true
+- retry:
+    maxRetries: 4
+    commands:
+      - runFlow:
+          when:
+            notVisible:
+              id: "font-option-system"
+          commands:
+            - swipe:
+                from:
+                  id: "font-options"
+                direction: RIGHT
+      - assertVisible:
+          id: "font-option-system"
 - tapOn:
     id: "font-option-system"
 - scrollUntilVisible:

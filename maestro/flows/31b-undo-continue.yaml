@@ -14,7 +14,7 @@ env:
     visible: ".*QA continuation preserved.*"
     timeout: 10000
 - longPressOn: ".*QA continuation preserved.*"
-- tapOn: "Write.*"
+# Undo sits on the first face of the menu (owner 2026-10-13), outside every group.
 - assertVisible: "Undo continuation"
 - takeScreenshot: 31b-undo-continue-menu
 - tapOn: "Undo continuation"

@@ -1,4 +1,4 @@
-# M2 Rich Capture: the Keyboard Slot. Focus the composer, select text, open the formatting panel from the pill on the keyboard's edge, format, close it and send.
+# M2 Rich Capture: app-owned selection tools. Focus the composer, select text, open the formatting panel from the pill on the keyboard's edge, format, close it and send.
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -8,19 +8,16 @@ appId: app.monologue.mobile
       QA_PREFIX: "Rico"
 - tapOn: "Message.*"
 - inputText: "alpha beta gamma"
-- extendedWaitUntil:
-    visible: "Formatting"
-    timeout: 8000
 - takeScreenshot: 36-pill
 # A long press in the field offers "Select all" on both platforms.
 - longPressOn: "alpha beta gamma"
 - tapOn: "Select [Aa]ll"
 - takeScreenshot: 36-selected
-# iOS: with text selected the system menu stays hidden (Cut/Copy/Paste are in the panel), so the pill is reachable.
+# The app toolbar keeps the keyboard and native selection handles.
 - retry:
     maxRetries: 3
     commands:
-      - tapOn: "Formatting"
+      - tapOn: "Format"
       - extendedWaitUntil:
           visible: "Bold"
           timeout: 5000
@@ -28,7 +25,8 @@ appId: app.monologue.mobile
 - tapOn: "Bold"
 - tapOn: "Italic"
 - takeScreenshot: 36-panel-formatted
-- tapOn: "Close formatting"
+- tapOn:
+    id: "selection-close"
 - takeScreenshot: 36-keyboard-back
 - tapOn: "Send message"
 - extendedWaitUntil:

@@ -1,0 +1,28 @@
+# M1-UI-CORRECTIONS: a wide bubble remains undimmed with the keyboard up; Focus uses a light blur.
+# Named images are the visual assertions. No new binary is required.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Android touch
+---
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - launchApp
+      - runFlow: support/new-chat.yaml
+      - tapOn: "Message.*"
+      - inputText: "Destaque Android: esta mensagem ocupa varias linhas para conferir suas bordas durante o toque longo, com o teclado aberto."
+      - tapOn: "Send message"
+      - takeScreenshot: 81-before-longpress-keyboard
+      - longPressOn: ".*Destaque Android.*"
+      - assertVisible:
+          id: context-menu-spotlight
+      - assertVisible: "Copy"
+      - takeScreenshot: 81-message-highlight-keyboard
+      - tapOn: "Write.*"
+      - tapOn: "Reply"
+      - takeScreenshot: 81-focus-blur-keyboard
+      - tapOn:
+          text: "Done|Close.*"
+          optional: true
+      - pressKey: back

@@ -36,6 +36,8 @@ appId: app.monologue.mobile
 - inputText: "```"
 - pressKey: Enter
 - inputText: "codigo *igual*"
+- pressKey: Enter
+- inputText: "```"
 - takeScreenshot: 77-compose-blocks
 - tapOn: "Send message"
 - extendedWaitUntil:

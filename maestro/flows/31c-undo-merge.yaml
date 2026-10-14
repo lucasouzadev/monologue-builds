@@ -8,7 +8,7 @@ env:
 - inputText: "QA second original"
 - tapOn: "Send message"
 - longPressOn: ".*QA root.*"
-- tapOn: "Write.*"
+- tapOn: "Organi[sz]e.*"
 - tapOn: "Merge"
 - tapOn: ".*QA second original.*"
 - tapOn: "Combine 2"
@@ -38,7 +38,6 @@ env:
       id: merge-provenance
     timeout: 15000
 - longPressOn: ".*QA root.*"
-- tapOn: "Write.*"
 - assertVisible: "Undo combine"
 - takeScreenshot: 31c-permanent-undo-menu
 - tapOn: "Undo combine"
