@@ -1,5 +1,5 @@
-# Baseline 17: raw symbols remain in the editable value, hidden with normal font metrics.
-# Screens certify visual preview; accessibility retains raw symbols until send.
+# Typing syntax: the symbols stay in the text while typing, drawn hidden, and the content is formatted in the compose (*bold* _italic_ ~strike~ `mono`, "# " / "## "
+# titles, "> " quote, a ``` line opens a code block, "- " bullets that continue on Enter). Sending turns the symbols into formatting: the bubble shows the result and no symbol.
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -8,29 +8,13 @@ appId: app.monologue.mobile
     env:
       QA_PREFIX: "Atalhos"
 - tapOn: "Message.*"
-- inputText: "*negrito"
-- inputText: "*"
-- runFlow: support/pause.yaml
-- inputText: " e _italico"
-- inputText: "_"
-- runFlow: support/pause.yaml
-- inputText: " e ~tachado"
-- inputText: "~"
-- runFlow: support/pause.yaml
-- inputText: " e `mono"
-- inputText: "`"
-- runFlow: support/pause.yaml
+- inputText: "*negrito* e _italico_ e ~tachado~ e `mono`"
 - takeScreenshot: 77-compose-inline
 - pressKey: Enter
-- inputText: "# "
-- runFlow: support/pause.yaml
-- inputText: "Titulo grande"
+- inputText: "# Titulo grande"
 - takeScreenshot: 77-compose-heading
 - pressKey: Enter
-- runFlow: support/pause.yaml
-- inputText: "- "
-- runFlow: support/pause.yaml
-- inputText: "primeiro"
+- inputText: "- primeiro"
 - pressKey: Enter
 - runFlow: support/pause.yaml
 - inputText: "segundo"
@@ -39,14 +23,9 @@ appId: app.monologue.mobile
 - runFlow: support/pause.yaml
 - pressKey: Enter
 - runFlow: support/pause.yaml
-- inputText: "## "
-- runFlow: support/pause.yaml
-- inputText: "Subtitulo"
+- inputText: "## Subtitulo"
 - pressKey: Enter
-- runFlow: support/pause.yaml
-- inputText: "> "
-- runFlow: support/pause.yaml
-- inputText: "citacao"
+- inputText: "> citacao"
 - pressKey: Enter
 - runFlow: support/pause.yaml
 - inputText: "continua"
