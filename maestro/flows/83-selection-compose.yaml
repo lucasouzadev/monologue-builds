@@ -1,0 +1,32 @@
+# M2-E01: raw typing must remain readable; the app owns the selection tools.
+# Screens certify geometry; accessibility text deliberately retains syntax markers.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Seletor"
+- tapOn: "Message.*"
+- inputText: "*"
+- inputText: "teste"
+- inputText: "*"
+- takeScreenshot: 83-compact-inline
+- longPressOn: ".*teste.*"
+- tapOn: "Select [Aa]ll"
+- assertVisible:
+    id: "selection-tools"
+- takeScreenshot: 83-selection-menu
+- tapOn:
+    id: "selection-format"
+- assertVisible:
+    id: "selection-style-underline"
+- takeScreenshot: 83-selection-styles
+- tapOn:
+    id: "selection-style-underline"
+- takeScreenshot: 83-combined-style
+- tapOn: "Send message"
+- assertNotVisible:
+    id: "selection-tools"
+- assertVisible: ".*teste.*"
+- takeScreenshot: 83-sent
