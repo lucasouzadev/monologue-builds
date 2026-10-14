@@ -25,7 +25,6 @@ env:
 - tapOn: "Edit"
 - assertVisible: "Done"
 - takeScreenshot: 83-merge-editor-keyboard
-- eraseText: 400
 - inputText: "Edited merge space: preserved result."
 - takeScreenshot: 83-merge-editor-changed
 - tapOn: "Combine messages"

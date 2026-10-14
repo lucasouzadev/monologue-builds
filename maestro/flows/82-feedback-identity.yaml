@@ -8,6 +8,8 @@ env:
 - extendedWaitUntil:
     visible: "New conversation"
     timeout: 60000
+- assertNotVisible:
+    id: app-identity
 - takeScreenshot: 82-identity-home
 - runFlow: support/new-chat.yaml
 - takeScreenshot: 82-identity-conversation
