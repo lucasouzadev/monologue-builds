@@ -3,6 +3,24 @@
 set -u
 export PATH="$PATH:$HOME/.maestro/bin"
 ROOT="$(cd "$(dirname "$0")" && pwd)"
+case "${FLOW_ONLY:-}" in
+  '@huge '*)
+    # Targeted accessibility check before the long full-suite/audit gate.
+    if command -v xcrun >/dev/null && [ -n "${1:-}" ]; then
+      xcrun simctl ui "$1" content_size accessibility-extra-extra-extra-large
+    else
+      adb shell settings put system font_scale 2.0
+    fi
+    mkdir -p "$ROOT/audit-huge"
+    cp -R "$ROOT/flows/support" "$ROOT/audit-huge/"
+    for targeted_file in "$ROOT"/flows/*.yaml; do
+      sed 's/takeScreenshot: /takeScreenshot: huge-/' "$targeted_file" > "$ROOT/audit-huge/${targeted_file##*/}"
+    done
+    FLOW_ONLY="${FLOW_ONLY#@huge }"
+    FLOWS_DIR="$ROOT/audit-huge"
+    SHOT_PREFIX=huge-
+    ;;
+esac
 cd "${FLOWS_DIR:-$ROOT/flows}"
 PFX="${SHOT_PREFIX:-}"
 status=0
