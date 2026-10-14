@@ -48,15 +48,15 @@ for flow in *.yaml; do
     $T30 adb ${1:+-s "$1"} exec-out screencap -p > "$SH/${PFX}${flow%.yaml}-end.png" 2>/dev/null || true
     adb ${1:+-s "$1"} shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 && adb ${1:+-s "$1"} pull /sdcard/ui.xml "$SH/${PFX}${flow%.yaml}-end.xml" >/dev/null 2>&1 || true
   fi
-done
-# Targeted captures may relaunch the app after the initial stamp. Verify again so
-# a concurrent publication cannot silently replace the bundle during the run.
-if [ -n "${FLOW_ONLY:-}" ] && [ -n "${EXPECTED_UPDATE_ID:-}" ]; then
-  echo '=== post-targeted OTA stamp (after all relaunches) ==='
+# A feature flow may relaunch the app. Recheck its source after the capture.
+if [ -n "${FLOW_ONLY:-}" ] && [ -n "${EXPECTED_UPDATE_ID:-}" ] && [ "$flow" != "00-warm-update.yaml" ] && [ "$flow" != "00b-build-stamp.yaml" ]; then
+  echo '=== post-flow OTA stamp (after all relaunches) ==='
   if $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" 00b-build-stamp.yaml; then
-    echo 'RESULT post-targeted OTA stamp: PASS'
+    echo 'RESULT post-flow OTA stamp: PASS'
   else
-    echo 'RESULT post-targeted OTA stamp: FAIL'; status=1
+    echo 'RESULT post-flow OTA stamp: FAIL'; exit 1
   fi
 fi
+done
+
 exit $status
