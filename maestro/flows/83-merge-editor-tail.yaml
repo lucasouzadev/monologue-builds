@@ -14,6 +14,7 @@ env:
 - assertVisible: "Copy"
 - takeScreenshot: 83-tail-menu-keyboard
 - tapOn: "Organi[sz]e.*"
+- takeScreenshot: 83-tail-menu-organize
 - tapOn: "Merge"
 - tapOn: ".*Merge space: first.*"
 - tapOn: "Combine 2"
