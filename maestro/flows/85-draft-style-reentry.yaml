@@ -1,0 +1,42 @@
+# Attribute ownership must survive losing focus and restoring a draft.
+# Raw accessibility text stays literal; inspect the screenshots for style undo/redo.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Rascunho"
+- tapOn: "Message.*"
+- inputText: "*volta*"
+- takeScreenshot: 85-before-leaving
+- openLink: "monologue:///"
+- extendedWaitUntil:
+    visible: "Open in.*Monologue.*"
+    timeout: 4000
+    optional: true
+- runFlow:
+    when:
+      visible: "Open in.*Monologue.*"
+    commands:
+      - tapOn: "Open"
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 20000
+- tapOn: ${".*" + output.qaTitle + ".*"}
+- tapOn: "Message.*"
+- assertVisible: ".*\\*volta\\*.*"
+- takeScreenshot: 85-restored
+- longPressOn: ".*volta.*"
+- tapOn: "Select [Aa]ll"
+- tapOn:
+    id: "selection-dismiss"
+- eraseText: 1
+- assertVisible: ".*\\*volta.*"
+- takeScreenshot: 85-style-undone
+- inputText: "*"
+- takeScreenshot: 85-style-redone
+- tapOn: "Send message"
+- assertVisible: ".*volta.*"
+- assertNotVisible: ".*\\*volta.*"
+- takeScreenshot: 85-sent
