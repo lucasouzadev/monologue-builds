@@ -7,12 +7,6 @@ appId: app.monologue.mobile
 - tapOn: "Select [Aa]ll"
 - tapOn:
     id: "selection-format"
-- scrollUntilVisible:
-    element:
-      text: ${STYLE}
-    direction: RIGHT
-    centerElement: true
-    timeout: 10000
 - takeScreenshot: 76-${STYLE}-menu
 - tapOn: ${STYLE}
 - tapOn: "Send message"
