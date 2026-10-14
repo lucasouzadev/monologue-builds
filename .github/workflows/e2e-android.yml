@@ -51,6 +51,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Require private QA evidence encryption before running tests
+        env:
+          ARTIFACT_PASSPHRASE: ${{ secrets.M2_QA_EVIDENCE_PASSPHRASE }}
+        run: node -e "if ((process.env.ARTIFACT_PASSPHRASE || '').length < 24) { console.error('A strong private QA evidence secret is required; existing APK keys are unchanged.'); process.exit(2); }"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -90,12 +94,10 @@ jobs:
           disk-size: 8192M
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
-          script: |
-            if bash maestro/android-e2e.sh > "$RUNNER_TEMP/monologue-maestro-android.log" 2>&1; then
-              echo 'Maestro Android: PASS (details encrypted)'
-            else
-              echo 'Maestro Android: FAIL (details encrypted)'; exit 1
-            fi
+          # The action executes each script line in a separate shell. Fold the
+          # entire conditional into one command; otherwise its first line fails.
+          script: >-
+            if bash maestro/android-e2e.sh > "$RUNNER_TEMP/monologue-maestro-android.log" 2>&1; then echo 'Maestro Android: PASS (details encrypted)'; else echo 'Maestro Android: FAIL (details encrypted)'; exit 1; fi
 
       # Metadata-only gate. A green report cannot replace inspecting the screenshots.
       - name: Fail closed on missing or damaged screenshot evidence
@@ -106,7 +108,7 @@ jobs:
       - name: Encrypt all visual QA and diagnostics before upload
         if: always()
         env:
-          ARTIFACT_PASSPHRASE: ${{ secrets.ARTIFACT_PASSPHRASE }}
+          ARTIFACT_PASSPHRASE: ${{ secrets.M2_QA_EVIDENCE_PASSPHRASE }}
         run: |
           set -euo pipefail
           dir="$RUNNER_TEMP/private-qa"

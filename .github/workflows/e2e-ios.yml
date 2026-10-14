@@ -102,6 +102,10 @@ jobs:
           node-version: 22
           cache: pnpm
           cache-dependency-path: src/pnpm-lock.yaml
+      - name: Require private QA evidence encryption before running tests
+        env:
+          ARTIFACT_PASSPHRASE: ${{ secrets.M2_QA_EVIDENCE_PASSPHRASE }}
+        run: node -e "if ((process.env.ARTIFACT_PASSPHRASE || '').length < 24) { console.error('A strong private QA evidence secret is required; existing APK keys are unchanged.'); process.exit(2); }"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -138,6 +142,7 @@ jobs:
           path: ${{ runner.temp }}/sim/Monologue.tar.gz
           key: ${{ steps.simcache.outputs.cache-primary-key }}
       - name: Boot a simulator and install the app
+        id: simulator
         run: |
           tar -xzf "$RUNNER_TEMP/sim/Monologue.tar.gz" -C "$RUNNER_TEMP/sim"
           APP=$(find "$RUNNER_TEMP/sim" -maxdepth 2 -name '*.app' | head -1)
@@ -173,7 +178,7 @@ jobs:
           fi
 
       - name: Audit passes (dark, large text, huge text)
-        if: always() && inputs.only == ''
+        if: always() && steps.simulator.outcome == 'success' && inputs.only == ''
         timeout-minutes: 100
         run: |
           mkdir -p "$RUNNER_TEMP/qa-logs"
@@ -184,7 +189,7 @@ jobs:
           fi
 
       - name: Run the stress flow (burst sends, 100k-char messages, Reply Focus, history scroll)
-        if: always() && inputs.only == ''
+        if: always() && steps.simulator.outcome == 'success' && inputs.only == ''
         timeout-minutes: 40
         run: |
           mkdir -p "$RUNNER_TEMP/qa-logs"
@@ -219,7 +224,7 @@ jobs:
       - name: Encrypt all visual QA and diagnostics before upload
         if: always()
         env:
-          ARTIFACT_PASSPHRASE: ${{ secrets.ARTIFACT_PASSPHRASE }}
+          ARTIFACT_PASSPHRASE: ${{ secrets.M2_QA_EVIDENCE_PASSPHRASE }}
         run: |
           set -euo pipefail
           dir="$RUNNER_TEMP/private-qa"

@@ -9,7 +9,7 @@ for (const platform of ['android', 'ios']) {
     `Only encrypted QA evidence may be uploaded: ${platform}`);
   assert(workflow.includes('encrypt-visual-evidence.mjs'),
     `Evidence encryption is required: ${platform}`);
-  assert(workflow.includes('ARTIFACT_PASSPHRASE: ${{ secrets.ARTIFACT_PASSPHRASE }}'),
+  assert(workflow.includes('ARTIFACT_PASSPHRASE: ${{ secrets.M2_QA_EVIDENCE_PASSPHRASE }}'),
     `Encryption must fail closed without a GitHub secret: ${platform}`);
   assert(!/path:\s*[^\n]*\.(?:png|jpg|mp4|log|xml)(?:\s|$)/im.test(workflow),
     `Raw screenshot/video/log upload forbidden: ${platform}`);
