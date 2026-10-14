@@ -17,7 +17,9 @@ env:
 - takeScreenshot: 83-tail-menu-organize
 - tapOn: "Merge"
 - tapOn: ".*Merge space: first.*"
-- tapOn: "Combine 2"
+- tapOn:
+    text: "Combine 2"
+    waitToSettleTimeoutMs: 1500
 - extendedWaitUntil:
     visible: "Combine messages"
     timeout: 15000
