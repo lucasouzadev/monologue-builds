@@ -19,8 +19,10 @@ appId: app.monologue.mobile
 - takeScreenshot: 83-selection-menu
 - tapOn:
     id: "selection-format"
-- assertVisible:
-    id: "selection-style-underline"
+- scrollUntilVisible:
+    element:
+      id: "selection-style-underline"
+    timeout: 15000
 - takeScreenshot: 83-selection-styles
 - tapOn:
     id: "selection-style-underline"

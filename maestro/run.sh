@@ -31,7 +31,25 @@ for flow in *.yaml; do
   # FLOW_ONLY="00-warm-update 00b-build-stamp 28-sheet-visuals": a verification subset (the staging gate runs this first, then the full suite).
   if [ -n "${FLOW_ONLY:-}" ] && ! echo " $FLOW_ONLY " | grep -q " ${flow%.yaml} "; then continue; fi
   echo; echo "=== $flow ($(date +%H:%M:%S)) ==="
-  if $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" "$flow"; then echo "RESULT $flow: PASS"; else
+  flow_result=0
+  $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" "$flow" || flow_result=$?
+  if [ "$flow" = "00b-build-stamp.yaml" ] && [ "$flow_result" -ne 0 ]; then
+    # Before feature acceptance only: slow update downloads can need another
+    # launch. Each bounded retry must still prove the exact expected OTA stamp.
+    for bootstrap_attempt in 1 2; do
+      echo "=== initial OTA source retry $bootstrap_attempt (no feature acceptance yet) ==="
+      sleep 45
+      if command -v xcrun >/dev/null && [ -n "${1:-}" ]; then
+        xcrun simctl terminate "$1" app.monologue.mobile >/dev/null 2>&1 || true
+      elif command -v adb >/dev/null; then
+        adb shell am force-stop app.monologue.mobile >/dev/null 2>&1 || true
+      fi
+      flow_result=0
+      $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" "$flow" || flow_result=$?
+      [ "$flow_result" -eq 0 ] && break
+    done
+  fi
+  if [ "$flow_result" -eq 0 ]; then echo "RESULT $flow: PASS"; else
     echo "RESULT $flow: FAIL"; status=1
     # A wrong/embedded OTA makes every later result invalid; publish the failure image and stop.
     if [ "$flow" = "00b-build-stamp.yaml" ]; then
