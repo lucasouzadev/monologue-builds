@@ -38,6 +38,7 @@ jobs:
           "$RUNNER_TEMP/quality-yaml/bin/pip" install --disable-pip-version-check PyYAML==6.0.2
           "$RUNNER_TEMP/quality-yaml/bin/python" - <<'PY'
           from pathlib import Path
+          import subprocess
           import yaml
           files = list(Path('maestro/flows').rglob('*.yaml'))
           files += list(Path('.github/workflows').glob('*.yml'))
@@ -47,6 +48,14 @@ jobs:
               if not docs or all(doc is None for doc in docs):
                   raise SystemExit(f'Empty YAML: {file}')
           print(f'PASS {len(files)} YAML files')
+          workflow = yaml.safe_load(Path('.github/workflows/e2e-android.yml').read_text())
+          emulator_step = next(step for step in workflow['jobs']['e2e']['steps']
+                               if str(step.get('uses', '')).startswith('reactivecircus/'))
+          script = emulator_step['with']['script']
+          if len(script.splitlines()) != 1:
+              raise SystemExit('Android emulator action executes each script line separately; keep its conditional in one command')
+          subprocess.run(['sh', '-n'], input=script, text=True, check=True)
+          print('PASS Android emulator command parses in a single shell')
           PY
       - name: Authenticated encryption round-trip and tamper rejection (synthetic only)
         run: |

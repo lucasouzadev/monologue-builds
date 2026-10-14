@@ -9,6 +9,14 @@ This repository is PUBLIC. Workflow logs, public branches and published artifact
 4. The new static job tests syntax, invalid/absent screenshot cases, encryption round-trip, tamper rejection, and asserts raw screenshot publication cannot silently return.
 5. Native compilation remains subject to the explicit owner approval rule in Monologue's constitution. Nothing here starts native builds, OTA, deploy or database migrations.
 
+For this formatting gate, workflow encryption binds the dedicated repository secret
+`M2_QA_EVIDENCE_PASSPHRASE` to the tool's `ARTIFACT_PASSPHRASE` environment variable.
+It must contain at least 24 characters. The existing `ARTIFACT_PASSPHRASE` repository
+secret still decrypts earlier APK/IPA artifacts and must not be overwritten to fix
+visual evidence encryption. Both workflows check the evidence key before starting
+tests. Local decryption still uses the environment variable below, with the evidence
+key rather than the APK key.
+
 ## Accessing screenshots for authorized QA
 Download the encrypted artifact to a **private workstation**, not a public issue or shared link. From the repo root, do not paste the passphrase into terminal commands/history:
 
