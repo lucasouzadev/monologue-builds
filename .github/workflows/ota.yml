@@ -2,7 +2,7 @@ name: Monologue OTA update (private source)
 run-name: OTA ${{ inputs.platform }} / ${{ inputs.channel }} @ ${{ inputs.source_ref }} (baseline ${{ inputs.native_baseline }})
 
 # Manual only. Publishes a JS/asset-only update to the Expo project; never compiles a native binary.
-# The runtime label must match the installed binary; the current tester baseline is 16.
+# The runtime label must match the installed binary; the current tester baseline is 17.
 on:
   workflow_dispatch:
     inputs:
@@ -27,8 +27,8 @@ on:
         description: Runtime label of the installed binary (must match it)
         type: choice
         required: true
-        default: '16'
-        options: ['16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
+        default: '17'
+        options: ['17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
       message:
         description: Update message
         type: string
