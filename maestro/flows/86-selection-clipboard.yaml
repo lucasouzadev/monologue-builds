@@ -1,0 +1,40 @@
+# Real native clipboard and caret behavior; no mocked keyboard/clipboard ports.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Clipboard"
+- tapOn: "Message.*"
+- inputText: "abc"
+- longPressOn: "abc"
+- tapOn: "Select [Aa]ll"
+- tapOn:
+    id: "selection-copy"
+- assertVisible:
+    id: "composer-input"
+    text: ".*abc.*"
+- takeScreenshot: 86-copy-preserves-selection
+- tapOn:
+    id: "selection-cut"
+- assertNotVisible:
+    id: "composer-input"
+    text: ".*abc.*"
+- longPressOn:
+    id: "composer-input"
+- assertVisible:
+    id: "selection-paste"
+- takeScreenshot: 86-empty-caret-paste
+- tapOn:
+    id: "selection-paste"
+- assertVisible:
+    id: "composer-input"
+    text: ".*abc.*"
+- inputText: "d"
+- takeScreenshot: 86-paste-caret
+- tapOn: "Send message"
+- assertVisible: ".*abcd.*"
+- assertNotVisible:
+    id: "selection-tools"
+- takeScreenshot: 86-sent
