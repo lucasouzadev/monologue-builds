@@ -1,4 +1,4 @@
-# Keyboard Slot in the Expanded editor: the pill rides the keyboard, the panel replaces it, the writing surface keeps its place.
+# Keyboard Slot in the Expanded editor: the pill rides the keyboard, the selector keeps the keyboard, the writing surface keeps its place.
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -11,21 +11,19 @@ appId: app.monologue.mobile
     visible: "Expand editor"
     timeout: 10000
 - tapOn: "Expand editor"
-- extendedWaitUntil:
-    visible: "Formatting"
-    timeout: 10000
 - inputText: "expanded alpha beta"
 - takeScreenshot: 37-expanded-pill
 - longPressOn: "expanded alpha beta"
 - takeScreenshot: 37-longpress
 - tapOn: "Select [Aa]ll"
 - takeScreenshot: 37-selected
-- tapOn: "Formatting"
+- tapOn: "Format"
 - takeScreenshot: 37-after-aa
 - extendedWaitUntil:
     visible: "Bold"
     timeout: 8000
 - tapOn: "Bold"
 - takeScreenshot: 37-expanded-panel
-- tapOn: "Close formatting"
+- tapOn:
+    id: "selection-close"
 - takeScreenshot: 37-expanded-keyboard-back

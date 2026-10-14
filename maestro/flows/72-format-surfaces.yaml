@@ -8,9 +8,6 @@ appId: app.monologue.mobile
       QA_PREFIX: "Formas"
 - tapOn: "Message.*"
 - inputText: "origem negrito"
-- extendedWaitUntil:
-    visible: "Formatting"
-    timeout: 8000
 - retry:
     maxRetries: 3
     commands:
@@ -19,14 +16,15 @@ appId: app.monologue.mobile
 - retry:
     maxRetries: 3
     commands:
-      - tapOn: "Formatting"
+      - tapOn: "Format"
       - extendedWaitUntil:
           visible: "Bold"
           timeout: 5000
 - tapOn: "Bold"
 - tapOn: "Italic"
 - takeScreenshot: 72-origin-panel
-- tapOn: "Close formatting"
+- tapOn:
+    id: "selection-close"
 - tapOn: "Send message"
 - extendedWaitUntil:
     visible: ".*origem negrito.*"

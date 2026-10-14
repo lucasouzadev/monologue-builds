@@ -1,54 +1,20 @@
-# Types TEXT in the open conversation, selects it, applies STYLE from the system menu's Format entry and sends it.
+# Every style reaches the sent bubble through the app selector.
 appId: app.monologue.mobile
 ---
 - tapOn: "Message.*"
 - inputText: ${TEXT}
 - longPressOn: ${TEXT}
-- retry:
-    maxRetries: 3
-    commands:
-      - tapOn: "Select [Aa]ll"
-- runFlow:
-    when:
-      platform: Android
-      notVisible: "Format"
-    commands:
-      - tapOn:
-          text: "More options"
-          optional: true
-- runFlow:
-    when:
-      platform: iOS
-      notVisible: "Format"
-    commands:
-      - tapOn:
-          point: "85%,50%"
-          optional: true
+- tapOn: "Select [Aa]ll"
 - tapOn:
-    text: "Format"
-    optional: true
-# Android: the fifth style sits behind the toolbar's overflow.
-- runFlow:
-    when:
-      platform: Android
-      notVisible: ${STYLE}
-    commands:
-      - tapOn:
-          text: "More options"
-          optional: true
-# iOS: the styles menu is a paged bar (Bold, Italic, Underline, then a chevron to the rest).
-- runFlow:
-    when:
-      platform: iOS
-      notVisible: ${STYLE}
-    commands:
-      - tapOn:
-          point: "68%,52%"
-          optional: true
+    id: "selection-format"
+- scrollUntilVisible:
+    element:
+      text: ${STYLE}
+    direction: RIGHT
+    centerElement: true
+    timeout: 10000
 - takeScreenshot: 76-${STYLE}-menu
 - tapOn: ${STYLE}
 - tapOn: "Send message"
-- extendedWaitUntil:
-    visible: ".*${TEXT}.*"
-    timeout: 15000
+- assertVisible: ".*${TEXT}.*"
 - takeScreenshot: 76-${STYLE}-sent
