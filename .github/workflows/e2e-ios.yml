@@ -159,54 +159,71 @@ jobs:
         env:
           FLOW_ONLY: ${{ inputs.only }}
           EXPECTED_UPDATE_ID: ${{ inputs.expected_update_id }}
-        run: bash builds/maestro/run.sh "$SIM_UDID"
-
-      - name: App log lines from the text-format module
-        if: always()
-        run: xcrun simctl spawn "$SIM_UDID" log show --last 90m --style compact --predicate 'eventMessage CONTAINS "MonologueTextFormat"' | tail -60 || true
+        run: |
+          mkdir -p "$RUNNER_TEMP/qa-logs"
+          if bash builds/maestro/run.sh "$SIM_UDID" > "$RUNNER_TEMP/qa-logs/ios-flows.log" 2>&1; then
+            echo 'Maestro iOS: PASS (detailed evidence encrypted)'
+          else
+            echo 'Maestro iOS: FAIL (detailed evidence encrypted)'; exit 1
+          fi
 
       - name: Audit passes (dark, large text, huge text)
         if: always() && inputs.only == ''
         timeout-minutes: 100
-        run: bash builds/maestro/audit-passes.sh ios "$SIM_UDID"
+        run: |
+          mkdir -p "$RUNNER_TEMP/qa-logs"
+          if bash builds/maestro/audit-passes.sh ios "$SIM_UDID" > "$RUNNER_TEMP/qa-logs/ios-audit.log" 2>&1; then
+            echo 'Maestro iOS visual audit: PASS (screenshots still require private review)'
+          else
+            echo 'Maestro iOS visual audit: FAIL (details encrypted)'; exit 1
+          fi
 
       - name: Run the stress flow (burst sends, 100k-char messages, Reply Focus, history scroll)
         if: always() && inputs.only == ''
         timeout-minutes: 40
-        run: FLOWS_DIR="$PWD/builds/maestro/stress" SHOT_PREFIX=stress- FLOW_TIMEOUT=420 bash builds/maestro/run.sh "$SIM_UDID"
+        run: |
+          mkdir -p "$RUNNER_TEMP/qa-logs"
+          if FLOWS_DIR="$PWD/builds/maestro/stress" SHOT_PREFIX=stress- FLOW_TIMEOUT=420 bash builds/maestro/run.sh "$SIM_UDID" > "$RUNNER_TEMP/qa-logs/ios-stress.log" 2>&1; then
+            echo 'Maestro iOS stress: PASS'
+          else
+            echo 'Maestro iOS stress: FAIL (details encrypted)'; exit 1
+          fi
 
       # Metadata-only gate. A green report cannot replace inspecting the screenshots.
       - name: Fail closed on missing or damaged screenshot evidence
         if: always()
         run: |
           python3 builds/maestro/quality-evidence.py --platform ios ${{ inputs.only == '' && '--full' || '' }} --output builds/maestro/maestro-quality-evidence.json
-      - name: Retain per-run screenshot evidence and audit manifest
+      # Public workflow: never upload plaintext UI, logs or screenshots.
+      - name: Encrypt all visual QA and diagnostics before upload
+        if: always()
+        env:
+          ARTIFACT_PASSPHRASE: ${{ secrets.ARTIFACT_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          dir="$RUNNER_TEMP/private-qa"
+          mkdir -p "$dir/data"
+          if [ -f builds/maestro/maestro-quality-evidence.json ]; then cp builds/maestro/maestro-quality-evidence.json "$dir/data/"; fi
+          find builds/maestro/flows builds/maestro/shots builds/maestro/audit-* builds/maestro/stress builds/maestro/stress-android \
+            -type f -name '*.png' -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
+          if [ -d "$HOME/.maestro/tests" ]; then
+            find "$HOME/.maestro/tests" -type f -name '*.png' -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
+          fi
+          if [ -d "$RUNNER_TEMP/qa-logs" ]; then cp "$RUNNER_TEMP/qa-logs/"*.log "$dir/data/" 2>/dev/null || true; fi
+          if [ -f "$RUNNER_TEMP/monologue-maestro-android.log" ]; then
+            cp "$RUNNER_TEMP/monologue-maestro-android.log" "$dir/data/"
+          fi
+          test -f "$dir/data/maestro-quality-evidence.json" || {
+            echo '::error::No audit manifest; no public plaintext fallback.'; exit 1;
+          }
+          tar -czf "$dir/visual-evidence.tgz" -C "$dir/data" .
+          node builds/tools/encrypt-visual-evidence.mjs "$dir/visual-evidence.tgz" "$GITHUB_WORKSPACE/visual-evidence.tgz.enc"
+          rm -rf "$dir"
+      - name: Publish encrypted visual evidence only
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: monologue-ios-visual-qa-${{ github.run_id }}
-          path: |
-            builds/maestro/maestro-quality-evidence.json
-            builds/maestro/flows/*.png
-            builds/maestro/shots/*.png
-            builds/maestro/audit-*/*.png
-            builds/maestro/stress/*.png
-            builds/maestro/stress-android/*.png
-          if-no-files-found: warn
-          retention-days: 14
-
-      - name: Publish screenshots (test data only) to a screens branch
-        if: always()
-        run: |
-          mkdir -p /tmp/shots
-          cp builds/maestro/flows/*.png builds/maestro/stress/*.png builds/maestro/audit-*/*.png builds/maestro/shots/* /tmp/shots/ 2>/dev/null || true
-          find ~/.maestro/tests -name "*.png" 2>/dev/null | while read -r f; do cp "$f" /tmp/shots/ 2>/dev/null || true; done
-          cd /tmp/shots
-          ls
-          if [ -n "$(ls)" ]; then
-            git init -q && git checkout -q -b screens-ios
-            git -c user.email=ci@example.invalid -c user.name=ci add . && git -c user.email=ci@example.invalid -c user.name=ci commit -q -m "screenshots ios ${{ github.run_id }}"
-            # Preserve evidence when another run later replaces the convenience branch.
-            git push -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:refs/heads/screens-ios-${{ github.run_id }}
-            git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:refs/heads/screens-ios
-          fi
+          name: monologue-ios-encrypted-qa-${{ github.run_id }}
+          path: visual-evidence.tgz.enc
+          if-no-files-found: error
+          retention-days: 7
