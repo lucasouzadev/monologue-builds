@@ -1,0 +1,46 @@
+name: Validate Maestro quality tooling (no native build)
+
+on:
+  pull_request:
+    paths:
+      - 'maestro/**'
+      - '.github/workflows/e2e-android.yml'
+      - '.github/workflows/e2e-ios.yml'
+      - '.github/workflows/quality-static.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'maestro/**'
+      - '.github/workflows/quality-static.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  maestro-static-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shell and Python syntax
+        run: |
+          bash -n maestro/run.sh maestro/audit-passes.sh maestro/android-e2e.sh
+          python3 -m py_compile maestro/quality-evidence.py
+      - name: Quality gate self-test (including negative fixtures)
+        run: python3 maestro/quality-evidence.py --self-test
+      - name: Validate Maestro and GitHub workflow YAML syntax
+        run: |
+          python3 -m venv "$RUNNER_TEMP/quality-yaml"
+          "$RUNNER_TEMP/quality-yaml/bin/pip" install --disable-pip-version-check PyYAML==6.0.2
+          "$RUNNER_TEMP/quality-yaml/bin/python" - <<'PY'
+          from pathlib import Path
+          import yaml
+          files = list(Path('maestro/flows').rglob('*.yaml'))
+          files += list(Path('.github/workflows').glob('*.yml'))
+          for file in files:
+              with file.open(encoding='utf-8') as stream:
+                  docs = list(yaml.safe_load_all(stream))
+              if not docs or all(doc is None for doc in docs):
+                  raise SystemExit(f'Empty YAML: {file}')
+          print(f'PASS {len(files)} YAML files')
+          PY
