@@ -90,20 +90,48 @@ jobs:
           disk-size: 8192M
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
-          script: bash maestro/android-e2e.sh
+          script: |
+            if bash maestro/android-e2e.sh > "$RUNNER_TEMP/monologue-maestro-android.log" 2>&1; then
+              echo 'Maestro Android: PASS (details encrypted)'
+            else
+              echo 'Maestro Android: FAIL (details encrypted)'; exit 1
+            fi
 
-      - name: Publish screenshots (test data only) to a screens branch
+      # Metadata-only gate. A green report cannot replace inspecting the screenshots.
+      - name: Fail closed on missing or damaged screenshot evidence
         if: always()
         run: |
-          mkdir -p /tmp/shots
-          cp maestro/flows/*.png maestro/audit-*/*.png maestro/stress-android/*.png maestro/shots/* /tmp/shots/ 2>/dev/null || true
-          find ~/.maestro/tests -name "*.png" 2>/dev/null | while read -r f; do cp "$f" /tmp/shots/ 2>/dev/null || true; done
-          cd /tmp/shots
-          ls
-          if [ -n "$(ls)" ]; then
-            git init -q && git checkout -q -b screens-android
-            git -c user.email=ci@example.invalid -c user.name=ci add . && git -c user.email=ci@example.invalid -c user.name=ci commit -q -m "screenshots android ${{ github.run_id }}"
-            # Preserve evidence when another run later replaces the convenience branch.
-            git push -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:refs/heads/screens-android-${{ github.run_id }}
-            git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:refs/heads/screens-android
+          python3 maestro/quality-evidence.py --platform android ${{ inputs.only == '' && '--full' || '' }} --output maestro/maestro-quality-evidence.json
+      # Public workflow: never upload plaintext UI, logs or screenshots.
+      - name: Encrypt all visual QA and diagnostics before upload
+        if: always()
+        env:
+          ARTIFACT_PASSPHRASE: ${{ secrets.ARTIFACT_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          dir="$RUNNER_TEMP/private-qa"
+          mkdir -p "$dir/data"
+          if [ -f maestro/maestro-quality-evidence.json ]; then cp maestro/maestro-quality-evidence.json "$dir/data/"; fi
+          find maestro/flows maestro/shots maestro/audit-* maestro/stress maestro/stress-android \
+            -type f -name '*.png' -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
+          if [ -d "$HOME/.maestro/tests" ]; then
+            find "$HOME/.maestro/tests" -type f -name '*.png' -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
           fi
+          if [ -d "$RUNNER_TEMP/qa-logs" ]; then cp "$RUNNER_TEMP/qa-logs/"*.log "$dir/data/" 2>/dev/null || true; fi
+          if [ -f "$RUNNER_TEMP/monologue-maestro-android.log" ]; then
+            cp "$RUNNER_TEMP/monologue-maestro-android.log" "$dir/data/"
+          fi
+          test -f "$dir/data/maestro-quality-evidence.json" || {
+            echo '::error::No audit manifest; no public plaintext fallback.'; exit 1;
+          }
+          tar -czf "$dir/visual-evidence.tgz" -C "$dir/data" .
+          node tools/encrypt-visual-evidence.mjs "$dir/visual-evidence.tgz" "$GITHUB_WORKSPACE/visual-evidence.tgz.enc"
+          rm -rf "$dir"
+      - name: Publish encrypted visual evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: monologue-android-encrypted-qa-${{ github.run_id }}
+          path: visual-evidence.tgz.enc
+          if-no-files-found: error
+          retention-days: 7
