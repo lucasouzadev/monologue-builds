@@ -1,4 +1,5 @@
-# Owner 2026-10-13: permanent localized identity below the safe area; feedback below header chrome.
+# Owner 2026-10-14: attribution behind the physical notch, captured in screenshots; feedback below header chrome.
+# Decorative attribution is excluded from accessibility. Inspect original top pixels, not accessibility visibility.
 appId: app.monologue.mobile
 env:
   QA_PREFIX: QA Identity
@@ -7,12 +8,8 @@ env:
 - extendedWaitUntil:
     visible: "New conversation"
     timeout: 60000
-- assertVisible:
-    id: app-identity
 - takeScreenshot: 82-identity-home
 - runFlow: support/new-chat.yaml
-- assertVisible:
-    id: app-identity
 - takeScreenshot: 82-identity-conversation
 - tapOn: "Message.*"
 - takeScreenshot: 82-identity-keyboard
@@ -22,13 +19,9 @@ env:
     timeout: 5000
 - tapOn: "Copy"
 - takeScreenshot: 82-copied-feedback
-- assertVisible:
-    id: app-identity
 - longPressOn: ".*QA root.*"
 - tapOn: "Write.*"
 - tapOn: "Reply"
-- assertVisible:
-    id: app-identity
 - takeScreenshot: 82-identity-focus
 - tapOn:
     text: "Done|Close.*"
