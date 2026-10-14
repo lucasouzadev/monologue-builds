@@ -9,7 +9,8 @@ appId: app.monologue.mobile
       QA_PREFIX: "Marca"
 - tapOn: "Message.*"
 - inputText: "manual"
-- longPressOn: "manual"
+- longPressOn:
+    id: "composer-input"
 - tapOn: "Select [Aa]ll"
 - tapOn:
     id: "selection-format"
@@ -29,9 +30,13 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: ${".*" + output.qaTitle + ".*"}
     timeout: 20000
-- tapOn: ${".*" + output.qaTitle + ".*"}
+- tapOn: ${"^" + output.qaTitle + ".*"}
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 15000
 - tapOn: "Message.*"
-- longPressOn: "manual"
+- longPressOn:
+    id: "composer-input"
 - tapOn: "Select [Aa]ll"
 - tapOn:
     id: "selection-format"

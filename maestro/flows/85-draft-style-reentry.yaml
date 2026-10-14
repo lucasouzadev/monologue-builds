@@ -23,11 +23,15 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: ${".*" + output.qaTitle + ".*"}
     timeout: 20000
-- tapOn: ${".*" + output.qaTitle + ".*"}
+- tapOn: ${"^" + output.qaTitle + ".*"}
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 15000
 - tapOn: "Message.*"
 - assertVisible: ".*\\*volta\\*.*"
 - takeScreenshot: 85-restored
-- longPressOn: ".*volta.*"
+- longPressOn:
+    id: "composer-input"
 - tapOn: "Select [Aa]ll"
 - tapOn:
     id: "selection-dismiss"

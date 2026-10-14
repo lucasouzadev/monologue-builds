@@ -8,7 +8,8 @@ appId: app.monologue.mobile
       QA_PREFIX: "Clipboard"
 - tapOn: "Message.*"
 - inputText: "abc"
-- longPressOn: "abc"
+- longPressOn:
+    id: "composer-input"
 - tapOn: "Select [Aa]ll"
 - tapOn:
     id: "selection-copy"
