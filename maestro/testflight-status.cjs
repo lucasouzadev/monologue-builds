@@ -17,7 +17,11 @@ async function main() {
     const url = new URL(path, 'https://api.appstoreconnect.apple.com');
     url.search = new URLSearchParams(query).toString();
     const response = await fetch(url, { method: 'GET', headers: { Authorization: `Bearer ${jwt}` }, signal: AbortSignal.timeout(30000) });
-    if (!response.ok) throw new Error(`Apple read failed: HTTP ${response.status}.`);
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      const codes = (body.errors || []).map((error) => error.code).filter((code) => /^[A-Z0-9_]+$/.test(code)).join(', ');
+      throw new Error(`Apple read failed on ${path}: HTTP ${response.status}${codes ? ` (${codes})` : ''}.`);
+    }
     return response.json();
   }
   const apps = await get('/v1/apps', { 'filter[bundleId]': 'app.monologue.mobile', 'fields[apps]': 'bundleId', limit: '2' });
@@ -38,7 +42,7 @@ async function main() {
       availableToInternalTesters: !build.attributes.expired && detail?.internalBuildState === 'IN_BETA_TESTING' && internalGroups > 0,
       availableToExternalTesters: !build.attributes.expired && detail?.externalBuildState === 'IN_BETA_TESTING' && externalGroups > 0 });
   }
-  const report = { checkedAt: new Date().toISOString(), requestedBuild: buildNumber, builds: results };
+  const report = { status: 'READ_OK', checkedAt: new Date().toISOString(), requestedBuild: buildNumber, builds: results };
   writeFileSync('testflight-status.json', JSON.stringify(report, null, 2));
   console.log(JSON.stringify(report, null, 2));
 }
@@ -46,5 +50,8 @@ main().catch((error) => {
   // Only our safe messages are printed; key parsing exceptions may contain input.
   const message = /^(Provide|Missing|Apple read failed|Expected)/.test(error.message) ? error.message : 'Unable to read TestFlight status.';
   console.error(message);
-  process.exitCode = 1;
+  // Readiness is separate from the UI gate. A permission error is explicitly
+  // unverified, never an assertion that the build is available to testers.
+  writeFileSync('testflight-status.json', JSON.stringify({ status: 'UNVERIFIED', requestedBuild: process.argv[2], checkedAt: new Date().toISOString(), reason: message }, null, 2));
+  if (!/^Apple read failed.*HTTP (401|403)/.test(message)) process.exitCode = 1;
 });
