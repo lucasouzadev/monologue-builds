@@ -87,6 +87,9 @@ jobs:
           CHANNEL: ${{ inputs.channel }}
           PLATFORM: ${{ inputs.platform }}
           UPDATE_MESSAGE: ${{ inputs.message }}
+          # OTA replaces the simulator bundle, including its build-time lab flag.
+          # Keep stress verification available only in the staging stream.
+          EXPO_PUBLIC_ENABLE_STRESS_LAB: ${{ inputs.channel == 'preview' && '1' || '0' }}
         run: |
           case "$CHANNEL" in
             development|preview) eas_environment="$CHANNEL" ;;
