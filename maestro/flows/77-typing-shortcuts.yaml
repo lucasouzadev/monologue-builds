@@ -1,7 +1,5 @@
-# Typing shortcuts: *bold* _italic_ ~strike~ `mono` become formats as the closing symbol is typed (the symbols go), "# " makes a heading, "- " a bullet list that
-# continues on Enter, "## " a lower title level, "> " a quote and three backticks a code block. Everything renders in the compose before it is sent, and again in
-# the bubble. The text is typed in small steps with a pause after every trigger: the app rewrites the field on a trigger, and a machine typing without pauses
-# outruns that rewrite (a person does not).
+# Baseline 17: raw symbols remain in the editable value, hidden with normal font metrics.
+# Screens certify visual preview; accessibility retains raw symbols until send.
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -23,7 +21,6 @@ appId: app.monologue.mobile
 - inputText: "`"
 - runFlow: support/pause.yaml
 - takeScreenshot: 77-compose-inline
-- assertNotVisible: ".*\\*negrito.*"
 - pressKey: Enter
 - inputText: "# "
 - runFlow: support/pause.yaml
@@ -58,8 +55,10 @@ appId: app.monologue.mobile
 - pressKey: Enter
 - runFlow: support/pause.yaml
 - inputText: "```"
-- runFlow: support/pause.yaml
+- pressKey: Enter
 - inputText: "codigo *igual*"
+- pressKey: Enter
+- inputText: "```"
 - takeScreenshot: 77-compose-blocks
 - tapOn: "Send message"
 - extendedWaitUntil:

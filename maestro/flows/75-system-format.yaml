@@ -1,49 +1,25 @@
-# Baseline 16: the system selection menu offers Format (Bold, Italic, ...): select text, choose Format, choose a style, send; the bubble shows it.
-# iOS: the edit menu has a "Format" submenu. Android: the entries sit in the toolbar overflow.
+# Baseline 17: app-owned selection toolbar, all styles accessible without native menu paging.
 appId: app.monologue.mobile
 ---
 - launchApp
 - runFlow:
     file: support/new-chat.yaml
     env:
-      QA_PREFIX: "Nativo"
+      QA_PREFIX: "Formato"
 - tapOn: "Message.*"
-- inputText: "formato nativo"
-- longPressOn: "formato nativo"
-- retry:
-    maxRetries: 3
-    commands:
-      - tapOn: "Select [Aa]ll"
-- takeScreenshot: 75-selected-menu
-# The Keyboard Slot pill is not drawn on this binary.
+- inputText: "formato escolhido"
 - assertNotVisible: "Formatting"
-# Format sits right after Cut / Copy / Paste. If the toolbar or menu paged it away, the chevron / overflow shows it.
-- runFlow:
-    when:
-      platform: Android
-      notVisible: "Format"
-    commands:
-      - tapOn:
-          text: "More options"
-          optional: true
-- runFlow:
-    when:
-      platform: iOS
-      notVisible: "Format"
-    commands:
-      - tapOn:
-          point: "85%,50%"
-          optional: true
-- takeScreenshot: 75-menu-page-2
-# Exact label: "Format.*" would also match the typed text ("formato nativo").
+- longPressOn: "formato escolhido"
+- tapOn: "Select [Aa]ll"
+- assertVisible:
+    id: "selection-tools"
+- takeScreenshot: 75-selected-menu
 - tapOn:
-    text: "Format"
-    optional: true
+    id: "selection-format"
 - takeScreenshot: 75-format-submenu
-- tapOn: "Bold"
+- tapOn:
+    id: "selection-style-bold"
 - takeScreenshot: 75-bold-applied
 - tapOn: "Send message"
-- extendedWaitUntil:
-    visible: ".*formato nativo.*"
-    timeout: 15000
+- assertVisible: ".*formato escolhido.*"
 - takeScreenshot: 75-sent-bubble

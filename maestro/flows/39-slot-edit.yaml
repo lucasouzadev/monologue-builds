@@ -35,25 +35,18 @@ appId: app.monologue.mobile
     visible: "Cancel editing"
     timeout: 10000
 # The edit field focuses with the bubble; when it does not (a stale tap target), tap the bubble at the centre of the screen.
-- runFlow:
-    when:
-      notVisible: "Formatting"
-    commands:
-      - tapOn:
-          point: "50%,50%"
-- extendedWaitUntil:
-    visible: "Formatting"
-    timeout: 10000
+- tapOn: "Message.*"
 - takeScreenshot: 39-edit-pill
 - longPressOn: "Message.*"
 - tapOn: "Select [Aa]ll"
-# iOS: with text selected the system menu stays hidden (Cut/Copy/Paste are in the panel), so the pill is reachable.
-- tapOn: "Formatting"
+# The app toolbar keeps the keyboard and native selection handles.
+- tapOn: "Format"
 - extendedWaitUntil:
     visible: "Bold"
     timeout: 8000
 - tapOn: "Bold"
 - takeScreenshot: 39-edit-panel
-- tapOn: "Close formatting"
+- tapOn:
+    id: "selection-close"
 - tapOn: "Save.*"
 - takeScreenshot: 39-edit-saved
