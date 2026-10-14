@@ -175,6 +175,26 @@ jobs:
         timeout-minutes: 40
         run: FLOWS_DIR="$PWD/builds/maestro/stress" SHOT_PREFIX=stress- FLOW_TIMEOUT=420 bash builds/maestro/run.sh "$SIM_UDID"
 
+      # Metadata-only gate. A green report cannot replace inspecting the screenshots.
+      - name: Fail closed on missing or damaged screenshot evidence
+        if: always()
+        run: |
+          python3 builds/maestro/quality-evidence.py --platform ios ${{ inputs.only == '' && '--full' || '' }} --output builds/maestro/maestro-quality-evidence.json
+      - name: Retain per-run screenshot evidence and audit manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: monologue-ios-visual-qa-${{ github.run_id }}
+          path: |
+            builds/maestro/maestro-quality-evidence.json
+            builds/maestro/flows/*.png
+            builds/maestro/shots/*.png
+            builds/maestro/audit-*/*.png
+            builds/maestro/stress/*.png
+            builds/maestro/stress-android/*.png
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Publish screenshots (test data only) to a screens branch
         if: always()
         run: |
