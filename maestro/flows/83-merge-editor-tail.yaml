@@ -1,0 +1,34 @@
+# Owner 2026-10-14: larger Merge reveal/editor above keyboard; no tail while the long-press menu is open.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Merge space
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Message.*"
+- inputText: "Merge space: first paragraph with enough text to check a larger editing area and preserve the original messages after combining them."
+- tapOn: "Send message"
+- inputText: "Merge space: second paragraph with more content for scrolling and editing above the keyboard without shrinking to a tiny field."
+- tapOn: "Send message"
+- longPressOn: ".*Merge space: second.*"
+- assertVisible: "Copy"
+- takeScreenshot: 83-tail-menu-keyboard
+- tapOn: "Organi[sz]e.*"
+- tapOn: "Merge"
+- tapOn: ".*Merge space: first.*"
+- tapOn: "Combine 2"
+- extendedWaitUntil:
+    visible: "Combine messages"
+    timeout: 15000
+- takeScreenshot: 83-merge-reveal
+- tapOn: "Edit"
+- assertVisible: "Done"
+- takeScreenshot: 83-merge-editor-keyboard
+- eraseText: 400
+- inputText: "Edited merge space: preserved result."
+- takeScreenshot: 83-merge-editor-changed
+- tapOn: "Combine messages"
+- extendedWaitUntil:
+    visible: ".*Edited merge space: preserved result.*"
+    timeout: 20000
+- takeScreenshot: 83-merge-saved
