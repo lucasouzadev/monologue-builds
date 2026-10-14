@@ -31,6 +31,8 @@ jobs:
           python3 -m py_compile maestro/quality-evidence.py
           node --check tools/encrypt-visual-evidence.mjs
           node --check tools/decrypt-visual-evidence.mjs
+          node --check tools/check-public-e2e-privacy.mjs
+          node tools/check-public-e2e-privacy.mjs
       - name: Quality gate self-test (including negative fixtures)
         run: python3 maestro/quality-evidence.py --self-test
       - name: Validate Maestro and GitHub workflow YAML syntax
