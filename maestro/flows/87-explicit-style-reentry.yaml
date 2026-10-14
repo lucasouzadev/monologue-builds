@@ -1,0 +1,44 @@
+# Manual formatting must not become the field's default font after refocus.
+# Visually compare before/after toggle with the final unformatted bubble.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Marca"
+- tapOn: "Message.*"
+- inputText: "manual"
+- longPressOn: "manual"
+- tapOn: "Select [Aa]ll"
+- tapOn:
+    id: "selection-format"
+- tapOn:
+    id: "selection-style-bold"
+- takeScreenshot: 87-bold-before-leaving
+- openLink: "monologue:///"
+- extendedWaitUntil:
+    visible: "Open in.*Monologue.*"
+    timeout: 4000
+    optional: true
+- runFlow:
+    when:
+      visible: "Open in.*Monologue.*"
+    commands:
+      - tapOn: "Open"
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 20000
+- tapOn: ${".*" + output.qaTitle + ".*"}
+- tapOn: "Message.*"
+- longPressOn: "manual"
+- tapOn: "Select [Aa]ll"
+- tapOn:
+    id: "selection-format"
+- takeScreenshot: 87-bold-restored
+- tapOn:
+    id: "selection-style-bold"
+- takeScreenshot: 87-bold-removed
+- tapOn: "Send message"
+- assertVisible: ".*manual.*"
+- takeScreenshot: 87-sent-plain
