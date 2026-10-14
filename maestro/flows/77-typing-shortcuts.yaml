@@ -1,0 +1,71 @@
+# Baseline 17: raw symbols remain in the editable value, hidden with normal font metrics.
+# Screens certify visual preview; accessibility retains raw symbols until send.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Atalhos"
+- tapOn: "Message.*"
+- inputText: "*negrito"
+- inputText: "*"
+- runFlow: support/pause.yaml
+- inputText: " e _italico"
+- inputText: "_"
+- runFlow: support/pause.yaml
+- inputText: " e ~tachado"
+- inputText: "~"
+- runFlow: support/pause.yaml
+- inputText: " e `mono"
+- inputText: "`"
+- runFlow: support/pause.yaml
+- takeScreenshot: 77-compose-inline
+- pressKey: Enter
+- inputText: "# "
+- runFlow: support/pause.yaml
+- inputText: "Titulo grande"
+- takeScreenshot: 77-compose-heading
+- pressKey: Enter
+- runFlow: support/pause.yaml
+- inputText: "- "
+- runFlow: support/pause.yaml
+- inputText: "primeiro"
+- pressKey: Enter
+- runFlow: support/pause.yaml
+- inputText: "segundo"
+- takeScreenshot: 77-compose-list
+- pressKey: Enter
+- runFlow: support/pause.yaml
+- pressKey: Enter
+- runFlow: support/pause.yaml
+- inputText: "## "
+- runFlow: support/pause.yaml
+- inputText: "Subtitulo"
+- pressKey: Enter
+- runFlow: support/pause.yaml
+- inputText: "> "
+- runFlow: support/pause.yaml
+- inputText: "citacao"
+- pressKey: Enter
+- runFlow: support/pause.yaml
+- inputText: "continua"
+- pressKey: Enter
+- runFlow: support/pause.yaml
+- pressKey: Enter
+- runFlow: support/pause.yaml
+- inputText: "```"
+- pressKey: Enter
+- inputText: "codigo *igual*"
+- pressKey: Enter
+- inputText: "```"
+- takeScreenshot: 77-compose-blocks
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*negrito.*"
+    timeout: 15000
+- takeScreenshot: 77-sent-bubble
+- assertNotVisible: ".*\\*negrito.*"
+- assertNotVisible: ".*# Titulo.*"
+- assertNotVisible: ".*## Subtitulo.*"
+- assertNotVisible: ".*> citacao.*"

@@ -1,0 +1,19 @@
+# Owner QA 2026-10-10 #1: a long press on a message with the keyboard up must leave the Composer above the keyboard and the last message above the Composer.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Press
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Message.*"
+- inputText: "Uma mensagem bem longa para ocupar varias linhas do chat e provar que o fim da conversa fica acima do campo de texto quando o teclado esta aberto e o menu da mensagem e usado."
+- tapOn: "Send message"
+- inputText: "Outra mensagem longa para empurrar o fim da conversa para baixo do campo de texto se alguma coisa estiver errada com a altura da lista depois do menu."
+- tapOn: "Send message"
+- takeScreenshot: 56-before-press
+- longPressOn: ".*Outra mensagem longa.*"
+- takeScreenshot: 56-menu-open
+- tapOn:
+    point: 50%, 12%
+- takeScreenshot: 56-after-menu
+- assertVisible: ".*Outra mensagem longa.*"

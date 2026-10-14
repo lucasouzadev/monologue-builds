@@ -1,0 +1,40 @@
+# M2 QA round 2: tray tiles are pressable (preview before sending) for photos; the viewer pages across them; closing keeps the tray.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Previa"
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- tapOn: "Photos"
+# Skip the video tile: the second and third tiles are photos.
+- tapOn:
+    point: "55%,47%"
+- tapOn:
+    point: "86%,47%"
+- tapOn:
+    point: "86%,90%"
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 20000
+- takeScreenshot: 71-tray
+- tapOn:
+    id: "tray-preview"
+    index: 0
+- extendedWaitUntil:
+    visible: "Close viewer"
+    timeout: 10000
+- takeScreenshot: 71-preview-open
+- tapOn: "Close viewer"
+- assertVisible: "Attachments"
+- takeScreenshot: 71-tray-after-preview
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: "Photo.*"
+    timeout: 20000
+# The bubble hugs its photos (thin frame).
+- takeScreenshot: 71-sent-photos

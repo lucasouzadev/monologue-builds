@@ -1,0 +1,35 @@
+# Owner 2026-10-10: the drawer is a card with the identity banner, the small activity board (streak / active days / total + dot grid), then Integrations, Storage, Settings.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Monologue"
+    timeout: 60000
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - retry:
+          maxRetries: 3
+          commands:
+            - runFlow:
+                when:
+                  notVisible:
+                    id: profile-section-settings
+                commands:
+                  - tapOn:
+                      point: "88%,9%"
+            - extendedWaitUntil:
+                visible:
+                  id: profile-section-settings
+                timeout: 8000
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "Open personal space"
+- extendedWaitUntil:
+    visible:
+      id: activity-mini-board
+    timeout: 15000
+- takeScreenshot: 54-drawer-board

@@ -1,0 +1,14 @@
+# Every style reaches the sent bubble through the app selector.
+appId: app.monologue.mobile
+---
+- tapOn: "Message.*"
+- inputText: ${TEXT}
+- longPressOn: ${TEXT}
+- tapOn: "Select [Aa]ll"
+- tapOn:
+    id: "selection-format"
+- takeScreenshot: 76-${STYLE}-menu
+- tapOn: ${STYLE}
+- tapOn: "Send message"
+- assertVisible: ".*${TEXT}.*"
+- takeScreenshot: 76-${STYLE}-sent

@@ -1,0 +1,12 @@
+# Owner QA 2026-10-09 #5: the Tools (+) panel follows the app theme. Evidence flow.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Tools
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- takeScreenshot: 53-tools-panel

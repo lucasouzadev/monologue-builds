@@ -1,0 +1,46 @@
+# Owner request 2026-10-09 (rev. 2026-10-10): first access is ONE real chat in which the Monologue guide answers; skipping leaves a summary,
+# then the storage step and Home. Opened on demand by deep link (the staging channel never shows it unprompted).
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "New conversation"
+    timeout: 60000
+- openLink: "monologue:///onboarding"
+- runFlow:
+    when:
+      visible: "Open in.*Monologue.*"
+    commands:
+      - tapOn: "Open"
+- extendedWaitUntil:
+    visible: ".*I.m Monologue.*"
+    timeout: 25000
+- extendedWaitUntil:
+    visible: ".*writing your first idea.*"
+    timeout: 15000
+- takeScreenshot: 41-guide-hello
+- tapOn: "Message.*"
+- inputText: "Minha primeira ideia"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*choose Reply.*"
+    timeout: 20000
+- takeScreenshot: 41-guide-reply-step
+- tapOn:
+    id: "onboarding-skip"
+- extendedWaitUntil:
+    visible: ".*What you can do here.*"
+    timeout: 15000
+- takeScreenshot: 41-guide-skipped-summary
+- extendedWaitUntil:
+    visible: ".*Where should we keep.*"
+    timeout: 20000
+- assertVisible: ".*Cloud \\(coming soon\\).*"
+- assertVisible: ".*Folder on this device.*"
+- takeScreenshot: 41-onboarding-storage
+- tapOn:
+    id: "onboarding-later"
+- extendedWaitUntil:
+    visible: "New conversation"
+    timeout: 25000
+- takeScreenshot: 41-home-after-onboarding

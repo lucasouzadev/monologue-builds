@@ -19,7 +19,7 @@ Screenshots of the latest E2E are force-pushed to branches `screens-android` and
 Full operating guide for agents: `docs/agents/TOOLING_AND_E2E_RUNBOOK.md` in the private repo.
 
 For tester OTA updates, choose `channel=testers` and the installed binary's `native_baseline`
-(currently `17`, the workflow default). The `testers` channel uses the EAS `production`
+(currently `16`, the workflow default). The `testers` channel uses the EAS `production`
 environment; it does not publish to the `production` channel. Publishing an OTA never compiles a native binary.
 
 ## Flows 16–25 (the 2026-10-07 branch)

@@ -1,0 +1,35 @@
+# M2 Rich Capture: app-owned selection tools. Focus the composer, select text, open the formatting panel from the pill on the keyboard's edge, format, close it and send.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Rico"
+- tapOn: "Message.*"
+- inputText: "alpha beta gamma"
+- takeScreenshot: 36-pill
+# A long press in the field offers "Select all" on both platforms.
+- longPressOn: "alpha beta gamma"
+- tapOn: "Select [Aa]ll"
+- takeScreenshot: 36-selected
+# The app toolbar keeps the keyboard and native selection handles.
+- retry:
+    maxRetries: 3
+    commands:
+      - tapOn: "Format"
+      - extendedWaitUntil:
+          visible: "Bold"
+          timeout: 5000
+- takeScreenshot: 36-panel
+- tapOn: "Bold"
+- tapOn: "Italic"
+- takeScreenshot: 36-panel-formatted
+- tapOn:
+    id: "selection-close"
+- takeScreenshot: 36-keyboard-back
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*alpha beta gamma.*"
+    timeout: 15000
+- takeScreenshot: 36-sent-bubble

@@ -6,6 +6,7 @@
 #   tools/ci.sh stage [source_ref] [message]                    STAGING OTA (channel preview) — validate here BEFORE publishing to development
 #   tools/ci.sh e2e-android [build_run_id]                      Maestro on an Android emulator (APK from a build.yml run)
 #   tools/ci.sh e2e-ios [source_ref]                            Maestro on an iOS simulator (compiles/caches a SIMULATOR build)
+#   tools/ci.sh e2e-ios-cached [source_ref]                     Maestro using cache only; refuses native compilation
 #   tools/ci.sh status [workflow-file]                          last 5 runs
 #   tools/ci.sh wait <run_id>                                   block until the run completes, print conclusion
 #   tools/ci.sh results <run_id>                                print every "RESULT <flow>: PASS|FAIL" line of the run
@@ -22,7 +23,7 @@ APK_BUILD_RUN="${APK_BUILD_RUN:-37700302745}" # build.yml run whose APK the Andr
 
 dispatch() { # workflow-file key=value...
   local wf="$1"; shift
-  local args=(-f ref=main)
+  local args=(-f "ref=${CI_WORKFLOW_REF:-main}")
   for kv in "$@"; do args+=(-f "inputs[${kv%%=*}]=${kv#*=}"); done
   gh api -X POST "repos/$REPO/actions/workflows/$wf/dispatches" "${args[@]}"
   sleep 20
@@ -49,9 +50,11 @@ case "$cmd" in
   stage)   # MANDATORY step 1 of every round: publish the JS to the STAGING stream (channel preview). Never touches the owner's devices.
     OTA_CHANNEL=preview dispatch ota.yml "platform=all" "channel=preview" "source_ref=${1:-$BRANCH_DEFAULT}" "native_baseline=$BASELINE" "message=${2:-staging}" ;;
   e2e-android)
-    dispatch e2e-android.yml "build_run_id=${1:-${STAGING_APK_BUILD_RUN:-$APK_BUILD_RUN}}" ;;
+    dispatch e2e-android.yml "build_run_id=${1:-${STAGING_APK_BUILD_RUN:-$APK_BUILD_RUN}}" "only=${E2E_ONLY:-}" ;;
   e2e-ios)
     dispatch e2e-ios.yml "authorize_native_build=true" "source_ref=${1:-$BRANCH_DEFAULT}" "native_baseline=$BASELINE" "channel=${E2E_CHANNEL:-development}" "only=${E2E_ONLY:-}" ;;
+  e2e-ios-cached)
+    dispatch e2e-ios.yml "authorize_native_build=false" "cache_only=true" "source_ref=${1:-$BRANCH_DEFAULT}" "native_baseline=$BASELINE" "channel=${E2E_CHANNEL:-preview}" "only=${E2E_ONLY:-}" ;;
   status)
     gh api "repos/$REPO/actions/${1:+workflows/$1/}runs?per_page=5" --jq '.workflow_runs[]|[.id,.name,.status,.conclusion,.created_at]|@tsv' ;;
   wait) wait_run "${1:?run id}" ;;

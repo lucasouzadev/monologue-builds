@@ -1,0 +1,82 @@
+# M2 QA round 2: a video from the gallery. Tray tile (poster, play mark, duration, preview before sending), send, poster in the bubble, playback in the viewer
+# (never the system viewer), the viewer stays usable (close works), share shows no "payload".
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Clipe"
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- tapOn: "Photos"
+- takeScreenshot: 70-gallery
+# The video fixture is the fifth tile (second row, middle) in the gallery (four generated PNGs come first).
+- tapOn:
+    point: "50%,61%"
+- takeScreenshot: 70-video-selected
+- tapOn:
+    point: "86%,90%"
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 20000
+- waitForAnimationToEnd:
+    timeout: 4000
+- takeScreenshot: 70-tray-video
+# Tap the tile in the tray: it previews before sending.
+- tapOn:
+    id: "tray-preview"
+- extendedWaitUntil:
+    visible: "Close viewer"
+    timeout: 15000
+- takeScreenshot: 70-tray-preview
+- tapOn: "Close viewer"
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 10000
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: "Video.*"
+    timeout: 25000
+- waitForAnimationToEnd:
+    timeout: 4000
+- takeScreenshot: 70-bubble-poster
+# Open and play: the in-app viewer, never the device's viewer.
+- tapOn:
+    text: "Video.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Close viewer"
+    timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: 70-viewer-video
+- assertVisible: "Share"
+- tapOn: "Share"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: 70-share-sheet
+- assertNotVisible:
+    text: ".*payload.*"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "50%,8%"
+- extendedWaitUntil:
+    visible: "Close viewer"
+    timeout: 8000
+- tapOn: "Close viewer"
+# The app is still ours: the composer is reachable.
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 10000
+- takeScreenshot: 70-back-in-chat

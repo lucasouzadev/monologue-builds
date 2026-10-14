@@ -24,18 +24,22 @@ appId: app.monologue.mobile
     point: "50%,30%"
 - takeScreenshot: 23-balloon-dismissed
 - tapOn: "Delete"
+- extendedWaitUntil:
+    visible:
+      id: "callout-action-delete"
+    timeout: 10000
 - tapOn:
     id: "callout-action-delete"
-    optional: true
-- tapOn:
-    point: "62%,84%"
-    optional: true
+# A second coordinate tap after successful confirmation used to open the next conversation card.
+- extendedWaitUntil:
+    notVisible:
+      id: "callout"
+    timeout: 10000
 - takeScreenshot: 23-after-delete
 - tapOn:
     id: "spatial-close"
-    optional: true
-- tapOn:
-    text: "Close conversation previews"
-    optional: true
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 10000
 - takeScreenshot: 23-home-after-delete
 - assertVisible: "Open personal space"

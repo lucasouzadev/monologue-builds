@@ -1,0 +1,29 @@
+# Baseline 16: every style of the system menu's Format entry reaches the sent bubble (Italic, Underline, Strikethrough, Monospace; Bold is flow 75).
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Estilos"
+- runFlow:
+    file: support/apply-system-format.yaml
+    env:
+      TEXT: "estilo italico"
+      STYLE: "Italic"
+- runFlow:
+    file: support/apply-system-format.yaml
+    env:
+      TEXT: "estilo sublinhado"
+      STYLE: "Underline"
+- runFlow:
+    file: support/apply-system-format.yaml
+    env:
+      TEXT: "estilo tachado"
+      STYLE: "Strikethrough"
+- runFlow:
+    file: support/apply-system-format.yaml
+    env:
+      TEXT: "estilo mono"
+      STYLE: "Monospace"
+- takeScreenshot: 76-all-styles

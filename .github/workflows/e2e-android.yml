@@ -9,6 +9,33 @@ on:
         description: Run id of the build.yml run that produced monologue-android-<id>-1
         type: string
         required: true
+      only:
+        description: Optional space-separated baseline flow names; empty runs the full suite and audits
+        type: string
+        required: false
+        default: ''
+      profile:
+        description: Optional device profile for the emulator (tall-gestures = 1080x2460, gesture navigation, like the owner's phone)
+        type: string
+        required: false
+        default: ''
+      appearance:
+        description: Appearance for the baseline or targeted capture (full runs still execute all audits)
+        type: choice
+        required: false
+        default: light
+        options: [light, dark]
+      motion:
+        description: Keep existing harness settings, or explicitly verify normal/reduced animation behavior
+        type: choice
+        required: false
+        default: existing
+        options: [existing, normal, reduced]
+      expected_update_id:
+        description: Required OTA stamp prefix for this run; fails before later flows if another update was loaded
+        type: string
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -17,7 +44,8 @@ permissions:
 jobs:
   e2e:
     runs-on: ubuntu-24.04
-    timeout-minutes: 110
+    # The light suite alone approached 110 min and prevented dark/large-text audits from finishing.
+    timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -45,14 +73,20 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - uses: reactivecircus/android-emulator-runner@v2
+        env:
+          FLOW_ONLY: ${{ inputs.only }}
+          DEVICE_PROFILE: ${{ inputs.profile }}
+          QA_APPEARANCE: ${{ inputs.appearance }}
+          QA_MOTION: ${{ inputs.motion }}
+          EXPECTED_UPDATE_ID: ${{ inputs.expected_update_id }}
         with:
           api-level: 34
           arch: x86_64
           target: default
           profile: pixel_6
           cores: 2
-          ram-size: 3072M
-          heap-size: 1024M
+          ram-size: 4096M
+          heap-size: 1536M
           disk-size: 8192M
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
           disable-animations: true
@@ -69,5 +103,7 @@ jobs:
           if [ -n "$(ls)" ]; then
             git init -q && git checkout -q -b screens-android
             git -c user.email=ci@example.invalid -c user.name=ci add . && git -c user.email=ci@example.invalid -c user.name=ci commit -q -m "screenshots android ${{ github.run_id }}"
+            # Preserve evidence when another run later replaces the convenience branch.
+            git push -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:refs/heads/screens-android-${{ github.run_id }}
             git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" HEAD:refs/heads/screens-android
           fi

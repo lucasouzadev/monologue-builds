@@ -1,0 +1,30 @@
+# Owner 2026-10-14: attribution behind the physical notch, captured in screenshots; feedback below header chrome.
+# Decorative attribution is excluded from accessibility. Inspect original top pixels, not accessibility visibility.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Identity
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "New conversation"
+    timeout: 60000
+- assertNotVisible:
+    id: app-identity
+- takeScreenshot: 82-identity-home
+- runFlow: support/new-chat.yaml
+- takeScreenshot: 82-identity-conversation
+- tapOn: "Message.*"
+- takeScreenshot: 82-identity-keyboard
+- longPressOn: ".*QA root.*"
+- extendedWaitUntil:
+    visible: "Copy"
+    timeout: 5000
+- tapOn: "Copy"
+- takeScreenshot: 82-copied-feedback
+- longPressOn: ".*QA root.*"
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- takeScreenshot: 82-identity-focus
+- tapOn:
+    text: "Done|Close.*"
+    optional: true

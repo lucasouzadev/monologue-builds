@@ -3,6 +3,21 @@
 set -u
 cd "$(dirname "$0")/.."
 adb shell settings put global window_animation_scale 0 >/dev/null 2>&1
+case "${QA_MOTION:-existing}" in
+  normal|reduced)
+    qa_animation_scale=1
+    [ "$QA_MOTION" = reduced ] && qa_animation_scale=0
+    for setting in window_animation_scale transition_animation_scale animator_duration_scale; do
+      adb shell settings put global "$setting" "$qa_animation_scale" >/dev/null 2>&1
+    done ;;
+esac
+adb shell cmd uimode night "$([ "${QA_APPEARANCE:-light}" = dark ] && echo yes || echo no)" >/dev/null 2>&1
+case "${DEVICE_PROFILE:-}" in
+  tall-gestures)
+    # The owner's phone: a taller screen (1080x2460) with gesture navigation (no navigation bar).
+    adb shell wm size 1080x2460 >/dev/null 2>&1
+    adb shell cmd overlay enable com.android.internal.systemui.navbar.gestural >/dev/null 2>&1 || true ;;
+esac
 sleep 25  # let the system finish booting; a loaded emulator ANRs the launcher otherwise
 adb install -r Monologue.apk | tail -1
 # (Media fixtures disabled: pushing/scanning large images killed the emulator in CI. The Photos flow runs against the permission-granted, possibly empty gallery.)
@@ -16,9 +31,17 @@ def png(path, rgb, size=96):
 for i, c in enumerate([(200, 40, 30), (30, 120, 200), (60, 160, 80), (230, 180, 40)], 1): png(f'/tmp/fx{i}.png', c)
 PY
 for i in 1 2 3 4; do adb push /tmp/fx$i.png /sdcard/Pictures/fx$i.png >/dev/null 2>&1; adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/Pictures/fx$i.png >/dev/null 2>&1; done
+# A short video (37 KB) for the video flows; pushed last, so it is the newest item in the gallery.
+adb push maestro/fixtures/clip.mp4 /sdcard/Movies/fxclip.mp4 >/dev/null 2>&1; adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/Movies/fxclip.mp4 >/dev/null 2>&1
 sleep 3
-for perm in READ_MEDIA_IMAGES READ_MEDIA_VISUAL_USER_SELECTED READ_EXTERNAL_STORAGE; do adb shell pm grant app.monologue.mobile android.permission.$perm >/dev/null 2>&1 || true; done
+for perm in READ_MEDIA_IMAGES READ_MEDIA_VIDEO READ_MEDIA_VISUAL_USER_SELECTED READ_EXTERNAL_STORAGE; do adb shell pm grant app.monologue.mobile android.permission.$perm >/dev/null 2>&1 || true; done
 adb logcat -c
+if [ -n "${FLOW_ONLY:-}" ]; then
+  # Keep flows in place so their relative support/ imports resolve correctly.
+  # A subset is baseline/targeted evidence only; the final gate uses empty FLOW_ONLY.
+  bash maestro/run.sh
+  exit $?
+fi
 if [ -f maestro/quick.txt ]; then
   # Quick diagnosis: only the flows listed in maestro/quick.txt, then the app's log.
   rm -rf maestro/flows-quick; mkdir -p maestro/flows-quick
@@ -37,7 +60,7 @@ adb logcat -d -b all 2>/dev/null | grep -E "FATAL EXCEPTION|AndroidRuntime|React
 # Re-seed: the light pass ends with deleted/renamed conversations (flows 11, 23, 24), and the later passes look for the "Ola" row. Flow 01 creates it again.
 reseed() { rm -rf maestro/flows-seed; mkdir -p maestro/flows-seed; cp maestro/flows/01-create-open-send.yaml maestro/flows-seed/; FLOWS_DIR="$PWD/maestro/flows-seed" SHOT_PREFIX=seed- bash maestro/run.sh || true; }
 # Audit passes (dark, large text, huge text): see maestro/audit-passes.sh. Informational: the look is judged from the images.
-bash maestro/audit-passes.sh android
+bash maestro/audit-passes.sh android || code=1
 # Stress pass (owner request: performance on both platforms): burst sends and limit-sized messages through the real conversation
 # screen (the lab opens on the development update channel), then Reply Focus and a fast history scroll. Informational.
 adb shell am force-stop app.monologue.mobile >/dev/null 2>&1

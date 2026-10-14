@@ -38,3 +38,8 @@ appId: app.monologue.mobile
           timeout: 20000
 - takeScreenshot: 00b-build-stamp
 - assertNotVisible: ".*embedded.*"
+- runFlow:
+    when:
+      true: ${MAESTRO_EXPECTED_UPDATE_ID != null && MAESTRO_EXPECTED_UPDATE_ID.length > 0}
+    commands:
+      - assertVisible: ${".*" + MAESTRO_EXPECTED_UPDATE_ID + ".*"}

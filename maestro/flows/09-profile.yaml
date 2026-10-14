@@ -6,10 +6,7 @@ appId: app.monologue.mobile
     visible: "Open personal space"
     timeout: 60000
 - tapOn: "Open personal space"
-- tapOn: "Activity.*"
-- takeScreenshot: 09-activity
-- pressKey: back
-- takeScreenshot: 09-after-activity
+- takeScreenshot: 09-drawer
 - tapOn:
     text: "Integrations.*"
     optional: true

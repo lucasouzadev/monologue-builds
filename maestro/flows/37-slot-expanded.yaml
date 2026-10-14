@@ -1,0 +1,29 @@
+# Keyboard Slot in the Expanded editor: the pill rides the keyboard, the selector keeps the keyboard, the writing surface keeps its place.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "SlotExp"
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- tapOn: "Expand editor"
+- inputText: "expanded alpha beta"
+- takeScreenshot: 37-expanded-pill
+- longPressOn: "expanded alpha beta"
+- takeScreenshot: 37-longpress
+- tapOn: "Select [Aa]ll"
+- takeScreenshot: 37-selected
+- tapOn: "Format"
+- takeScreenshot: 37-after-aa
+- extendedWaitUntil:
+    visible: "Bold"
+    timeout: 8000
+- tapOn: "Bold"
+- takeScreenshot: 37-expanded-panel
+- tapOn:
+    id: "selection-close"
+- takeScreenshot: 37-expanded-keyboard-back

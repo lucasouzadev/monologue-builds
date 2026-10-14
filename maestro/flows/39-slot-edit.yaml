@@ -1,0 +1,52 @@
+# Keyboard Slot while editing a message: the edit keeps the stored formatting, formats change, the save keeps them.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "SlotEdit"
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  - longPressOn:
+                      point: "82%,83%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- retry:
+    maxRetries: 3
+    commands:
+      - tapOn: "Write.*"
+      - extendedWaitUntil:
+          visible: "Edit"
+          timeout: 4000
+- tapOn: "Edit"
+- extendedWaitUntil:
+    visible: "Cancel editing"
+    timeout: 10000
+# The edit field focuses with the bubble; when it does not (a stale tap target), tap the bubble at the centre of the screen.
+- tapOn: "Message.*"
+- takeScreenshot: 39-edit-pill
+- longPressOn: "Message.*"
+- tapOn: "Select [Aa]ll"
+# The app toolbar keeps the keyboard and native selection handles.
+- tapOn: "Format"
+- extendedWaitUntil:
+    visible: "Bold"
+    timeout: 8000
+- tapOn: "Bold"
+- takeScreenshot: 39-edit-panel
+- tapOn:
+    id: "selection-close"
+- tapOn: "Save.*"
+- takeScreenshot: 39-edit-saved

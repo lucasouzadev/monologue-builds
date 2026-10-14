@@ -1,0 +1,25 @@
+# Baseline 17: app-owned selection toolbar, all styles accessible without native menu paging.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Formato"
+- tapOn: "Message.*"
+- inputText: "formato escolhido"
+- assertNotVisible: "Formatting"
+- longPressOn: "formato escolhido"
+- tapOn: "Select [Aa]ll"
+- assertVisible:
+    id: "selection-tools"
+- takeScreenshot: 75-selected-menu
+- tapOn:
+    id: "selection-format"
+- takeScreenshot: 75-format-submenu
+- tapOn:
+    id: "selection-style-bold"
+- takeScreenshot: 75-bold-applied
+- tapOn: "Send message"
+- assertVisible: ".*formato escolhido.*"
+- takeScreenshot: 75-sent-bubble

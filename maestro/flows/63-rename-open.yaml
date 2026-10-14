@@ -1,0 +1,13 @@
+# Diagnostic: opening the Rename sheet must not crash (Android JS sheet). A failure prints the app logcat.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Ola.*"
+    timeout: 60000
+- tapOn: "Options for .*"
+- tapOn: "Rename"
+- extendedWaitUntil:
+    visible: "Leave the title empty.*"
+    timeout: 8000
+- takeScreenshot: 63-rename-open

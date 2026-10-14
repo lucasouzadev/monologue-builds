@@ -1,0 +1,46 @@
+# Character-by-character typing with real keyboard input and reversible syntax.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Teclas"
+- tapOn: "Message.*"
+- inputText: "*"
+- inputText: "t"
+- inputText: "e"
+- inputText: "s"
+- inputText: "t"
+- inputText: "e"
+- inputText: "*"
+- takeScreenshot: 84-inline-complete
+- eraseText: 1
+- takeScreenshot: 84-inline-undone
+- inputText: "*"
+- pressKey: Enter
+- inputText: "#"
+- inputText: " "
+- inputText: "T"
+- inputText: "i"
+- inputText: "t"
+- inputText: "u"
+- inputText: "l"
+- inputText: "o"
+- takeScreenshot: 84-heading
+- pressKey: Enter
+- inputText: ">"
+- inputText: " "
+- inputText: "c"
+- inputText: "i"
+- inputText: "t"
+- inputText: "a"
+- inputText: "d"
+- inputText: "o"
+- takeScreenshot: 84-quote
+- tapOn: "Send message"
+- assertVisible: ".*teste.*"
+- assertNotVisible: ".*\\*teste.*"
+- assertNotVisible: ".*# Titulo.*"
+- assertNotVisible: ".*> citado.*"
+- takeScreenshot: 84-sent

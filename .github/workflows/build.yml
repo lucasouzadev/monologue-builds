@@ -16,7 +16,7 @@ on:
         type: choice
         required: true
         default: '17'
-        options: ['17', '16', '09', '08', '07', '06']
+        options: ['17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
       platforms:
         description: Both by default; choose one only for an explicit scope or failed-platform retry
         type: choice
@@ -28,7 +28,7 @@ on:
         type: choice
         required: true
         default: development
-        options: [development, preview, production]
+        options: [development, preview, production, testers]
       source_ref:
         description: Branch, tag or SHA of the private lucasouzadev/monologue repository
         type: string
@@ -38,6 +38,10 @@ on:
         description: Upload the signed IPA directly to App Store Connect (TestFlight processing follows)
         type: boolean
         default: true
+      publish_latest:
+        description: Also publish the APK at the STABLE public key `latest/Monologue.apk` (the short link behind the custom domain); leave off for development/preview builds
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -66,7 +70,7 @@ jobs:
           PLATFORMS: ${{ inputs.platforms }}
         run: |
           test "$NATIVE_BUILD_AUTHORIZED" = true || { echo 'Explicit native build authorization is required.'; exit 1; }
-          case "$BUILD_CHANNEL" in development|preview|production) ;; *) exit 1 ;; esac
+          case "$BUILD_CHANNEL" in development|preview|production|testers) ;; *) exit 1 ;; esac
           case "$PLATFORMS" in both|android|ios) ;; *) exit 1 ;; esac
       - uses: actions/checkout@v4
         with:
@@ -169,6 +173,12 @@ jobs:
           key="releases/baseline-${{ inputs.native_baseline }}/${{ inputs.channel }}/$(openssl rand -hex 12)/Monologue-${{ inputs.native_baseline }}-${{ inputs.channel }}-${{ github.run_id }}.apk"
           aws s3 cp "$RUNNER_TEMP/monologue-artifacts/Monologue.apk" "s3://$R2_BUCKET/$key" --endpoint-url "$endpoint" --content-type application/vnd.android.package-archive --no-progress
           case "$R2_PUBLIC_BASE_URL" in https://*) ;; *) [ -n "$R2_PUBLIC_BASE_URL" ] && echo "R2_PUBLIC_BASE_URL must be a full https:// URL (got '$R2_PUBLIC_BASE_URL'): printing a signed link instead."; R2_PUBLIC_BASE_URL='' ;; esac
+          if [ "${{ inputs.publish_latest }}" = "true" ]; then
+            aws s3 cp "$RUNNER_TEMP/monologue-artifacts/Monologue.apk" "s3://$R2_BUCKET/latest/Monologue.apk" --endpoint-url "$endpoint" --content-type application/vnd.android.package-archive --cache-control "no-cache" --no-progress
+            sha256sum "$RUNNER_TEMP/monologue-artifacts/Monologue.apk" | cut -d' ' -f1 > "$RUNNER_TEMP/Monologue.apk.sha256.txt"
+            aws s3 cp "$RUNNER_TEMP/Monologue.apk.sha256.txt" "s3://$R2_BUCKET/latest/Monologue.apk.sha256.txt" --endpoint-url "$endpoint" --content-type text/plain --cache-control "no-cache" --no-progress
+            [ -n "$R2_PUBLIC_BASE_URL" ] && echo "Stable APK: ${R2_PUBLIC_BASE_URL%/}/latest/Monologue.apk"
+          fi
           if [ -n "$R2_PUBLIC_BASE_URL" ]; then echo "APK: ${R2_PUBLIC_BASE_URL%/}/$key"; else echo 'APK (signed, 7 days):'; aws s3 presign "s3://$R2_BUCKET/$key" --endpoint-url "$endpoint" --expires-in 604800; fi
           echo "sha256: $(sha256sum "$RUNNER_TEMP/monologue-artifacts/Monologue.apk" | cut -d' ' -f1)"
       - name: Encrypt artifact (this repository is public)

@@ -1,0 +1,66 @@
+# Owner QA 2026-10-09 #1/#1.1 (Reply focus: bubbles must pass under the Composer like the Timeline; light preview bubble) and #8 (conversation Reveal).
+# Evidence flow: screenshots are READ.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Focus
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Message.*"
+- inputText: "Um"
+- tapOn: "Send message"
+- inputText: "Dois"
+- tapOn: "Send message"
+- inputText: "Tres"
+- tapOn: "Send message"
+- takeScreenshot: 51-chat
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  - longPressOn:
+                      point: "82%,60%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- takeScreenshot: 51-menu
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- takeScreenshot: 51-reply-focus
+- inputText: "r1"
+- tapOn: "Send message"
+- inputText: "r2"
+- tapOn: "Send message"
+- inputText: "r3"
+- tapOn: "Send message"
+- inputText: "r4"
+- tapOn: "Send message"
+- takeScreenshot: 51-reply-focus-several
+- swipe:
+    direction: DOWN
+    duration: 600
+- takeScreenshot: 51-reply-focus-scrolled-down
+- swipe:
+    direction: UP
+    duration: 300
+- takeScreenshot: 51-reply-focus-scrolled-up
+- tapOn:
+    text: "Done|Close.*"
+    optional: true
+- extendedWaitUntil:
+    visible: "Conversation info"
+    timeout: 10000
+- tapOn: "Conversation info"
+- takeScreenshot: 51-info-reveal
+- tapOn:
+    id: "info-favorites"
+    optional: true
+- takeScreenshot: 51-info-favorites-page
