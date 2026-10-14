@@ -3,6 +3,24 @@
 set -u
 export PATH="$PATH:$HOME/.maestro/bin"
 ROOT="$(cd "$(dirname "$0")" && pwd)"
+case "${FLOW_ONLY:-}" in
+  '@huge '*)
+    # Targeted accessibility check before the long full-suite/audit gate.
+    if command -v xcrun >/dev/null && [ -n "${1:-}" ]; then
+      xcrun simctl ui "$1" content_size accessibility-extra-extra-extra-large
+    else
+      adb shell settings put system font_scale 2.0
+    fi
+    mkdir -p "$ROOT/audit-huge"
+    cp -R "$ROOT/flows/support" "$ROOT/audit-huge/"
+    for targeted_file in "$ROOT"/flows/*.yaml; do
+      sed 's/takeScreenshot: /takeScreenshot: huge-/' "$targeted_file" > "$ROOT/audit-huge/${targeted_file##*/}"
+    done
+    FLOW_ONLY="${FLOW_ONLY#@huge }"
+    FLOWS_DIR="$ROOT/audit-huge"
+    SHOT_PREFIX=huge-
+    ;;
+esac
 cd "${FLOWS_DIR:-$ROOT/flows}"
 PFX="${SHOT_PREFIX:-}"
 status=0
@@ -13,7 +31,25 @@ for flow in *.yaml; do
   # FLOW_ONLY="00-warm-update 00b-build-stamp 28-sheet-visuals": a verification subset (the staging gate runs this first, then the full suite).
   if [ -n "${FLOW_ONLY:-}" ] && ! echo " $FLOW_ONLY " | grep -q " ${flow%.yaml} "; then continue; fi
   echo; echo "=== $flow ($(date +%H:%M:%S)) ==="
-  if $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" "$flow"; then echo "RESULT $flow: PASS"; else
+  flow_result=0
+  $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" "$flow" || flow_result=$?
+  if [ "$flow" = "00b-build-stamp.yaml" ] && [ "$flow_result" -ne 0 ]; then
+    # Before feature acceptance only: slow update downloads can need another
+    # launch. Each bounded retry must still prove the exact expected OTA stamp.
+    for bootstrap_attempt in 1 2; do
+      echo "=== initial OTA source retry $bootstrap_attempt (no feature acceptance yet) ==="
+      sleep 45
+      if command -v xcrun >/dev/null && [ -n "${1:-}" ]; then
+        xcrun simctl terminate "$1" app.monologue.mobile >/dev/null 2>&1 || true
+      elif command -v adb >/dev/null; then
+        adb shell am force-stop app.monologue.mobile >/dev/null 2>&1 || true
+      fi
+      flow_result=0
+      $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" "$flow" || flow_result=$?
+      [ "$flow_result" -eq 0 ] && break
+    done
+  fi
+  if [ "$flow_result" -eq 0 ]; then echo "RESULT $flow: PASS"; else
     echo "RESULT $flow: FAIL"; status=1
     # A wrong/embedded OTA makes every later result invalid; publish the failure image and stop.
     if [ "$flow" = "00b-build-stamp.yaml" ]; then
@@ -54,7 +90,17 @@ if [ -n "${FLOW_ONLY:-}" ] && [ -n "${EXPECTED_UPDATE_ID:-}" ] && [ "$flow" != "
   if $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" 00b-build-stamp.yaml; then
     echo 'RESULT post-flow OTA stamp: PASS'
   else
-    echo 'RESULT post-flow OTA stamp: FAIL'; exit 1
+    echo 'RESULT post-flow OTA stamp: FAIL'
+    # A driver/launch timeout needs evidence too; previously it exited before
+    # saving the screen or crash buffer and could not be diagnosed.
+    if command -v adb >/dev/null && [ -z "${1:-}" ]; then
+      timeout 20 adb logcat -d -b all 2>/dev/null | grep -E 'FATAL|AndroidRuntime|ANR in|JavascriptException|ErrorRecovery|Unable to load' | tail -80
+      timeout 10 adb exec-out screencap -p > "$SH/${PFX}post-source-failure.png" 2>/dev/null || true
+      timeout 10 adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 && adb pull /sdcard/ui.xml "$SH/${PFX}post-source-failure.xml" >/dev/null 2>&1 || true
+    elif command -v xcrun >/dev/null && [ -n "${1:-}" ]; then
+      xcrun simctl io "$1" screenshot "$SH/${PFX}post-source-failure.png" >/dev/null 2>&1 || true
+    fi
+    exit 1
   fi
 fi
 done

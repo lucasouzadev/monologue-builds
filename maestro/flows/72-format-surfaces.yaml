@@ -57,6 +57,11 @@ appId: app.monologue.mobile
     visible: ".*resposta.*"
     timeout: 15000
 - takeScreenshot: 72-reply-quote
+- tapOn:
+    id: "thought-focus-close"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 15000
 # Continue from the formatted message.
 - retry:
     maxRetries: 3

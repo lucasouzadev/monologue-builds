@@ -54,6 +54,11 @@ on:
         type: string
         required: false
         default: ''
+      testflight_build:
+        description: Optional existing iOS build number to inspect in App Store Connect (read only)
+        type: string
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -190,6 +195,22 @@ jobs:
           fi
 
       # Metadata-only gate. A green report cannot replace inspecting the screenshots.
+      - name: Read existing TestFlight build readiness (no upload or distribution)
+        if: always() && inputs.testflight_build != ''
+        env:
+          ASC_KEY_ID: ${{ vars.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ vars.ASC_ISSUER_ID }}
+          ASC_API_KEY_BASE64: ${{ secrets.ASC_API_KEY_BASE64 }}
+          TESTFLIGHT_BUILD: ${{ inputs.testflight_build }}
+        run: node builds/maestro/testflight-status.cjs "$TESTFLIGHT_BUILD"
+      - name: Retain TestFlight readiness receipt
+        if: always() && inputs.testflight_build != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: monologue-testflight-status-${{ github.run_id }}
+          path: testflight-status.json
+          if-no-files-found: error
+
       - name: Fail closed on missing or damaged screenshot evidence
         if: always()
         run: |

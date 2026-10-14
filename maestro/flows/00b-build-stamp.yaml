@@ -2,7 +2,20 @@
 # "<channel> · embedded" (= NO update was applied: the E2E would be testing the old embedded bundle, so every later result is void).
 appId: app.monologue.mobile
 ---
-- launchApp
+- launchApp:
+    # Inspect the JS that is running now. Another cold restart here could hide a
+    # previous flow's rollback and unnecessarily restarts the app twice per flow.
+    stopApp: false
+- openLink: "monologue:///"
+- extendedWaitUntil:
+    visible: "Open in.*Monologue.*"
+    timeout: 4000
+    optional: true
+- runFlow:
+    when:
+      visible: "Open in.*Monologue.*"
+    commands:
+      - tapOn: "Open"
 - extendedWaitUntil:
     visible: "Monologue"
     timeout: 60000
@@ -18,8 +31,19 @@ appId: app.monologue.mobile
       - retry:
           maxRetries: 3
           commands:
-            - tapOn:
-                point: "88%,9%"
+            - runFlow:
+                when:
+                  visible: "Open personal space"
+                commands:
+                  - tapOn: "Open personal space"
+            - runFlow:
+                when:
+                  notVisible: "Settings.*"
+                commands:
+                  # Current main moved attribution into the status area. The
+                  # inspected header button centre is now at 9%, not 12%.
+                  - tapOn:
+                      point: "88%,9%"
             - extendedWaitUntil:
                 visible: "Settings.*"
                 timeout: 6000
