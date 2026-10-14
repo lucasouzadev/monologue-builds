@@ -92,6 +92,26 @@ jobs:
           disable-animations: true
           script: bash maestro/android-e2e.sh
 
+      # Metadata-only gate. A green report cannot replace inspecting the screenshots.
+      - name: Fail closed on missing or damaged screenshot evidence
+        if: always()
+        run: |
+          python3 maestro/quality-evidence.py --platform android ${{ inputs.only == '' && '--full' || '' }} --output maestro/maestro-quality-evidence.json
+      - name: Retain per-run screenshot evidence and audit manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: monologue-android-visual-qa-${{ github.run_id }}
+          path: |
+            maestro/maestro-quality-evidence.json
+            maestro/flows/*.png
+            maestro/shots/*.png
+            maestro/audit-*/*.png
+            maestro/stress/*.png
+            maestro/stress-android/*.png
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Publish screenshots (test data only) to a screens branch
         if: always()
         run: |
