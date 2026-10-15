@@ -102,7 +102,7 @@ jobs:
       # Content-free per-flow outcome (flow file names and PASS/FAIL only): lets an agent see WHICH acceptance flow failed without the encrypted evidence.
       - name: Per-flow results (names only)
         if: always()
-        run: grep -E '^RESULT ' "$RUNNER_TEMP/monologue-maestro-android.log" || echo 'No per-flow results recorded.'
+        run: grep -E '^(RESULT|STEP) ' "$RUNNER_TEMP/monologue-maestro-android.log" || echo 'No per-flow results recorded.'
       # Metadata-only gate. A green report cannot replace inspecting the screenshots.
       - name: Fail closed on missing or damaged screenshot evidence
         if: always()

@@ -182,7 +182,7 @@ jobs:
       # Content-free per-flow outcome (flow file names and PASS/FAIL only).
       - name: Per-flow results (names only)
         if: always()
-        run: grep -hE '^RESULT ' "$RUNNER_TEMP"/qa-logs/ios-*.log 2>/dev/null || echo 'No per-flow results recorded.'
+        run: grep -hE '^(RESULT|STEP) ' "$RUNNER_TEMP"/qa-logs/ios-*.log 2>/dev/null || echo 'No per-flow results recorded.'
 
       - name: Audit passes (dark, large text, huge text)
         if: always() && steps.simulator.outcome == 'success' && inputs.only == ''

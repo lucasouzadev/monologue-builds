@@ -1,4 +1,4 @@
-# Round 6 · item 13 — the video viewer offers mute, playback speed, picture in picture and Edit video.
+# Round 6 · item 13 (JS part) — the video viewer offers mute and playback speed in its tools pill. PiP and Edit video: 98b (native baseline 20).
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -34,7 +34,3 @@ appId: app.monologue.mobile
     id: "viewer-mute"
 - assertVisible:
     id: "viewer-speed"
-- assertVisible:
-    id: "viewer-pip"
-- assertVisible:
-    id: "viewer-edit-video"

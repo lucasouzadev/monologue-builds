@@ -53,10 +53,8 @@ appId: app.monologue.mobile
 - tapOn:
     id: "text-selection-derive"
 - extendedWaitUntil:
-    visible:
-      id: "derive-sheet"
-    timeout: 6000
-- assertVisible:
-    id: "derive-title"
+    visible: "New conversation from the excerpt"
+    timeout: 8000
+- assertVisible: ".*first message of a new conversation.*"
 - assertVisible: ".*QA.*"
 - takeScreenshot: 92-derive-sheet

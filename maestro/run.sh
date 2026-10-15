@@ -32,7 +32,8 @@ for flow in *.yaml; do
   if [ -n "${FLOW_ONLY:-}" ] && ! echo " $FLOW_ONLY " | grep -q " ${flow%.yaml} "; then continue; fi
   echo; echo "=== $flow ($(date +%H:%M:%S)) ==="
   flow_result=0
-  $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" "$flow" || flow_result=$?
+  $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" "$flow" 2>&1 | tee "$SH/.last-flow.log" || true
+  flow_result=${PIPESTATUS[0]}
   if [ "$flow" = "00b-build-stamp.yaml" ] && [ "$flow_result" -ne 0 ]; then
     # Before feature acceptance only: slow update downloads can need another
     # launch. Each bounded retry must still prove the exact expected OTA stamp.
@@ -51,6 +52,8 @@ for flow in *.yaml; do
   fi
   if [ "$flow_result" -eq 0 ]; then echo "RESULT $flow: PASS"; else
     echo "RESULT $flow: FAIL"; status=1
+    # Content-free reason: only Maestro's own failure line, which names the selector from this public flow file (never app text or screens).
+    grep -oE "(Assertion is false|Element not found)[^|]{0,140}" "$SH/.last-flow.log" 2>/dev/null | head -1 | sed "s/^/STEP $flow: /"
     # A wrong/embedded OTA makes every later result invalid; publish the failure image and stop.
     if [ "$flow" = "00b-build-stamp.yaml" ]; then
       if command -v adb >/dev/null && [ -z "${1:-}" ]; then
