@@ -27,14 +27,14 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Unmark"
     timeout: 4000
-# Copy: closes and says so in a pill.
+# Copy: closes and says so in a pill (it stays ~1.6 s: wait for it right away, before anything else).
 - tapOn:
     id: "text-selection-copy"
 - extendedWaitUntil:
-    notVisible:
-      id: "text-selection-bubble"
-    timeout: 4000
-- assertVisible: ".*Copied.*"
+    visible: ".*Copied.*"
+    timeout: 3000
+- assertNotVisible:
+    id: "text-selection-bubble"
 - takeScreenshot: 92-copied
 # Derive: a sheet with a title field and the excerpt already filled.
 - runFlow:
