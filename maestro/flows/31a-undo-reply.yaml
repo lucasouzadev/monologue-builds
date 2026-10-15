@@ -35,15 +35,16 @@ env:
 - assertVisible: "Undo reply"
 - takeScreenshot: 31a-undo-reply-menu
 - tapOn: "Undo reply"
-- runFlow:
-    when:
-      visible:
-        id: thought-focus-close
-    commands:
-      - tapOn:
-          id: thought-focus-close
+# Round 6b · 2: inside Reply Focus, Undo takes the reply back for rewriting: it leaves the conversation and its text returns to the Focus Composer.
+- extendedWaitUntil:
+    visible: ".*QA reply preserved.*"
+    timeout: 8000
+- assertVisible:
+    id: thought-focus-close
+- takeScreenshot: 31a-back-in-composer
+- tapOn:
+    id: thought-focus-close
 - assertVisible: ".*QA root.*"
-- assertVisible: ".*QA reply preserved.*"
 - assertNotVisible:
     id: reply-summary
 - takeScreenshot: 31a-restored
