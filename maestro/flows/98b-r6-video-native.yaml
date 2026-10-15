@@ -11,9 +11,9 @@ appId: app.monologue.mobile
     visible: "Photos"
     timeout: 10000
 - tapOn: "Photos"
-# The pushed clip is the newest item: the first tile.
+# The video fixture is the fifth tile (second row, middle): four generated PNGs come first (as in flow 70).
 - tapOn:
-    point: "20%,47%"
+    point: "50%,61%"
 - tapOn:
     point: "86%,90%"
 - extendedWaitUntil:
@@ -21,10 +21,10 @@ appId: app.monologue.mobile
     timeout: 20000
 - tapOn: "Send message"
 - extendedWaitUntil:
-    visible: "(Video|Photo).*"
+    visible: "Video.*"
     timeout: 20000
 - tapOn:
-    text: "(Video|Photo).*"
+    text: "Video.*"
     index: 0
 - extendedWaitUntil:
     visible: "Close viewer"

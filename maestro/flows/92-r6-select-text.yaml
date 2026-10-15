@@ -6,18 +6,8 @@ appId: app.monologue.mobile
     file: support/new-chat.yaml
     env:
       QA_PREFIX: "R6Sel"
-- retry:
-    maxRetries: 3
-    commands:
-      - longPressOn: ".*QA root.*"
-      - extendedWaitUntil:
-          visible: "Select text"
-          timeout: 5000
-- tapOn: "Select text"
-- extendedWaitUntil:
-    visible:
-      id: "text-selection-bubble"
-    timeout: 8000
+- runFlow:
+    file: support/open-select-text.yaml
 - runFlow:
     file: support/select-word.yaml
 - tapOn:
@@ -27,9 +17,16 @@ appId: app.monologue.mobile
 - takeScreenshot: 92-after-mark
 - assertVisible:
     id: "text-selection-bubble"
+# The press on Mark may collapse the selection: pick the word again only if the capsule does not already read Unmark.
 - runFlow:
-    file: support/select-word.yaml
-- assertVisible: "Unmark"
+    when:
+      notVisible: "Unmark"
+    commands:
+      - runFlow:
+          file: support/select-word.yaml
+- extendedWaitUntil:
+    visible: "Unmark"
+    timeout: 4000
 # Copy: closes and says so in a pill.
 - tapOn:
     id: "text-selection-copy"
@@ -40,14 +37,8 @@ appId: app.monologue.mobile
 - assertVisible: ".*Copied.*"
 - takeScreenshot: 92-copied
 # Derive: a sheet with a title field and the excerpt already filled.
-- retry:
-    maxRetries: 3
-    commands:
-      - longPressOn: ".*QA root.*"
-      - extendedWaitUntil:
-          visible: "Select text"
-          timeout: 5000
-- tapOn: "Select text"
+- runFlow:
+    file: support/open-select-text.yaml
 - runFlow:
     file: support/select-word.yaml
 - tapOn:

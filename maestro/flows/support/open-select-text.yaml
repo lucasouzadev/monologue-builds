@@ -1,0 +1,25 @@
+# Long-presses the QA root message and opens Select text (iOS: the canvas is one element, so a second press on the bubble body if the menu did not come up — as in flow 40).
+appId: app.monologue.mobile
+---
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Select text"
+                commands:
+                  - longPressOn:
+                      point: "82%,83%"
+      - extendedWaitUntil:
+          visible: "Select text"
+          timeout: 5000
+- tapOn: "Select text"
+- extendedWaitUntil:
+    visible:
+      id: "text-selection-bubble"
+    timeout: 8000

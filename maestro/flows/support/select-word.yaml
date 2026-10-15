@@ -1,15 +1,21 @@
-# Selects the first word in the Select-text bubble (Android: long press on it; iOS: double tap the field).
+# Selects the first word in the Select-text bubble (Android: long press on it; iOS: double tap the field), and waits until the bubble counts the selection.
 appId: app.monologue.mobile
 ---
-- runFlow:
-    when:
-      platform: Android
+- retry:
+    maxRetries: 2
     commands:
-      - longPressOn:
-          point: "24%,47%"
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - doubleTapOn:
-          id: "text-selection-field"
+      - runFlow:
+          when:
+            platform: Android
+          commands:
+            - longPressOn:
+                point: "24%,47%"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - doubleTapOn:
+                id: "text-selection-field"
+      - extendedWaitUntil:
+          visible: ".*characters selected.*"
+          timeout: 3000
