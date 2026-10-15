@@ -38,3 +38,15 @@ appId: app.monologue.mobile
     id: "edit-result-update"
 - assertVisible:
     id: "edit-result-send-new"
+# Update this photo → a pill confirms it with Undo; Undo restores the original.
+- tapOn:
+    id: "edit-result-update"
+- extendedWaitUntil:
+    visible: "Photo updated"
+    timeout: 6000
+- takeScreenshot: 96-photo-updated
+- tapOn: "Undo photo update"
+- extendedWaitUntil:
+    visible: "Original photo restored"
+    timeout: 6000
+- takeScreenshot: 96-photo-restored
