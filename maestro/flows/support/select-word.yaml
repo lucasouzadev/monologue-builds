@@ -1,0 +1,15 @@
+# Selects the first word in the Select-text bubble (Android: long press on it; iOS: double tap the field).
+appId: app.monologue.mobile
+---
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - longPressOn:
+          point: "24%,47%"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - doubleTapOn:
+          id: "text-selection-field"

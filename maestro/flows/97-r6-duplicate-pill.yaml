@@ -1,0 +1,26 @@
+# Round 6 · item 9 — attaching a photo that is already in the conversation shows no "Already added to your messages" pill.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "R6Dup"
+- runFlow:
+    file: support/attach-photo.yaml
+    env:
+      CAPTION: ""
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Photos"
+    timeout: 10000
+- tapOn: "Photos"
+- tapOn:
+    point: "20%,47%"
+- tapOn:
+    point: "86%,90%"
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 20000
+- takeScreenshot: 97-same-photo-again
+- assertNotVisible: "Already added to your messages.*"

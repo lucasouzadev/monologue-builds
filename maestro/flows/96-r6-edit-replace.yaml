@@ -1,0 +1,40 @@
+# Round 6 · items 7 and 8 — editing a SENT photo from the viewer saves, and then offers to update this message or send the result as a new one.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "R6Repl"
+- runFlow:
+    file: support/attach-photo.yaml
+    env:
+      CAPTION: ""
+- tapOn:
+    text: "Photo.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Close viewer"
+    timeout: 10000
+- tapOn:
+    id: "viewer-edit"
+- extendedWaitUntil:
+    visible:
+      id: "media-editor"
+    timeout: 8000
+- tapOn:
+    id: "media-editor-crop-toggle"
+- tapOn:
+    id: "media-editor-rotate"
+- tapOn:
+    id: "media-editor-crop-apply"
+- tapOn:
+    id: "media-editor-done"
+- waitForAnimationToEnd:
+    timeout: 3000
+- assertNotVisible: "Could not save the edit.*"
+- takeScreenshot: 96-after-done
+- assertVisible:
+    id: "edit-result-update"
+- assertVisible:
+    id: "edit-result-send-new"

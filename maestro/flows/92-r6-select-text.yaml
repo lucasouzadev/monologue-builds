@@ -1,0 +1,62 @@
+# Round 6 · item 3 — Select text: Mark keeps the bubble open and turns into Unmark; Copy closes with a "Copied" pill; Derive opens a sheet with a title field and the picked text.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "R6Sel"
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - extendedWaitUntil:
+          visible: "Select text"
+          timeout: 5000
+- tapOn: "Select text"
+- extendedWaitUntil:
+    visible:
+      id: "text-selection-bubble"
+    timeout: 8000
+- runFlow:
+    file: support/select-word.yaml
+- tapOn:
+    id: "text-selection-mark"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 92-after-mark
+- assertVisible:
+    id: "text-selection-bubble"
+- runFlow:
+    file: support/select-word.yaml
+- assertVisible: "Unmark"
+# Copy: closes and says so in a pill.
+- tapOn:
+    id: "text-selection-copy"
+- extendedWaitUntil:
+    notVisible:
+      id: "text-selection-bubble"
+    timeout: 4000
+- assertVisible: ".*Copied.*"
+- takeScreenshot: 92-copied
+# Derive: a sheet with a title field and the excerpt already filled.
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - extendedWaitUntil:
+          visible: "Select text"
+          timeout: 5000
+- tapOn: "Select text"
+- runFlow:
+    file: support/select-word.yaml
+- tapOn:
+    id: "text-selection-derive"
+- extendedWaitUntil:
+    visible:
+      id: "derive-sheet"
+    timeout: 6000
+- assertVisible:
+    id: "derive-title"
+- assertVisible: ".*QA.*"
+- takeScreenshot: 92-derive-sheet

@@ -1,0 +1,40 @@
+# Round 6 · item 13 — the video viewer offers mute, playback speed, picture in picture and Edit video.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "R6Video"
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Photos"
+    timeout: 10000
+- tapOn: "Photos"
+# The pushed clip is the newest item: the first tile.
+- tapOn:
+    point: "20%,47%"
+- tapOn:
+    point: "86%,90%"
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 20000
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: "(Video|Photo).*"
+    timeout: 20000
+- tapOn:
+    text: "(Video|Photo).*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Close viewer"
+    timeout: 10000
+- takeScreenshot: 98-video-viewer
+- assertVisible:
+    id: "viewer-mute"
+- assertVisible:
+    id: "viewer-speed"
+- assertVisible:
+    id: "viewer-pip"
+- assertVisible:
+    id: "viewer-edit-video"

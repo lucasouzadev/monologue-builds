@@ -1,0 +1,49 @@
+# Round 6 · item 1.3 — the bubble tail goes away ONLY while the message is long-pressed and comes back when the menu closes; scrolling never removes it.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "R6Tail"
+- assertVisible:
+    id: "message-bubble-tail"
+- takeScreenshot: 90-tail-rest
+# Scrolling the timeline must keep it.
+- swipe:
+    start: "50%,40%"
+    end: "50%,70%"
+    duration: 400
+- swipe:
+    start: "50%,70%"
+    end: "50%,40%"
+    duration: 400
+- waitForAnimationToEnd:
+    timeout: 2000
+- assertVisible:
+    id: "message-bubble-tail"
+- takeScreenshot: 90-tail-after-scroll
+# Long press: the tail is lifted with the bubble (hidden) while the menu is open.
+- longPressOn: ".*QA root.*"
+- extendedWaitUntil:
+    visible: ".*(Copy|Select text|Write|Delete).*"
+    timeout: 6000
+- takeScreenshot: 90-tail-menu-open
+- assertNotVisible:
+    id: "message-bubble-tail"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "50%,8%"
+- waitForAnimationToEnd:
+    timeout: 2000
+- assertVisible:
+    id: "message-bubble-tail"
+- takeScreenshot: 90-tail-menu-closed
