@@ -1,0 +1,15 @@
+# Leaves the current panel/sheet on either platform. Never fails: it is a navigation helper for the full-app tour.
+appId: app.monologue.mobile
+---
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: "(Done|Close.*|Back|Cancel.*)"
+          optional: true

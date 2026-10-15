@@ -1,0 +1,127 @@
+# FULL-APP TOUR 2/6 — Composer: typing, titles, emoji, styles at the cursor, link preview, Tools panel, expanded editor, selection tools.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "TourCompose"
+- takeScreenshot: 121-chat-initial
+- tapOn: "Message.*"
+- inputText: "# Titulo grande"
+- takeScreenshot: 121-heading-typing
+- inputText: " "
+- takeScreenshot: 121-heading-line
+- eraseText: 40
+- inputText: "corpo normal com acento: ação, coração, é"
+- takeScreenshot: 121-accents
+- eraseText: 60
+- inputText: "emoji 😀🎉❤️"
+- takeScreenshot: 121-emoji
+- eraseText: 40
+# Style at the cursor
+- inputText: "inicio "
+- longPressOn:
+    text: "inicio.*"
+    optional: true
+- tapOn:
+    text: "Select [Aa]ll"
+    optional: true
+- takeScreenshot: 121-selected
+- tapOn:
+    text: "Format"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 121-format-panel
+- tapOn:
+    text: "Bold"
+    optional: true
+- tapOn:
+    text: "Italic"
+    optional: true
+- tapOn:
+    text: "Underline"
+    optional: true
+- tapOn:
+    text: "Strikethrough"
+    optional: true
+- takeScreenshot: 121-format-applied
+- tapOn:
+    id: "selection-close"
+    optional: true
+- takeScreenshot: 121-keyboard-back
+- inputText: "digitado depois"
+- takeScreenshot: 121-style-at-cursor
+# Spell-checker / suggestions on a misspelt word
+- inputText: " teh quik brwn fox"
+- takeScreenshot: 121-misspelt
+- eraseText: 200
+# Link preview while typing
+- inputText: "https://example.com"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: 121-link-preview
+- tapOn:
+    id: "composer-link-preview-dismiss"
+    optional: true
+- takeScreenshot: 121-link-preview-dismissed
+- eraseText: 60
+# Tools panel
+- tapOn:
+    text: "Tools.*"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 121-tools-panel
+- tapOn:
+    text: "Photos"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 121-photos-gallery
+- runFlow: support/back.yaml
+- tapOn:
+    text: "Tools.*"
+    optional: true
+- tapOn:
+    text: "Camera"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 121-camera
+- runFlow: support/back.yaml
+- tapOn:
+    text: "Tools.*"
+    optional: true
+- tapOn:
+    text: "Scan.*"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 121-scanner
+- runFlow: support/back.yaml
+# Expanded editor
+- tapOn:
+    text: "Tools.*"
+    optional: true
+- tapOn:
+    text: "Expand editor"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 121-expanded-empty
+- inputText: "Linha um\nLinha dois\nLinha tres\nLinha quatro\nLinha cinco\nLinha seis\nLinha sete\nLinha oito\nLinha nove\nLinha dez\nLinha onze\nLinha doze"
+- takeScreenshot: 121-expanded-long-text
+- tapOn:
+    id: "composer-collapse"
+    optional: true
+- takeScreenshot: 121-expanded-collapsed
+- tapOn:
+    text: "Send message"
+    optional: true
+- extendedWaitUntil:
+    visible: ".*Linha um.*"
+    timeout: 15000
+    optional: true
+- takeScreenshot: 121-sent-multiline

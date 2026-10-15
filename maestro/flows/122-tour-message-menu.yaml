@@ -1,0 +1,144 @@
+# FULL-APP TOUR 3/6 — Message bubble: menu, Select text, Reply/Continue Focus, Edit, marks, Move, Merge, Calendar, Share, Delete + undo.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "TourMenu"
+- tapOn: "Message.*"
+- inputText: "segunda mensagem do tour"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*segunda mensagem.*"
+    timeout: 15000
+- takeScreenshot: 122-two-messages
+- runFlow: support/msg-menu.yaml
+- takeScreenshot: 122-menu
+- tapOn:
+    text: "Write.*"
+    optional: true
+- takeScreenshot: 122-menu-write
+- runFlow: support/back.yaml
+# Select text
+- runFlow: support/msg-menu.yaml
+- tapOn: "Select text"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 122-select-text
+- runFlow: support/select-word.yaml
+- takeScreenshot: 122-select-word
+- tapOn:
+    id: "text-selection-mark"
+    optional: true
+- takeScreenshot: 122-select-marked
+- tapOn:
+    id: "text-selection-close"
+    optional: true
+- runFlow: support/back.yaml
+# Reply Focus
+- runFlow: support/msg-menu.yaml
+- tapOn:
+    text: "Write.*"
+    optional: true
+- tapOn:
+    text: "Reply"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 122-reply-focus
+- inputText: "resposta do tour"
+- takeScreenshot: 122-reply-focus-typed
+- tapOn:
+    text: "Send message"
+    optional: true
+- takeScreenshot: 122-reply-sent
+- longPressOn:
+    text: ".*resposta do tour.*"
+    optional: true
+- takeScreenshot: 122-reply-menu-undo
+- tapOn:
+    text: "Undo reply"
+    optional: true
+- takeScreenshot: 122-reply-undone
+- tapOn:
+    id: "thought-focus-close"
+    optional: true
+- takeScreenshot: 122-focus-closed
+# Continue Focus
+- runFlow: support/msg-menu.yaml
+- tapOn:
+    text: "Write.*"
+    optional: true
+- tapOn:
+    text: "Continue"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 122-continue-focus
+- tapOn:
+    id: "thought-focus-close"
+    optional: true
+# Edit
+- runFlow: support/msg-menu.yaml
+- tapOn:
+    text: "Edit"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 122-edit-mode
+- runFlow: support/back.yaml
+# Favorite / Pin / Move / Merge / Calendar / Share
+- runFlow: support/msg-menu.yaml
+- tapOn:
+    text: "Favorite"
+    optional: true
+- takeScreenshot: 122-favorited
+- runFlow: support/msg-menu.yaml
+- tapOn:
+    text: "Pin"
+    optional: true
+- takeScreenshot: 122-pinned-banner
+- runFlow: support/msg-menu.yaml
+- tapOn:
+    text: "Move"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 122-move-sheet
+- runFlow: support/back.yaml
+- runFlow: support/msg-menu.yaml
+- tapOn:
+    text: "Organi[sz]e.*"
+    optional: true
+- tapOn:
+    text: "Merge"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 122-merge-selection
+- runFlow: support/back.yaml
+- runFlow: support/msg-menu.yaml
+- tapOn:
+    text: "Add to Calendar"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 122-calendar-sheet
+- runFlow: support/back.yaml
+- runFlow: support/msg-menu.yaml
+- tapOn:
+    text: "Share"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 122-share-sheet
+- runFlow: support/back.yaml
+# Delete + undo
+- runFlow: support/msg-menu.yaml
+- tapOn:
+    text: "Delete"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 122-delete-confirm-or-undo

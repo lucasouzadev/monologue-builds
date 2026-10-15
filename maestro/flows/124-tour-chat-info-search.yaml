@@ -1,0 +1,80 @@
+# FULL-APP TOUR 5/6 — Chat header, details sheet (rename), favorites, options menu, archive/unarchive, in-chat and global search, Go to latest.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "TourInfo"
+- repeat:
+    times: 12
+    commands:
+      - tapOn: "Message.*"
+      - inputText: "mensagem para rolar"
+      - tapOn: "Send message"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 124-long-chat
+- swipe:
+    start: "50%,35%"
+    end: "50%,80%"
+    duration: 500
+- takeScreenshot: 124-scrolled-up
+- tapOn:
+    id: "go-to-latest-button"
+    optional: true
+- takeScreenshot: 124-go-to-latest
+- tapOn:
+    text: "Conversation info"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 124-details
+- tapOn:
+    id: "conversation-info-title"
+    optional: true
+- takeScreenshot: 124-rename-keyboard
+- hideKeyboard
+- tapOn:
+    id: "info-favorites"
+    optional: true
+- takeScreenshot: 124-favorites
+- tapOn:
+    id: "favorite-back"
+    optional: true
+- swipe:
+    start: "50%,62%"
+    end: "50%,12%"
+    duration: 400
+- tapOn:
+    text: "Conversation options"
+    optional: true
+- takeScreenshot: 124-options-menu
+- tapOn:
+    text: "Pin.*"
+    optional: true
+- takeScreenshot: 124-pinned-chat
+- tapOn:
+    text: "Conversation options"
+    optional: true
+- tapOn:
+    text: "Archive.*"
+    optional: true
+- takeScreenshot: 124-archived-readonly
+- tapOn:
+    text: "Conversation options"
+    optional: true
+- tapOn:
+    text: "Unarchive.*"
+    optional: true
+- takeScreenshot: 124-unarchived
+- tapOn:
+    text: "Search.*"
+    optional: true
+- inputText: "rolar"
+- takeScreenshot: 124-chat-search
+- runFlow: support/back.yaml
+- tapOn:
+    text: "Back"
+    optional: true
+- takeScreenshot: 124-home-after

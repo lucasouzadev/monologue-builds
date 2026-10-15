@@ -1,0 +1,33 @@
+# FULL-APP TOUR 6/6 — New conversation sheet, spatial navigator, onboarding/empty states, relaunch persistence.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "New conversation"
+    timeout: 60000
+- tapOn: "New conversation"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 125-new-conversation-sheet
+- tapOn: "Conversation title"
+- inputText: "TourSpatial"
+- takeScreenshot: 125-new-conversation-typed
+- runFlow: support/back.yaml
+- tapOn:
+    text: "Cancel.*"
+    optional: true
+- tapOn:
+    text: "Open conversation navigator"
+    optional: true
+- takeScreenshot: 125-navigator
+- runFlow: support/back.yaml
+- tapOn:
+    point: "8%,50%"
+    optional: true
+- takeScreenshot: 125-spatial-edge
+- runFlow: support/back.yaml
+- launchApp
+- extendedWaitUntil:
+    visible: "New conversation"
+    timeout: 60000
+- takeScreenshot: 125-relaunch-home

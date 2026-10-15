@@ -1,0 +1,20 @@
+# Opens the message menu of the "QA root" bubble (same long-press recipe as the round-6 flows).
+appId: app.monologue.mobile
+---
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Select text"
+                commands:
+                  - longPressOn:
+                      point: "82%,83%"
+      - extendedWaitUntil:
+          visible: "Select text"
+          timeout: 5000
