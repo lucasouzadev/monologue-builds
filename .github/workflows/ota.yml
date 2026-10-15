@@ -2,7 +2,8 @@ name: Monologue OTA update (private source)
 run-name: ${{ inputs.recover_apk_build_run_id && format('Recover APK upload from {0}', inputs.recover_apk_build_run_id) || format('OTA {0} / {1} @ {2} (baseline {3})', inputs.platform, inputs.channel, inputs.source_ref, inputs.native_baseline) }}
 
 # Manual only. Publishes a JS/asset-only update to the Expo project; never compiles a native binary.
-# The runtime label must match the installed binary; the current tester baseline is 16.
+# The runtime label must match the installed binary. KEEP THIS FILE CURRENT: every new native baseline is added to `native_baseline` (and becomes its default once the binary is in the testers' hands).
+# Current installed testers binary: baseline 19. Baseline 20 is listed so its OTAs can be published as soon as its binary exists.
 on:
   workflow_dispatch:
     inputs:
@@ -12,15 +13,15 @@ on:
         required: false
         default: ''
       source_ref:
-        description: Branch, tag or SHA of the private lucasouzadev/monologue repository
+        description: Branch, tag or SHA of the private lucasouzadev/monologue repository (the active app branch is claude/m2-format-feedback; use a FULL SHA to pin exactly what was validated)
         type: string
         required: true
-        default: main
+        default: claude/m2-format-feedback
       channel:
-        description: EAS update channel (testers uses the production EAS environment)
+        description: EAS update channel (preview = staging, validate there first; testers uses the production EAS environment)
         type: choice
         required: true
-        default: development
+        default: preview
         options: [development, preview, production, testers]
       platform:
         description: Platform(s) to publish
@@ -29,11 +30,11 @@ on:
         default: all
         options: [all, ios, android]
       native_baseline:
-        description: Runtime label of the installed binary (must match it)
+        description: Runtime label of the installed binary (must match it; 19 = current testers binary)
         type: choice
         required: true
-        default: '17'
-        options: ['17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
+        default: '19'
+        options: ['20', '19', '18', '17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
       message:
         description: Update message
         type: string
