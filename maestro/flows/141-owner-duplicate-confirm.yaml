@@ -1,0 +1,28 @@
+# M2 #16/#19 — the chat menu asks before Duplicate and before Move to Recycle Bin.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Dup"
+- tapOn: "Conversation options"
+- tapOn: "Duplicate"
+- extendedWaitUntil:
+    visible: "Duplicate conversation?"
+    timeout: 5000
+- takeScreenshot: 141-duplicate-question
+- tapOn: "Cancel"
+- tapOn: "Conversation options"
+- tapOn: "Move to Recycle Bin"
+- extendedWaitUntil:
+    visible: "Move this conversation to the Recycle Bin?"
+    timeout: 5000
+- takeScreenshot: 141-trash-question
+- tapOn:
+    text: "Move to Recycle Bin"
+    index: 1
+- extendedWaitUntil:
+    notVisible: "Conversation options"
+    timeout: 8000
+- takeScreenshot: 141-back-home

@@ -1,0 +1,73 @@
+# M2 #15/#31 — delete moves to the Lixeira with an Undo notification; the Lixeira sheet lists it; Restore brings it back.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Trash"
+- runFlow:
+    when:
+      visible: "Back"
+    commands:
+      - tapOn: "Back"
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 10000
+# Step 1 reveals the trash button; step 2 (tap) moves the conversation to the Lixeira.
+- swipe:
+    from:
+      text: ${".*" + output.qaTitle + ".*"}
+    direction: RIGHT
+    duration: 500
+- extendedWaitUntil:
+    visible:
+      id: "swipe-delete-action"
+    timeout: 5000
+- tapOn:
+    id: "swipe-delete-action"
+- extendedWaitUntil:
+    visible: "Moved to the Recycle Bin"
+    timeout: 8000
+- takeScreenshot: 140-notification
+- extendedWaitUntil:
+    visible:
+      id: "undo-feedback-handle"
+    timeout: 3000
+# Undo restores it.
+- tapOn: "Undo"
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 8000
+# Delete again and open the Lixeira from the filter menu.
+- swipe:
+    from:
+      text: ${".*" + output.qaTitle + ".*"}
+    direction: RIGHT
+    duration: 500
+- tapOn:
+    id: "swipe-delete-action"
+- extendedWaitUntil:
+    notVisible: ${".*" + output.qaTitle + ".*"}
+    timeout: 8000
+- tapOn: "Filter conversations"
+- tapOn: "Recycle Bin"
+- extendedWaitUntil:
+    visible:
+      id: "trash-sheet"
+    timeout: 8000
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 8000
+- takeScreenshot: 140-trash-sheet
+- tapOn: ${".*" + output.qaTitle + ".*"}
+- tapOn: "Restore"
+- extendedWaitUntil:
+    notVisible: ${".*" + output.qaTitle + ".*"}
+    timeout: 8000
+- tapOn:
+    id: "trash-close"
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 8000
+- takeScreenshot: 140-restored
