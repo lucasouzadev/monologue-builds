@@ -16,8 +16,19 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Close viewer"
     timeout: 10000
-- tapOn:
-    id: "viewer-edit-caption"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      # The native iOS viewer toolbar does not expose the id: the caption (speech bubble) icon is the middle one of the bottom bar.
+      - tapOn:
+          point: "50%,93%"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          id: "viewer-edit-caption"
 # Sheet content is checked by its words (ids inside the native sheet are not always exposed to the driver).
 - extendedWaitUntil:
     visible: ".*marks the message as edited.*"

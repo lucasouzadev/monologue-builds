@@ -36,7 +36,7 @@ appId: app.monologue.mobile
     visible: ".*Carry me along.*"
     timeout: 5000
 - takeScreenshot: 100-carried-into-focus
-- hideKeyboard
+# No hideKeyboard here: with no keyboard open it acts as Back on Android and closes the Focus; on iOS it fails (evidence runs 38786115975/38786121735).
 - tapOn:
     id: thought-focus-close
 - extendedWaitUntil:
