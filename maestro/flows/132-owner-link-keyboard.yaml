@@ -1,0 +1,30 @@
+# Owner list 2026-10-16 · item 11 and defect A — typing a link: the keyboard must stay open while the preview appears and while the link keeps changing; the
+# preview should wait for a complete link.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Link"
+- tapOn: "Message.*"
+- inputText: "https://example.c"
+- takeScreenshot: 132-partial-link
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1500
+    optional: true
+- takeScreenshot: 132-partial-link-settled
+- inputText: "om"
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1500
+    optional: true
+- takeScreenshot: 132-preview-shown
+- inputText: "/abc"
+- takeScreenshot: 132-typing-after-preview
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 400
+    optional: true
+- takeScreenshot: 132-typing-after-preview-400ms

@@ -1,0 +1,40 @@
+# Owner list 2026-10-16 · item 12 — long press with the keyboard open: the tail must stay, the bubble must not fly, the keyboard must not overlap the Composer.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Tail"
+- repeat:
+    times: 7
+    commands:
+      - tapOn: "Message.*"
+      - inputText: "linha"
+      - tapOn: "Send message"
+- tapOn: "Message.*"
+- takeScreenshot: 133-before-keyboard-open
+- longPressOn:
+    text: ".*QA root.*"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 133-menu-top-message
+- runFlow: support/close-menu.yaml
+- takeScreenshot: 133-after-close-0ms
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1500
+    optional: true
+- takeScreenshot: 133-after-close-1500ms
+- longPressOn:
+    text: "linha"
+    index: 6
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 133-menu-last-message
+- runFlow: support/close-menu.yaml
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1500
+    optional: true
+- takeScreenshot: 133-after-close-last

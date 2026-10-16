@@ -1,0 +1,66 @@
+# Owner list 2026-10-16 · items 4 and 5 — a bubble with 5 media must not grow without limit (expected: 4 tiles + "+N"); the Reply Focus preview must show a
+# compact summary and must not open the viewer.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Grid"
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Photos"
+    timeout: 10000
+- tapOn: "Photos"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 131-gallery
+- tapOn:
+    point: "20%,47%"
+- tapOn:
+    point: "50%,47%"
+    optional: true
+- tapOn:
+    point: "80%,47%"
+    optional: true
+- tapOn:
+    point: "20%,61%"
+    optional: true
+- tapOn:
+    point: "50%,61%"
+    optional: true
+- takeScreenshot: 131-gallery-selected
+- tapOn:
+    point: "86%,90%"
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 20000
+    optional: true
+- takeScreenshot: 131-tray
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: "(Photo|Video).*"
+    timeout: 25000
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 131-bubble
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn:
+          text: "(Photo|Video).*"
+          index: 0
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 131-focus-preview
+- tapOn:
+    point: "50%,22%"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 131-focus-preview-tapped
