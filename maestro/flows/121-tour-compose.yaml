@@ -35,16 +35,16 @@ appId: app.monologue.mobile
     timeout: 1500
 - takeScreenshot: 121-format-panel
 - tapOn:
-    text: "Bold"
+    id: "format-bold"
     optional: true
 - tapOn:
-    text: "Italic"
+    id: "format-italic"
     optional: true
 - tapOn:
-    text: "Underline"
+    id: "format-underline"
     optional: true
 - tapOn:
-    text: "Strikethrough"
+    id: "format-strike"
     optional: true
 - takeScreenshot: 121-format-applied
 - tapOn:

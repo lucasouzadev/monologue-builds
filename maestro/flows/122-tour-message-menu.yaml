@@ -47,6 +47,7 @@ appId: app.monologue.mobile
 - waitForAnimationToEnd:
     timeout: 1500
 - takeScreenshot: 122-reply-focus
+- tapOn: "(Reply|Message).*"
 - inputText: "resposta do tour"
 - takeScreenshot: 122-reply-focus-typed
 - tapOn:

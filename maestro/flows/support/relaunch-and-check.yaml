@@ -1,0 +1,24 @@
+# Diagnostic for "sent media never shows up in the timeline" (Android evidence run 38838775237: 91, 98, 98b, 123). Called with env KIND ("Photo" | "Video") right
+# after Send: waits for the bubble; if it is missing, takes a screenshot, relaunches the app, re-opens the chat by its title and asserts again, so the report
+# can tell "message never created" from "message created but not rendered".
+appId: app.monologue.mobile
+---
+- extendedWaitUntil:
+    visible: ${KIND + ".*"}
+    timeout: 20000
+    optional: true
+- runFlow:
+    when:
+      notVisible: ${KIND + ".*"}
+    commands:
+      - takeScreenshot: media-bubble-missing-before-relaunch
+      - launchApp
+      - extendedWaitUntil:
+          visible: ${".*" + output.qaTitle + ".*"}
+          timeout: 30000
+      - tapOn: ${".*" + output.qaTitle + ".*"}
+      - extendedWaitUntil:
+          visible: ".*QA root.*"
+          timeout: 15000
+      - takeScreenshot: media-bubble-after-relaunch
+      - assertVisible: ${KIND + ".*"}

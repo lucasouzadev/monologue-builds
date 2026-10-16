@@ -20,9 +20,10 @@ appId: app.monologue.mobile
     visible: "Attachments"
     timeout: 20000
 - tapOn: "Send message"
-- extendedWaitUntil:
-    visible: "Video.*"
-    timeout: 20000
+- runFlow:
+    file: support/relaunch-and-check.yaml
+    env:
+      KIND: "Video"
 - tapOn:
     text: "Video.*"
     index: 0

@@ -21,6 +21,7 @@ appId: app.monologue.mobile
       - tapOn: "Message.*"
       - inputText: ${CAPTION}
 - tapOn: "Send message"
-- extendedWaitUntil:
-    visible: "Photo.*"
-    timeout: 20000
+- runFlow:
+    file: relaunch-and-check.yaml
+    env:
+      KIND: "Photo"

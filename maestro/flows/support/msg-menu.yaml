@@ -1,6 +1,10 @@
 # Opens the message menu of the "QA root" bubble (same long-press recipe as the round-6 flows).
 appId: app.monologue.mobile
 ---
+# Guard: we must still be inside the chat (a stray Back would land on Home and the long press would hit a Home row).
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 5000
 - retry:
     maxRetries: 3
     commands:
