@@ -22,7 +22,7 @@ appId: app.monologue.mobile
     id: "viewer-more"
     optional: true
 - takeScreenshot: 123-viewer-menu
-- runFlow: support/back.yaml
+- runFlow: support/close-menu.yaml
 - tapOn:
     id: "viewer-edit-caption"
     optional: true

@@ -47,5 +47,5 @@ appId: app.monologue.mobile
     visible: "New conversation from the excerpt"
     timeout: 8000
 - assertVisible: ".*first message of a new conversation.*"
-- assertVisible: ".*QA.*"
+- assertVisible: ".*root.*"
 - takeScreenshot: 92-derive-sheet

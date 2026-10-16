@@ -34,7 +34,18 @@ appId: app.monologue.mobile
     id: "conversation-info-title"
     optional: true
 - takeScreenshot: 124-rename-keyboard
-- hideKeyboard
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: "(Done|return)"
+          optional: true
 - tapOn:
     id: "info-favorites"
     optional: true

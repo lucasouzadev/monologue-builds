@@ -11,5 +11,5 @@ appId: app.monologue.mobile
       platform: iOS
     commands:
       - tapOn:
-          text: "(Done|Close.*|Back|Cancel.*)"
+          text: "(Done|Cancel.*)"
           optional: true

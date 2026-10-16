@@ -1,0 +1,16 @@
+# Closes a native context menu / popover without leaving the screen under it (Android: Back; iOS: tap outside, near the status bar).
+appId: app.monologue.mobile
+---
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: back
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "50%,5%"
+- waitForAnimationToEnd:
+    timeout: 1500

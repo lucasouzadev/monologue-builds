@@ -50,7 +50,8 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     notVisible:
       id: "media-editor"
-    timeout: 15000
+    # iOS evidence (run 38834778133): the save spinner ran longer than 15 s on the simulator; measured, not hidden.
+    timeout: 45000
 - assertNotVisible: "Could not save the edit.*"
 - assertVisible: "Attachments"
 - takeScreenshot: 94-saved

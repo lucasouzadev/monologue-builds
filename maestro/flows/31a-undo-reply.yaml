@@ -32,7 +32,9 @@ env:
     visible: ".*QA reply preserved.*"
     timeout: 10000
 - longPressOn: ".*QA reply preserved.*"
-- assertVisible: "Undo reply"
+- extendedWaitUntil:
+    visible: "Undo reply"
+    timeout: 6000
 - takeScreenshot: 31a-undo-reply-menu
 - tapOn: "Undo reply"
 # Round 6b · 2: inside Reply Focus, Undo takes the reply back for rewriting: it leaves the conversation and its text returns to the Focus Composer.
