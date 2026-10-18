@@ -26,7 +26,9 @@ appId: app.monologue.mobile
 - tapOn: "Italic"
 - takeScreenshot: 36-panel-formatted
 - tapOn:
-    id: "selection-close"
+    id: "selection-back"
+- tapOn:
+    id: "selection-dismiss"
 - takeScreenshot: 36-keyboard-back
 - tapOn: "Send message"
 - extendedWaitUntil:

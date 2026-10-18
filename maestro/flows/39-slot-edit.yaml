@@ -47,6 +47,8 @@ appId: app.monologue.mobile
 - tapOn: "Bold"
 - takeScreenshot: 39-edit-panel
 - tapOn:
-    id: "selection-close"
+    id: "selection-back"
+- tapOn:
+    id: "selection-dismiss"
 - tapOn: "Save.*"
 - takeScreenshot: 39-edit-saved
