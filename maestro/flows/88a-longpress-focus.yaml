@@ -1,0 +1,48 @@
+# Owner QA 2026-10-17 (iPhone 15): a long press inside Focus froze the screen. Probe: Tools must still open afterwards.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Freeze
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Message.*"
+- inputText: "Primeira"
+- tapOn: "Send message"
+- inputText: "Segunda"
+- tapOn: "Send message"
+- inputText: "Terceira"
+- tapOn: "Send message"
+- takeScreenshot: 88a-chat
+# 1. Reply Focus, then a long press inside it.
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  - longPressOn:
+                      point: "82%,60%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- takeScreenshot: 88a-focus
+- longPressOn: ".*QA root.*"
+- takeScreenshot: 88a-focus-longpress
+- tapOn:
+    point: 50%, 12%
+    optional: true
+- takeScreenshot: 88a-focus-after-menu
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- takeScreenshot: 88a-focus-tools-open
+- tapOn: "Tools.*"
