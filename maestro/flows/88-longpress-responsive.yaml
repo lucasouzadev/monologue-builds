@@ -1,0 +1,84 @@
+# Owner QA 2026-10-17 (iPhone 15): after a long press inside Focus, or inside the selection mode, the screen stopped answering ("+" pressed several times, nothing happened).
+# The probe after every long press is a tap on Tools: if a layer is swallowing touches, "Expand editor" never appears and the flow fails at that line.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Freeze
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Message.*"
+- inputText: "Primeira"
+- tapOn: "Send message"
+- inputText: "Segunda"
+- tapOn: "Send message"
+- inputText: "Terceira"
+- tapOn: "Send message"
+- takeScreenshot: 88-chat
+# 1. Reply Focus, then a long press inside it.
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  - longPressOn:
+                      point: "82%,60%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- takeScreenshot: 88-focus
+- longPressOn: ".*QA root.*"
+- takeScreenshot: 88-focus-longpress
+- tapOn:
+    point: 50%, 12%
+    optional: true
+- takeScreenshot: 88-focus-after-menu
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- takeScreenshot: 88-focus-tools-open
+- tapOn: "Tools.*"
+# Leave Focus.
+- tapOn:
+    text: "Back"
+    optional: true
+- extendedWaitUntil:
+    visible: ".*Terceira.*"
+    timeout: 15000
+# 2. Selection mode (Merge) and a long press inside it.
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*Segunda.*"
+      - extendedWaitUntil:
+          visible: "Organi[sz]e.*"
+          timeout: 5000
+- tapOn: "Organi[sz]e.*"
+- tapOn: "Merge.*"
+- takeScreenshot: 88-selection
+- longPressOn: ".*Terceira.*"
+- takeScreenshot: 88-selection-longpress
+- tapOn:
+    point: 50%, 12%
+    optional: true
+- takeScreenshot: 88-selection-after-menu
+- tapOn:
+    text: "Cancel selection"
+    optional: true
+- extendedWaitUntil:
+    visible: "Tools.*"
+    timeout: 10000
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- takeScreenshot: 88-end-tools-open
