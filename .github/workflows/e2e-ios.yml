@@ -176,10 +176,10 @@ jobs:
           mkdir -p "$RUNNER_TEMP/qa-logs"
           if bash builds/maestro/run.sh "$SIM_UDID" > "$RUNNER_TEMP/qa-logs/ios-flows.log" 2>&1; then
             echo 'Maestro iOS: PASS (detailed evidence encrypted)'
-            grep -aE '^RESULT ' "$RUNNER_TEMP/qa-logs/ios-flows.log" || true
+            grep -aE '^(RESULT|RECOVERY) ' "$RUNNER_TEMP/qa-logs/ios-flows.log" || true
           else
             # Only the flow names and PASS/FAIL are public (no UI text, no screenshots): enough to see WHICH flow failed.
-            grep -aE '^RESULT ' "$RUNNER_TEMP/qa-logs/ios-flows.log" || true
+            grep -aE '^(RESULT|RECOVERY) ' "$RUNNER_TEMP/qa-logs/ios-flows.log" || true
             echo 'Maestro iOS: FAIL (detailed evidence encrypted)'; exit 1
           fi
 

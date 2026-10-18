@@ -59,6 +59,24 @@ for flow in *.yaml; do
         timeout 20 adb exec-out screencap -p > "$SH/${PFX}${flow%.yaml}-end.png" 2>/dev/null || true
         adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 && adb pull /sdcard/ui.xml "$SH/${PFX}${flow%.yaml}-end.xml" >/dev/null 2>&1 || true
       fi
+      # The app's recovery surface prints the caught error ("Name: message", testID recovery-detail). Only that one line is made public:
+      # it is an exception from the code, not user content, and without it a release-binary launch failure cannot be diagnosed.
+      if command -v xcrun >/dev/null && [ -n "${1:-}" ]; then
+        xcrun simctl io "$1" screenshot "$SH/${PFX}${flow%.yaml}-end.png" >/dev/null 2>&1 || true
+        $T30 maestro --device "$1" hierarchy 2>/dev/null | python3 -c '
+import json, sys
+def walk(n):
+    a = n.get("attributes", {}) if isinstance(n, dict) else {}
+    if "recovery-detail" in a.values():
+        print("RECOVERY " + (a.get("text") or a.get("accessibilityText") or "").strip()[:240])
+    for c in (n.get("children") or []) if isinstance(n, dict) else []:
+        walk(c)
+try:
+    walk(json.load(sys.stdin))
+except Exception as e:
+    print("RECOVERY (hierarchy unreadable: %s)" % type(e).__name__)
+' || true
+      fi
       exit "$status"
     fi
     # Android: what the app logged just now (the circular buffer rolls over within minutes, so it is read per failure).
