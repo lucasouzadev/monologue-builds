@@ -1,4 +1,4 @@
-# Owner QA 2026-10-17 (iPhone 15): a long press inside Focus froze the screen. Probe: Tools must still open afterwards.
+# Owner QA 2026-10-17 (iPhone 15): a long press inside Focus froze the screen. Probe: the Reply composer must still take typing afterwards.
 appId: app.monologue.mobile
 env:
   QA_PREFIX: QA Freeze
@@ -40,9 +40,11 @@ env:
     point: 50%, 12%
     optional: true
 - takeScreenshot: 88a-focus-after-menu
-- tapOn: "Tools.*"
+# The composer in Focus must still take input after the long press. (In Focus the tools control reads "Expand editor", not "Tools", when no
+# photo / camera source exists, as on the simulator: the earlier Tools probe tested the flow's own assumption, not the freeze.)
+- tapOn: "Reply…"
+- inputText: "ok"
 - extendedWaitUntil:
-    visible: "Expand editor"
-    timeout: 10000
-- takeScreenshot: 88a-focus-tools-open
-- tapOn: "Tools.*"
+    visible: "ok"
+    timeout: 8000
+- takeScreenshot: 88a-focus-typed
