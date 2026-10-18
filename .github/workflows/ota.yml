@@ -3,7 +3,8 @@ run-name: ${{ inputs.recover_apk_build_run_id && format('Recover APK upload from
 
 # Manual only. Publishes a JS/asset-only update to the Expo project; never compiles a native binary.
 # The runtime label must match the installed binary. KEEP THIS FILE CURRENT: every new native baseline is added to `native_baseline` (and becomes its default once the binary is in the testers' hands).
-# Current installed testers binary: baseline 19. Baselines 20 and 21 are listed so their OTAs can be published as soon as their binaries exist (21 = 20 + Share to Monologue).
+# Current testers binaries (2026-10-18): Android = baseline 21 (build run 39147740710), iOS = baseline 20 (baseline-21 iOS waits for the Share Extension signing secret).
+# Until both platforms are on one baseline, publish every testers OTA twice: platform android + baseline 21, platform ios + baseline 20.
 on:
   workflow_dispatch:
     inputs:
@@ -30,10 +31,10 @@ on:
         default: all
         options: [all, ios, android]
       native_baseline:
-        description: Runtime label of the installed binary (must match it; 19 = current testers binary)
+        description: Runtime label of the installed binary (must match it; testers = 21 on Android, 20 on iOS)
         type: choice
         required: true
-        default: '19'
+        default: '20'
         options: ['21', '20', '19', '18', '17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
       message:
         description: Update message
