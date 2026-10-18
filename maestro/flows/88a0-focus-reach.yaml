@@ -1,0 +1,36 @@
+# Owner QA 2026-10-17 (iPhone 15): probe 1/2: can the flow REACH Focus (menu > Write > Reply)? Separates a navigation failure from the freeze probe in 88a.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Freeze
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Message.*"
+- inputText: "Primeira"
+- tapOn: "Send message"
+- inputText: "Segunda"
+- tapOn: "Send message"
+- inputText: "Terceira"
+- tapOn: "Send message"
+- takeScreenshot: 88a0-chat
+# 1. Reply Focus, then a long press inside it.
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  - longPressOn:
+                      point: "82%,60%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- takeScreenshot: 88a0-focus
