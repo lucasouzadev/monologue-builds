@@ -212,6 +212,8 @@ jobs:
       FASTLANE_SKIP_UPDATE_CHECK: '1'
       FASTLANE_HIDE_CHANGELOG: '1'
       FASTLANE_OPT_OUT_USAGE: '1'
+      # Baseline 21: the iOS Share Extension is built only when its signing profile exists; without it the app ships without the extension (owner 2026-10-18).
+      MONOLOGUE_IOS_SHARE_EXTENSION: ${{ secrets.IOS_SHARE_EXTENSION_PROVISIONING_PROFILE_BASE64 != '' && 'on' || 'off' }}
     steps:
       - uses: actions/checkout@v4
         with:
