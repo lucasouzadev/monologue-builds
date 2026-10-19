@@ -25,8 +25,8 @@ on:
         description: Native baseline label embedded in the build
         type: choice
         required: true
-        default: '17'
-        options: ['17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
+        default: '18'
+        options: ['18', '17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
       only:
         description: Verification subset — space-separated flow names (e.g. '00-warm-update 00b-build-stamp 01-create-open-send 15-conversation-panel 28-sheet-visuals'); empty = the full suite + audit + stress
         type: string
