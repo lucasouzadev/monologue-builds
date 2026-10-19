@@ -13,12 +13,8 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: ".*zebracrossing needle.*"
     timeout: 10000
-- openLink: "monologue:///"
-- runFlow:
-    when:
-      visible: "Open in.*Monologue.*"
-    commands:
-      - tapOn: "Open"
+# A fresh launch, like flow 19: the message is already persisted (see 92).
+- launchApp
 - extendedWaitUntil:
     visible: "More creation options"
     timeout: 30000
