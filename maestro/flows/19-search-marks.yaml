@@ -9,9 +9,23 @@ appId: app.monologue.mobile
 - tapOn: "Wide search"
 - extendedWaitUntil:
     visible:
-      id: "search-chip-favorite"
+      id: "search-filter-carousel"
     timeout: 10000
 - takeScreenshot: 19-wide-search-chips
+# The chips are a horizontal carousel: Favorites and Pinned sit past the right edge of the screen. Swipe the carousel itself
+# (scrollUntilVisible swipes from the screen centre and would miss it).
+- swipe:
+    from:
+      id: "search-filter-carousel"
+    direction: LEFT
+- swipe:
+    from:
+      id: "search-filter-carousel"
+    direction: LEFT
+- assertVisible:
+    id: "search-chip-favorite"
+- assertVisible:
+    id: "search-chip-pin"
 - tapOn:
     id: "search-chip-favorite"
 - takeScreenshot: 19-favorites-list
