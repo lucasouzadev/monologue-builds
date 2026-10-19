@@ -43,9 +43,10 @@ appId: app.monologue.mobile
     direction: LEFT
 - tapOn:
     id: "search-chip-favorite"
-# The search is asynchronous: wait for the filtered list instead of asserting at once.
+# The fixture is not a favorite, so the filter leaves nothing: the search screen shows its empty state.
+# (Not "notVisible" on the text: the Home list stays in the accessibility tree behind the search and shows the same preview.)
 - extendedWaitUntil:
-    notVisible: ".*zebracrossing needle.*"
+    visible: ".*(No results|No matching).*"
     timeout: 10000
 - takeScreenshot: 91-favorite-filter-excludes
 - tapOn:
