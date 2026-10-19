@@ -1,0 +1,42 @@
+# #133 P0 (composer and keyboard): after sending from the EXPANDED editor the composer must return to its compact, empty state, the message must be in the timeline,
+# and the next message must work (no ghost draft, no stuck expanded editor).
+# NOT YET RUN when this was written.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Envio"
+- tapOn: "Message.*"
+- inputText: "linha um"
+- pressKey: Enter
+- inputText: "linha dois"
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- tapOn: "Expand editor"
+- extendedWaitUntil:
+    visible:
+      id: "composer-collapse"
+    timeout: 10000
+- takeScreenshot: 94-expanded
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*linha dois.*"
+    timeout: 15000
+# Back to the compact, empty composer.
+- assertNotVisible:
+    id: "composer-collapse"
+- assertVisible: "Message.*"
+- takeScreenshot: 94-after-send
+# The next message goes through the normal path and the first stays.
+- tapOn: "Message.*"
+- inputText: "segunda mensagem"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*segunda mensagem.*"
+    timeout: 15000
+- assertVisible: ".*linha dois.*"
+- takeScreenshot: 94-second-sent
