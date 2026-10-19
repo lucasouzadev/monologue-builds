@@ -1,0 +1,48 @@
+# Home search finds a known term, filters narrow the list, and a term with no match shows the empty state.
+# NOT YET RUN: authored without a simulator/emulator; verify on staging before relying on it.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Busca"
+- tapOn: "Message.*"
+- inputText: "zebracrossing needle"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*zebracrossing needle.*"
+    timeout: 10000
+# A fresh launch, like flow 19: the message is already persisted (see 92).
+- launchApp
+- extendedWaitUntil:
+    visible: "More creation options"
+    timeout: 30000
+- tapOn: "More creation options"
+- tapOn: "Wide search"
+- extendedWaitUntil:
+    visible:
+      id: "search-chip-favorite"
+    timeout: 10000
+- tapOn:
+    id: "home-search-input"
+- inputText: "zebracrossing"
+- extendedWaitUntil:
+    visible: ".*zebracrossing.*"
+    timeout: 10000
+- takeScreenshot: 91-hit
+# A filter that excludes the fixture (it is not a favorite) must hide the hit.
+- tapOn:
+    id: "search-chip-favorite"
+- assertNotVisible: ".*zebracrossing needle.*"
+- takeScreenshot: 91-favorite-filter-excludes
+- tapOn:
+    id: "search-chip-favorite"
+- assertVisible: ".*zebracrossing.*"
+# No match shows the empty state.
+- eraseText: 20
+- inputText: "qqqxxnomatchqqq"
+- extendedWaitUntil:
+    visible: ".*(No results|No matching conversations).*"
+    timeout: 10000
+- takeScreenshot: 91-no-results

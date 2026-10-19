@@ -97,7 +97,7 @@ jobs:
           # The action executes each script line in a separate shell. Fold the
           # entire conditional into one command; otherwise its first line fails.
           script: >-
-            if bash maestro/android-e2e.sh > "$RUNNER_TEMP/monologue-maestro-android.log" 2>&1; then echo 'Maestro Android: PASS (details encrypted)'; else echo 'Maestro Android: FAIL (details encrypted)'; exit 1; fi
+            bash maestro/android-e2e.sh > "$RUNNER_TEMP/monologue-maestro-android.log" 2>&1; rc=$?; grep -aE '^(RESULT|RECOVERY|STEP) ' "$RUNNER_TEMP/monologue-maestro-android.log" || true; if [ "$rc" -eq 0 ]; then echo 'Maestro Android: PASS (details encrypted)'; else echo 'Maestro Android: FAIL (details encrypted)'; exit 1; fi
 
       # Content-free per-flow outcome (flow file names and PASS/FAIL only): lets an agent see WHICH acceptance flow failed without the encrypted evidence.
       - name: Per-flow results (names only)
