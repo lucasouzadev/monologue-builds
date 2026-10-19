@@ -1,0 +1,37 @@
+# Owner list 2026-10-16 · item 1 — a formatted caption must keep its formatting in the bubble, the viewer caption and the caption editor.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Rich"
+- runFlow:
+    file: support/attach-photo.yaml
+    env:
+      CAPTION: "*forte* ~riscado~ normal"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 135-bubble
+- tapOn:
+    text: "Photo.*"
+    index: 0
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 135-viewer-caption
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "50%,93%"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          id: "viewer-edit-caption"
+          optional: true
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 135-caption-editor

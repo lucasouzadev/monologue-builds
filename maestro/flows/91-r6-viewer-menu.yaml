@@ -1,0 +1,26 @@
+# Round 6 · item 2 — the viewer's ⋯ menu is compact and contextual: media actions (edit the photo) are there; text-only actions (calendar, select text) are not.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "R6Menu"
+- runFlow:
+    file: support/attach-photo.yaml
+    env:
+      CAPTION: "Legenda r6"
+- tapOn:
+    text: "Photo.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Close viewer"
+    timeout: 10000
+- tapOn:
+    id: "viewer-more"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 91-viewer-menu
+- assertVisible: "Edit photo"
+- assertNotVisible: "Add to Calendar"
+- assertNotVisible: "Select text"

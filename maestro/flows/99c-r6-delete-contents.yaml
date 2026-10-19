@@ -1,0 +1,31 @@
+# Round 6 · item 19 — deleting every message through "+" → Delete keeps the "+" button, and no pin/favourite update lines stay behind.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "R6Del"
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Delete"
+    timeout: 10000
+- tapOn: "Delete"
+- tapOn: ".*QA root.*"
+- extendedWaitUntil:
+    visible: "Delete 1"
+    timeout: 8000
+- tapOn: "Delete 1"
+- runFlow:
+    when:
+      visible:
+        id: "selection-confirm-action"
+    commands:
+      - tapOn:
+          id: "selection-confirm-action"
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: 99c-after-delete-all
+- assertNotVisible: ".*QA root.*"
+- assertVisible: "Tools.*"
+- assertNotVisible: "Message (pinned|unpinned|favourited).*"

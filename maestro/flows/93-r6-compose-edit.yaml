@@ -1,0 +1,27 @@
+# Round 6 · items 5 and 7 — in the Composer a picked photo opens the EDITOR (not the plain viewer), and a crop/turn edit and a drawing both save into the tray.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "R6Edit"
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Photos"
+    timeout: 10000
+- tapOn: "Photos"
+- tapOn:
+    point: "20%,47%"
+- tapOn:
+    point: "86%,90%"
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 20000
+- tapOn:
+    id: "tray-preview"
+- extendedWaitUntil:
+    visible:
+      id: "media-editor"
+    timeout: 8000
+- takeScreenshot: 93-editor-open

@@ -1,0 +1,27 @@
+# Attaches the first photo of the device gallery to the open chat through "+" → Photos, optionally with a caption, and sends it.
+# CAPTION may be empty. Used by the round-6 acceptance flows.
+appId: app.monologue.mobile
+---
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Photos"
+    timeout: 10000
+- tapOn: "Photos"
+- tapOn:
+    point: "20%,47%"
+- tapOn:
+    point: "86%,90%"
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 20000
+- runFlow:
+    when:
+      true: ${CAPTION != ""}
+    commands:
+      - tapOn: "Message.*"
+      - inputText: ${CAPTION}
+- tapOn: "Send message"
+- runFlow:
+    file: relaunch-and-check.yaml
+    env:
+      KIND: "Photo"

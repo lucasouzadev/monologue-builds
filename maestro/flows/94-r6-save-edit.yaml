@@ -1,0 +1,57 @@
+# Round 6 · item 7 — a turn and a drawing are saved: Done returns to the Composer with the edited photo, never "Could not save the edit".
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "R6Save"
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Photos"
+    timeout: 10000
+- tapOn: "Photos"
+- tapOn:
+    point: "20%,47%"
+- tapOn:
+    point: "86%,90%"
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 20000
+- tapOn:
+    id: "tray-preview"
+- extendedWaitUntil:
+    visible:
+      id: "media-editor"
+    timeout: 8000
+# Turn.
+- tapOn:
+    id: "media-editor-crop-toggle"
+- tapOn:
+    id: "media-editor-rotate"
+- tapOn:
+    id: "media-editor-crop-apply"
+# Draw a line.
+- runFlow:
+    when:
+      visible:
+        id: "media-editor-draw"
+    commands:
+      - tapOn:
+          id: "media-editor-draw"
+      - swipe:
+          start: "30%,45%"
+          end: "70%,55%"
+          duration: 600
+      - tapOn:
+          id: "media-editor-draw-apply"
+- tapOn:
+    id: "media-editor-done"
+- extendedWaitUntil:
+    notVisible:
+      id: "media-editor"
+    # iOS evidence (run 38834778133): the save spinner ran longer than 15 s on the simulator; measured, not hidden.
+    timeout: 45000
+- assertNotVisible: "Could not save the edit.*"
+- assertVisible: "Attachments"
+- takeScreenshot: 94-saved

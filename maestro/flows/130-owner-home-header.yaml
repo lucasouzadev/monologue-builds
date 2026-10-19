@@ -1,0 +1,47 @@
+# Owner list 2026-10-16 · item 2 — the Home header (title + pill) must come back after leaving Home from the options tray.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Activity calendar"
+    timeout: 60000
+- takeScreenshot: 130-home-before
+- tapOn: "More creation options"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 130-tray-open
+- tapOn: "Wide search"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 130-wide-search
+- runFlow: support/back.yaml
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: "(Back|Close.*|Fechar.*)"
+          optional: true
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 130-home-after-wide-search
+- assertVisible: "Activity calendar"
+- tapOn: "More creation options"
+- tapOn:
+    text: "(Timeline|Linha do tempo)"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 130-timeline
+- runFlow: support/back.yaml
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: "(Back|Close.*|Fechar.*)"
+          optional: true
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 130-home-after-timeline
+- assertVisible: "Activity calendar"

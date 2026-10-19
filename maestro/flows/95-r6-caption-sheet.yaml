@@ -1,0 +1,37 @@
+# Round 6 · item 6 — "Edit caption" in the viewer opens its own sheet with the caption field (not the message's Edit in the Composer).
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "R6Cap"
+- runFlow:
+    file: support/attach-photo.yaml
+    env:
+      CAPTION: "Legenda"
+- tapOn:
+    text: "Photo.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Close viewer"
+    timeout: 10000
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      # The native iOS viewer toolbar does not expose the id: the caption (speech bubble) icon is the middle one of the bottom bar.
+      - tapOn:
+          point: "50%,93%"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          id: "viewer-edit-caption"
+# Sheet content is checked by its words (ids inside the native sheet are not always exposed to the driver).
+- extendedWaitUntil:
+    visible: ".*marks the message as edited.*"
+    timeout: 8000
+- assertVisible: "Legenda"
+- takeScreenshot: 95-caption-sheet

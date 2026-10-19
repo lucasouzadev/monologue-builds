@@ -1,0 +1,27 @@
+# Selects a word in the Select-text bubble and waits until the bubble counts the selection.
+# Both platforms: a double tap on the field selects the word nearest the touch (the field spans the bubble, so a single press lands after the text and only places the caret).
+# Android fallback: a long press on the text itself, tried at two heights, as in flow 40.
+appId: app.monologue.mobile
+---
+- retry:
+    maxRetries: 2
+    commands:
+      - doubleTapOn:
+          id: "text-selection-field"
+      - runFlow:
+          when:
+            platform: Android
+            notVisible: ".*characters selected.*"
+          commands:
+            - longPressOn:
+                point: "24%,44%"
+      - runFlow:
+          when:
+            platform: Android
+            notVisible: ".*characters selected.*"
+          commands:
+            - longPressOn:
+                point: "24%,41%"
+      - extendedWaitUntil:
+          visible: ".*characters selected.*"
+          timeout: 3000

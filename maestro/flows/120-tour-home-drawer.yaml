@@ -1,0 +1,172 @@
+# FULL-APP TOUR 1/6 — Home, filters, selection, calendar, wide search, drawer and every Settings screen.
+# Built to be read as images: steps after the entry anchor are optional, so one broken screen does not hide the next ones.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "TourHome"
+- runFlow: support/back.yaml
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 30000
+- takeScreenshot: 120-home
+# Filters
+- tapOn:
+    text: "Filter conversations.*"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 120-filter-menu
+- tapOn:
+    text: "(Pinned|Fixadas)"
+    optional: true
+- takeScreenshot: 120-filter-pinned
+- tapOn:
+    text: "Filter conversations.*"
+    optional: true
+- tapOn:
+    text: "(Archived|Arquivadas)"
+    optional: true
+- takeScreenshot: 120-filter-archived
+- tapOn:
+    text: "Filter conversations.*"
+    optional: true
+- tapOn:
+    text: "All"
+    optional: true
+- takeScreenshot: 120-filter-all
+# Select mode (owner item: lives in the filter menu)
+- tapOn:
+    text: "Filter conversations.*"
+    optional: true
+- tapOn:
+    text: "Select"
+    optional: true
+- takeScreenshot: 120-select-mode
+- runFlow: support/back.yaml
+# Row menu and long-press preview
+- tapOn:
+    text: "Options for .*"
+    index: 0
+    optional: true
+- takeScreenshot: 120-row-menu
+- runFlow: support/back.yaml
+- longPressOn:
+    text: ".*TourHome.*"
+    optional: true
+- takeScreenshot: 120-row-preview
+- runFlow: support/back.yaml
+# Swipe row to the right → Delete (dismissed, nothing is deleted)
+- swipe:
+    start: "20%,24%"
+    end: "70%,24%"
+    duration: 400
+- takeScreenshot: 120-row-swipe
+- tapOn:
+    id: "swipe-delete-dismiss"
+    optional: true
+# Calendar
+- tapOn:
+    text: "Activity calendar"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 120-calendar
+- tapOn:
+    id: "home-calendar-done"
+    optional: true
+# Wide search + options tray
+- tapOn:
+    text: "More creation options"
+    optional: true
+- takeScreenshot: 120-creation-options
+- tapOn:
+    text: "Wide search"
+    optional: true
+- takeScreenshot: 120-wide-search
+- runFlow: support/back.yaml
+# Home search field
+- tapOn:
+    id: "home-search-input"
+    optional: true
+- inputText: "TourHome"
+- takeScreenshot: 120-home-search
+- hideKeyboard
+- runFlow: support/back.yaml
+# Drawer and sections
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          point: "88%,9%"
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          text: "Open personal space"
+          optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 120-drawer
+- tapOn:
+    id: "profile-section-activity"
+    optional: true
+- takeScreenshot: 120-section-activity
+- tapOn:
+    id: "profile-section-integrations"
+    optional: true
+- takeScreenshot: 120-section-integrations
+- tapOn:
+    id: "integration-linkPreviews-switch"
+    optional: true
+- takeScreenshot: 120-integration-toggled
+- tapOn:
+    id: "integration-linkPreviews-switch"
+    optional: true
+- tapOn:
+    id: "profile-section-storage"
+    optional: true
+- takeScreenshot: 120-section-storage
+- tapOn:
+    id: "profile-section-labs"
+    optional: true
+- takeScreenshot: 120-section-labs
+- tapOn:
+    id: "profile-section-settings"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 120-settings-top
+- scrollUntilVisible:
+    element:
+      id: "theme-options"
+    optional: true
+- takeScreenshot: 120-settings-theme
+- scrollUntilVisible:
+    element:
+      id: "font-options"
+    optional: true
+- takeScreenshot: 120-settings-fonts
+- tapOn:
+    id: "font-option-lora"
+    optional: true
+- takeScreenshot: 120-settings-font-selected
+- tapOn:
+    id: "font-option-system"
+    optional: true
+- scrollUntilVisible:
+    element:
+      id: "text-size-slider"
+    optional: true
+- takeScreenshot: 120-settings-text-size
+- scrollUntilVisible:
+    element:
+      id: "settings-apply"
+    optional: true
+- takeScreenshot: 120-settings-bottom
+- runFlow: support/back.yaml
+- takeScreenshot: 120-end

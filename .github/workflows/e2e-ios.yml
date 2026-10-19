@@ -26,7 +26,7 @@ on:
         type: choice
         required: true
         default: '18'
-        options: ['18', '17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
+        options: ['20', '19', '18', '17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
       only:
         description: Verification subset — space-separated flow names (e.g. '00-warm-update 00b-build-stamp 01-create-open-send 15-conversation-panel 28-sheet-visuals'); empty = the full suite + audit + stress
         type: string
@@ -154,7 +154,9 @@ jobs:
           xcrun simctl bootstatus "$UDID" -b
           xcrun simctl install "$UDID" "$APP"
           xcrun simctl ui "$UDID" appearance "${{ inputs.appearance }}" || true
-          # A short video for the video flows (the simulator's library has none).
+          # Tiny generated photos (like Android's), then the short video last so it is the newest item.
+          python3 builds/maestro/make-photo-fixtures.py
+          for i in 1 2 3 4; do xcrun simctl addmedia "$UDID" /tmp/fx$i.png || true; done
           xcrun simctl addmedia "$UDID" builds/maestro/fixtures/clip.mp4 || true
           if [ "${{ inputs.reduce_transparency }}" = true ]; then
             xcrun simctl spawn "$UDID" defaults write com.apple.Accessibility ReduceTransparencyEnabled -bool true || true
@@ -176,6 +178,11 @@ jobs:
           else
             echo 'Maestro iOS: FAIL (detailed evidence encrypted)'; exit 1
           fi
+
+      # Content-free per-flow outcome (flow file names and PASS/FAIL only).
+      - name: Per-flow results (names only)
+        if: always()
+        run: grep -hE '^(RESULT|STEP) ' "$RUNNER_TEMP"/qa-logs/ios-*.log 2>/dev/null || echo 'No per-flow results recorded.'
 
       - name: Audit passes (dark, large text, huge text)
         if: always() && steps.simulator.outcome == 'success' && inputs.only == ''
