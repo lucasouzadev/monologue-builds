@@ -20,7 +20,7 @@ appId: app.monologue.mobile
 - swipe:
     from:
       text: ${".*" + output.qaTitle + ".*"}
-    direction: LEFT
+    direction: RIGHT   # the delete gesture is a swipe to the right (swipe-to-delete.tsx: activeOffsetX 12, failOffsetX -10)
 - extendedWaitUntil:
     visible:
       id: "swipe-delete-action"

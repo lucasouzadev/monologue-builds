@@ -25,8 +25,7 @@ appId: app.monologue.mobile
     visible:
       id: "search-filter-carousel"
     timeout: 10000
-- tapOn:
-    id: "home-search-input"
+# The search field autofocuses when the screen opens.
 - inputText: "zebracrossing"
 - extendedWaitUntil:
     visible: ".*zebracrossing.*"

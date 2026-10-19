@@ -35,6 +35,8 @@ appId: app.monologue.mobile
           optional: true
       - tapOn: "Edit"
       - assertVisible: "Save edit"
+      - tapOn:
+          id: "composer-input"
       - eraseText: 40
       - inputText: "Corrected wording"
       # The editor shows the new text before saving (isolates typing from saving).
