@@ -1,0 +1,26 @@
+# Owner QA 2026-10-17 (iPhone 15): probe 1/2: can the flow REACH selection mode (menu > Organize > Merge)? Separates a navigation failure from the freeze probe in 88b.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Freeze
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Message.*"
+- inputText: "Primeira"
+- tapOn: "Send message"
+- inputText: "Segunda"
+- tapOn: "Send message"
+- inputText: "Terceira"
+- tapOn: "Send message"
+- takeScreenshot: 88b0-chat
+# 2. Selection mode (Merge) and a long press inside it.
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*Segunda.*"
+      - extendedWaitUntil:
+          visible: "Organi[sz]e.*"
+          timeout: 5000
+- tapOn: "Organi[sz]e.*"
+- tapOn: "Merge.*"
+- takeScreenshot: 88b0-selection

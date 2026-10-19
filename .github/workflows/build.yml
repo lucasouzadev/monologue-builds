@@ -12,11 +12,11 @@ on:
         required: true
         default: false
       native_baseline:
-        description: Native baseline label embedded in the binaries (19 = 18 + react-native-view-shot for the editor drawing, runtime 1.0.0-native-baseline-19; 18 = current tester baseline; 09 = 08 + Android NativeSurfaceHost attach guard; 08 = baseline 07 + expo-camera + react-native-document-scanner-plugin)
+        description: Native baseline label embedded in the binaries (21 = 20 + Share to Monologue (iOS Share Extension + Android SEND intents), needs the IOS_SHARE_EXTENSION_PROVISIONING_PROFILE_BASE64 secret; 20 = 19 + Picture in Picture, video cut, PDF viewer, text-format protocol 3; 19 = installed testers baseline; 17 = runtime 1.0.0-native-baseline-17; 16 = previous tester baseline; 09 = 08 + Android NativeSurfaceHost attach guard; 08 = baseline 07 + expo-camera + react-native-document-scanner-plugin)
         type: choice
         required: true
-        default: '19'
-        options: ['20', '19', '18', '17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
+        default: '21'
+        options: ['21', '20', '19', '18', '17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
       platforms:
         description: Both by default; choose one only for an explicit scope or failed-platform retry
         type: choice
@@ -212,6 +212,8 @@ jobs:
       FASTLANE_SKIP_UPDATE_CHECK: '1'
       FASTLANE_HIDE_CHANGELOG: '1'
       FASTLANE_OPT_OUT_USAGE: '1'
+      # Baseline 21: the iOS Share Extension is built only when its signing profile exists; without it the app ships without the extension (owner 2026-10-18).
+      MONOLOGUE_IOS_SHARE_EXTENSION: ${{ secrets.IOS_SHARE_EXTENSION_PROVISIONING_PROFILE_BASE64 != '' && 'on' || 'off' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -224,6 +226,8 @@ jobs:
           IOS_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}
           IOS_DISTRIBUTION_CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
           IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          # Baseline 21 only (Share Extension App ID `app.monologue.mobile.expo-sharing-extension`); ignored below 21.
+          IOS_SHARE_EXTENSION_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_SHARE_EXTENSION_PROVISIONING_PROFILE_BASE64 }}
           ASC_KEY_ID: ${{ vars.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ vars.ASC_ISSUER_ID }}
           ASC_API_KEY_BASE64: ${{ secrets.ASC_API_KEY_BASE64 }}
@@ -251,6 +255,8 @@ jobs:
           IOS_DISTRIBUTION_CERTIFICATE_BASE64: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_BASE64 }}
           IOS_DISTRIBUTION_CERTIFICATE_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_CERTIFICATE_PASSWORD }}
           IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          # Baseline 21 only (Share Extension App ID `app.monologue.mobile.expo-sharing-extension`); ignored below 21.
+          IOS_SHARE_EXTENSION_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_SHARE_EXTENSION_PROVISIONING_PROFILE_BASE64 }}
           ASC_KEY_ID: ${{ vars.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ vars.ASC_ISSUER_ID }}
           ASC_API_KEY_BASE64: ${{ secrets.ASC_API_KEY_BASE64 }}

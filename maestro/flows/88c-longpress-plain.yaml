@@ -1,0 +1,25 @@
+# Baseline for 88a/88b: a plain long press (menu) on a message, then Tools must still open.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Freeze
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Message.*"
+- inputText: "Primeira"
+- tapOn: "Send message"
+- inputText: "Segunda"
+- tapOn: "Send message"
+- inputText: "Terceira"
+- tapOn: "Send message"
+- takeScreenshot: 88c-chat
+- longPressOn: ".*Segunda.*"
+- takeScreenshot: 88c-menu
+- tapOn:
+    point: 50%, 12%
+    optional: true
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- takeScreenshot: 88c-tools-open

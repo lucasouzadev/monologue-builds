@@ -27,5 +27,7 @@ appId: app.monologue.mobile
 - tapOn: "Underline"
 - takeScreenshot: 73-panel-formatted
 - tapOn:
-    id: "selection-close"
+    id: "selection-back"
+- tapOn:
+    id: "selection-dismiss"
 - takeScreenshot: 73-keyboard-back

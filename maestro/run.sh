@@ -32,8 +32,12 @@ for flow in *.yaml; do
   if [ -n "${FLOW_ONLY:-}" ] && ! echo " $FLOW_ONLY " | grep -q " ${flow%.yaml} "; then continue; fi
   echo; echo "=== $flow ($(date +%H:%M:%S)) ==="
   flow_result=0
-  $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" "$flow" 2>&1 | tee "$SH/.last-flow.log" || true
+  FLOW_OUT="$(mktemp)"
+  $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" "$flow" 2>&1 | tee "$FLOW_OUT"
   flow_result=${PIPESTATUS[0]}
+  # Public: only the failing Maestro step of the (public) flow YAML, so a failure can be triaged without the encrypted evidence.
+  if [ "$flow_result" -ne 0 ]; then grep -aE 'FAILED|not found|Assertion is false|Timeout' "$FLOW_OUT" | head -3 | cut -c1-220 | sed "s|^|STEP ${flow%.yaml}: |"; fi
+  rm -f "$FLOW_OUT"
   if [ "$flow" = "00b-build-stamp.yaml" ] && [ "$flow_result" -ne 0 ]; then
     # Before feature acceptance only: slow update downloads can need another
     # launch. Each bounded retry must still prove the exact expected OTA stamp.
@@ -61,6 +65,24 @@ for flow in *.yaml; do
         timeout 20 adb logcat -d -b all 2>/dev/null | grep -E 'FATAL|AndroidRuntime|ReactNativeJS|JavascriptException|ExpoBlur|GaussianBlur|ErrorRecovery|Unable to load' | tail -100
         timeout 20 adb exec-out screencap -p > "$SH/${PFX}${flow%.yaml}-end.png" 2>/dev/null || true
         adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 && adb pull /sdcard/ui.xml "$SH/${PFX}${flow%.yaml}-end.xml" >/dev/null 2>&1 || true
+      fi
+      # The app's recovery surface prints the caught error ("Name: message", testID recovery-detail). Only that one line is made public:
+      # it is an exception from the code, not user content, and without it a release-binary launch failure cannot be diagnosed.
+      if command -v xcrun >/dev/null && [ -n "${1:-}" ]; then
+        xcrun simctl io "$1" screenshot "$SH/${PFX}${flow%.yaml}-end.png" >/dev/null 2>&1 || true
+        $T30 maestro --device "$1" hierarchy 2>/dev/null | python3 -c '
+import json, sys
+def walk(n):
+    a = n.get("attributes", {}) if isinstance(n, dict) else {}
+    if "recovery-detail" in a.values():
+        print("RECOVERY " + (a.get("text") or a.get("accessibilityText") or "").strip()[:240])
+    for c in (n.get("children") or []) if isinstance(n, dict) else []:
+        walk(c)
+try:
+    walk(json.load(sys.stdin))
+except Exception as e:
+    print("RECOVERY (hierarchy unreadable: %s)" % type(e).__name__)
+' || true
       fi
       exit "$status"
     fi

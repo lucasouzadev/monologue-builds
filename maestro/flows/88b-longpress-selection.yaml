@@ -1,0 +1,43 @@
+# Owner QA 2026-10-17 (iPhone 15): a long press inside the selection mode froze the screen. Probe: Tools must still open afterwards.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Freeze
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Message.*"
+- inputText: "Primeira"
+- tapOn: "Send message"
+- inputText: "Segunda"
+- tapOn: "Send message"
+- inputText: "Terceira"
+- tapOn: "Send message"
+- takeScreenshot: 88b-chat
+# 2. Selection mode (Merge) and a long press inside it.
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*Segunda.*"
+      - extendedWaitUntil:
+          visible: "Organi[sz]e.*"
+          timeout: 5000
+- tapOn: "Organi[sz]e.*"
+- tapOn: "Merge.*"
+- takeScreenshot: 88b-selection
+- longPressOn: ".*Terceira.*"
+- takeScreenshot: 88b-selection-longpress
+- tapOn:
+    point: 50%, 12%
+    optional: true
+- takeScreenshot: 88b-selection-after-menu
+- tapOn:
+    text: "Cancel selection"
+    optional: true
+- extendedWaitUntil:
+    visible: "Tools.*"
+    timeout: 10000
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- takeScreenshot: 88b-end-tools-open

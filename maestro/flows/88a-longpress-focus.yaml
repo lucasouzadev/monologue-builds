@@ -1,0 +1,50 @@
+# Owner QA 2026-10-17 (iPhone 15): a long press inside Focus froze the screen. Probe: the Reply composer must still take typing afterwards.
+appId: app.monologue.mobile
+env:
+  QA_PREFIX: QA Freeze
+---
+- launchApp
+- runFlow: support/new-chat.yaml
+- tapOn: "Message.*"
+- inputText: "Primeira"
+- tapOn: "Send message"
+- inputText: "Segunda"
+- tapOn: "Send message"
+- inputText: "Terceira"
+- tapOn: "Send message"
+- takeScreenshot: 88a-chat
+# 1. Reply Focus, then a long press inside it.
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  - longPressOn:
+                      point: "82%,60%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- takeScreenshot: 88a-focus
+- longPressOn: ".*QA root.*"
+- takeScreenshot: 88a-focus-longpress
+- tapOn:
+    point: 50%, 12%
+    optional: true
+- takeScreenshot: 88a-focus-after-menu
+# The composer in Focus must still take input after the long press. (In Focus the tools control reads "Expand editor", not "Tools", when no
+# photo / camera source exists, as on the simulator: the earlier Tools probe tested the flow's own assumption, not the freeze.)
+- tapOn: "Reply…"
+- inputText: "ok"
+- extendedWaitUntil:
+    visible: "ok"
+    timeout: 8000
+- takeScreenshot: 88a-focus-typed
