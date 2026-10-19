@@ -1,0 +1,39 @@
+# Owner list 2026-10-16 · item 13 — Select text opened with the keyboard up: the Composer must not stay active behind it; Copy keeps the tool open with feedback;
+# Edit and Mark stay inside the tool.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "SelKb"
+- tapOn: "Message.*"
+- takeScreenshot: 134-keyboard-open
+- runFlow: support/open-select-text.yaml
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 134-select-with-keyboard
+- runFlow: support/select-word.yaml
+- takeScreenshot: 134-word-selected
+- tapOn:
+    id: "text-selection-copy"
+- takeScreenshot: 134-after-copy-0ms
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 800
+    optional: true
+- takeScreenshot: 134-after-copy-800ms
+- runFlow: support/open-select-text.yaml
+- runFlow: support/select-word.yaml
+- tapOn:
+    id: "text-selection-mark"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 134-after-mark
+- runFlow: support/open-select-text.yaml
+- runFlow: support/select-word.yaml
+- tapOn:
+    id: "text-selection-edit"
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 134-after-edit

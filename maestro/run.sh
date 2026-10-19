@@ -56,6 +56,8 @@ for flow in *.yaml; do
   fi
   if [ "$flow_result" -eq 0 ]; then echo "RESULT $flow: PASS"; else
     echo "RESULT $flow: FAIL"; status=1
+    # Content-free reason: only Maestro's own failure line, which names the selector from this public flow file (never app text or screens).
+    grep -oE "(Assertion is false|Element not found)[^|]{0,140}" "$SH/.last-flow.log" 2>/dev/null | head -1 | sed "s/^/STEP $flow: /"
     # A wrong/embedded OTA makes every later result invalid; publish the failure image and stop.
     if [ "$flow" = "00b-build-stamp.yaml" ]; then
       if command -v adb >/dev/null && [ -z "${1:-}" ]; then

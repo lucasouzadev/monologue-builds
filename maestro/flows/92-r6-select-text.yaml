@@ -1,0 +1,51 @@
+# Round 6 · item 3 — Select text: Mark keeps the bubble open and turns into Unmark; Copy closes with a "Copied" pill; Derive opens a sheet with a title field and the picked text.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "R6Sel"
+- runFlow:
+    file: support/open-select-text.yaml
+- runFlow:
+    file: support/select-word.yaml
+- tapOn:
+    id: "text-selection-mark"
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 92-after-mark
+- assertVisible:
+    id: "text-selection-bubble"
+# The press on Mark may collapse the selection: pick the word again only if the capsule does not already read Unmark.
+- runFlow:
+    when:
+      notVisible: "Unmark"
+    commands:
+      - runFlow:
+          file: support/select-word.yaml
+- extendedWaitUntil:
+    visible: "Unmark"
+    timeout: 4000
+# Copy: closes and says so in a pill (it stays ~1.6 s: wait for it right away, before anything else).
+- tapOn:
+    id: "text-selection-copy"
+- extendedWaitUntil:
+    visible: ".*Copied.*"
+    timeout: 3000
+- assertNotVisible:
+    id: "text-selection-bubble"
+- takeScreenshot: 92-copied
+# Derive: a sheet with a title field and the excerpt already filled.
+- runFlow:
+    file: support/open-select-text.yaml
+- runFlow:
+    file: support/select-word.yaml
+- tapOn:
+    id: "text-selection-derive"
+- extendedWaitUntil:
+    visible: "New conversation from the excerpt"
+    timeout: 8000
+- assertVisible: ".*first message of a new conversation.*"
+- assertVisible: ".*root.*"
+- takeScreenshot: 92-derive-sheet

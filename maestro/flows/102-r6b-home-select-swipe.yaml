@@ -1,0 +1,45 @@
+# Round 6b · additions 1 and 2 — Home: "Select" in the filter menu opens selection (not a filter); a banner swiped right reveals Delete, which deletes it.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "R6bHome"
+# Back to Home (no hideKeyboard: on Android it can itself press Back and leave the chat before this tap).
+- runFlow:
+    when:
+      visible: "Back"
+    commands:
+      - tapOn: "Back"
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 10000
+# 2 — Select from the filter menu.
+- tapOn: "Filter conversations"
+- tapOn: "Select"
+- extendedWaitUntil:
+    visible: "0 selected"
+    timeout: 5000
+- takeScreenshot: 102-select-mode
+- tapOn: "Cancel selection"
+- extendedWaitUntil:
+    notVisible: "0 selected"
+    timeout: 5000
+# 1 — Swipe right on the banner (the reverse of the drawer): Delete is revealed, then deletes.
+- swipe:
+    from:
+      text: ${".*" + output.qaTitle + ".*"}
+    direction: RIGHT
+    duration: 500
+- extendedWaitUntil:
+    visible:
+      id: "swipe-delete-action"
+    timeout: 5000
+- takeScreenshot: 102-swipe-revealed
+- tapOn:
+    id: "swipe-delete-action"
+- extendedWaitUntil:
+    notVisible: ${".*" + output.qaTitle + ".*"}
+    timeout: 8000
+- takeScreenshot: 102-swipe-deleted

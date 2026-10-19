@@ -1,0 +1,21 @@
+# Round 6 · item 14 — Storage leads with one clear bar of Monologue's weight; the breakdown sits behind a disclosure arrow.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 60000
+- tapOn: "Open personal space"
+- tapOn: "Storage.*"
+- extendedWaitUntil:
+    visible:
+      id: "storage-usage"
+    timeout: 10000
+- takeScreenshot: 99a-storage
+- assertVisible:
+    id: "storage-usage-more"
+- assertNotVisible:
+    id: "storage-usage-videos"
+- tapOn:
+    id: "storage-usage-more"
+- takeScreenshot: 99a-storage-details

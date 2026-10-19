@@ -157,7 +157,9 @@ jobs:
           xcrun simctl bootstatus "$UDID" -b
           xcrun simctl install "$UDID" "$APP"
           xcrun simctl ui "$UDID" appearance "${{ inputs.appearance }}" || true
-          # A short video for the video flows (the simulator's library has none).
+          # Tiny generated photos (like Android's), then the short video last so it is the newest item.
+          python3 builds/maestro/make-photo-fixtures.py
+          for i in 1 2 3 4; do xcrun simctl addmedia "$UDID" /tmp/fx$i.png || true; done
           xcrun simctl addmedia "$UDID" builds/maestro/fixtures/clip.mp4 || true
           if [ "${{ inputs.reduce_transparency }}" = true ]; then
             xcrun simctl spawn "$UDID" defaults write com.apple.Accessibility ReduceTransparencyEnabled -bool true || true
@@ -182,6 +184,11 @@ jobs:
             grep -aE '^(RESULT|RECOVERY|STEP) ' "$RUNNER_TEMP/qa-logs/ios-flows.log" || true
             echo 'Maestro iOS: FAIL (detailed evidence encrypted)'; exit 1
           fi
+
+      # Content-free per-flow outcome (flow file names and PASS/FAIL only).
+      - name: Per-flow results (names only)
+        if: always()
+        run: grep -hE '^(RESULT|STEP) ' "$RUNNER_TEMP"/qa-logs/ios-*.log 2>/dev/null || echo 'No per-flow results recorded.'
 
       - name: Audit passes (dark, large text, huge text)
         if: always() && steps.simulator.outcome == 'success' && inputs.only == ''

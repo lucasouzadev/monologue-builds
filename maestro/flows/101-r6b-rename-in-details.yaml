@@ -1,0 +1,29 @@
+# Round 6b · additions 3 — in the chat details, a tap on the name opens the keyboard on it; Done renames and the header follows.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "R6bRename"
+- tapOn: "Conversation info"
+- extendedWaitUntil:
+    visible:
+      id: "conversation-info-title"
+    timeout: 10000
+- tapOn:
+    id: "conversation-info-title"
+- extendedWaitUntil:
+    visible:
+      id: "conversation-info-title-input"
+    timeout: 5000
+- takeScreenshot: 101-rename-keyboard
+- eraseText: 80
+- inputText: "R6b renamed"
+- pressKey: Enter
+- extendedWaitUntil:
+    visible: ".*R6b renamed.*"
+    timeout: 6000
+- assertNotVisible:
+    id: "conversation-info-title-input"
+- takeScreenshot: 101-renamed

@@ -1,0 +1,108 @@
+# FULL-APP TOUR 4/6 — Photos with caption, viewer (menu, caption sheet, edit tools), video viewer (mute, speed, PiP, trim), gallery.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "TourMedia"
+- runFlow:
+    file: support/attach-photo.yaml
+    env:
+      CAPTION: "Legenda do tour"
+- takeScreenshot: 123-photo-sent
+- tapOn:
+    text: "Photo.*"
+    index: 0
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 2000
+- takeScreenshot: 123-viewer
+- tapOn:
+    id: "viewer-more"
+    optional: true
+- takeScreenshot: 123-viewer-menu
+- runFlow: support/close-menu.yaml
+- tapOn:
+    id: "viewer-edit-caption"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 123-caption-sheet
+- runFlow: support/back.yaml
+- tapOn:
+    id: "viewer-edit"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 1500
+- takeScreenshot: 123-editor
+- tapOn:
+    id: "media-editor-crop-toggle"
+    optional: true
+- takeScreenshot: 123-editor-crop
+- tapOn:
+    id: "media-editor-crop-cancel"
+    optional: true
+- tapOn:
+    id: "media-editor-draw"
+    optional: true
+- takeScreenshot: 123-editor-draw
+- tapOn:
+    id: "media-editor-draw-cancel"
+    optional: true
+- tapOn:
+    id: "media-editor-cancel"
+    optional: true
+- runFlow: support/back.yaml
+# Video
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Photos"
+    timeout: 10000
+    optional: true
+- tapOn:
+    text: "Photos"
+    optional: true
+- takeScreenshot: 123-gallery
+- tapOn:
+    point: "50%,61%"
+- tapOn:
+    point: "86%,90%"
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 20000
+    optional: true
+- takeScreenshot: 123-tray-video
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: "Video.*"
+    timeout: 20000
+    optional: true
+- takeScreenshot: 123-video-sent
+- tapOn:
+    text: "Video.*"
+    index: 0
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 2500
+- takeScreenshot: 123-video-viewer
+- tapOn:
+    id: "viewer-mute"
+    optional: true
+- tapOn:
+    id: "viewer-speed"
+    optional: true
+- takeScreenshot: 123-video-mute-speed
+- tapOn:
+    id: "viewer-pip"
+    optional: true
+- takeScreenshot: 123-video-pip
+- tapOn:
+    id: "viewer-edit-video"
+    optional: true
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: 123-video-trim
+- runFlow: support/back.yaml
+- runFlow: support/back.yaml
+- takeScreenshot: 123-end
