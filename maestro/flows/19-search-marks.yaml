@@ -35,7 +35,9 @@ appId: app.monologue.mobile
 - tapOn:
     id: "search-chip-favorite"
 - takeScreenshot: 19-favorites-list
-# The carousel may re-render after the Favorites filter (iOS): bring Pinned back into view before each tap.
+# Each filter is checked on its own: switch Favorites off again before Pinned (on iOS the chip row re-lays out while a filter is on).
+- tapOn:
+    id: "search-chip-favorite"
 - swipe:
     from:
       id: "search-filter-carousel"
@@ -47,10 +49,6 @@ appId: app.monologue.mobile
 - tapOn:
     id: "search-chip-pin"
 - takeScreenshot: 19-pinned-list
-- swipe:
-    from:
-      id: "search-filter-carousel"
-    direction: LEFT
 - tapOn:
     id: "search-chip-pin"
 - takeScreenshot: 19-chips-off
