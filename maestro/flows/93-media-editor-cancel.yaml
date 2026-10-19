@@ -37,13 +37,37 @@ appId: app.monologue.mobile
     id: "media-editor-caption"
 - assertVisible: ".*legenda da foto.*"
 - takeScreenshot: 93-editor-open
-# Draw a stroke, then cancel: nothing may change in the tray or in the caption.
+# Two levels of cancel. Draw mode has its own: cancelling there drops only that stroke and returns to the editor.
+- tapOn:
+    id: "media-editor-draw"
+- extendedWaitUntil:
+    visible:
+      id: "media-editor-draw-mode"
+    timeout: 10000
+- swipe:
+    start: "30%,45%"
+    end: "70%,55%"
+    duration: 400
+- tapOn:
+    id: "media-editor-draw-cancel"
+- extendedWaitUntil:
+    visible:
+      id: "media-editor"
+    timeout: 10000
+- assertVisible: ".*legenda da foto.*"
+# Draw again and apply the stroke; the editor's own cancel then discards the whole edit.
 - tapOn:
     id: "media-editor-draw"
 - swipe:
     start: "30%,45%"
     end: "70%,55%"
     duration: 400
+- tapOn:
+    id: "media-editor-draw-apply"
+- extendedWaitUntil:
+    visible:
+      id: "media-editor"
+    timeout: 10000
 - takeScreenshot: 93-editor-drawn
 - tapOn:
     id: "media-editor-cancel"
