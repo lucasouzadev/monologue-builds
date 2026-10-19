@@ -1,0 +1,34 @@
+# A draft survives a real process kill (stopApp + launchApp), not just leaving the chat.
+# NOT YET RUN: authored without a simulator/emulator; verify on staging before relying on it.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Relaunch"
+- tapOn: "Message.*"
+- inputText: "draft survives kill"
+- assertVisible: ".*draft survives kill.*"
+- takeScreenshot: 88-before-kill
+# Give the debounced draft write time to reach storage before the process dies.
+- extendedWaitUntil:
+    visible: "Send message"
+    timeout: 5000
+- stopApp
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 30000
+- takeScreenshot: 88-home-after-kill
+- tapOn: ${"^" + output.qaTitle + ".*"}
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 15000
+- tapOn: "Message.*"
+- assertVisible: ".*draft survives kill.*"
+- takeScreenshot: 88-draft-restored
+# Clean up: flows share state, so send the draft rather than leaving it behind.
+- tapOn: "Send message"
+- assertVisible: ".*draft survives kill.*"

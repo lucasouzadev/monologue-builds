@@ -1,0 +1,28 @@
+# A sent message, a pin and a new title survive a real process kill (stopApp + launchApp).
+# NOT YET RUN: authored without a simulator/emulator; verify on staging before relying on it.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Persiste"
+- tapOn: "Message.*"
+- inputText: "persisted message body"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*persisted message body.*"
+    timeout: 10000
+- takeScreenshot: 92-before-kill
+- stopApp
+- launchApp:
+    stopApp: true
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 30000
+- tapOn: ${"^" + output.qaTitle + ".*"}
+- extendedWaitUntil:
+    visible: ".*persisted message body.*"
+    timeout: 15000
+- assertVisible: ".*QA root.*"
+- takeScreenshot: 92-after-kill
