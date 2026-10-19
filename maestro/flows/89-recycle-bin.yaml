@@ -1,6 +1,6 @@
-# Recycle Bin: delete a fixture conversation from Home selection, find it in the bin, restore it.
-# Uses its own fixture (support/new-chat.yaml), so the shared "Ola" state is untouched.
-# NOT YET RUN: authored without a simulator/emulator; verify on staging before relying on it.
+# Recycle Bin: swipe a fixture conversation away (the gesture works on both platforms and asks nothing),
+# find it in the bin, restore it, and see it back on Home. Own fixture via support/new-chat.yaml.
+# (A row long-press is a preview on Android and a native menu on iOS, so it is not used here.)
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -17,18 +17,19 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: ${".*" + output.qaTitle + ".*"}
     timeout: 20000
-- longPressOn: ${".*" + output.qaTitle + ".*"}
-- tapOn:
-    text: "Delete"
-    optional: true
+- swipe:
+    from:
+      text: ${".*" + output.qaTitle + ".*"}
+    direction: LEFT
 - extendedWaitUntil:
     visible:
-      id: "conversation-selection-bar"
+      id: "swipe-delete-action"
     timeout: 10000
-- tapOn: "Delete 1"
 - tapOn:
-    id: "selection-confirm-action"
-- assertNotVisible: ${".*" + output.qaTitle + ".*"}
+    id: "swipe-delete-action"
+- extendedWaitUntil:
+    notVisible: ${".*" + output.qaTitle + ".*"}
+    timeout: 10000
 - takeScreenshot: 89-deleted-from-home
 - tapOn: "Filter conversations.*"
 - tapOn: "Recycle Bin"

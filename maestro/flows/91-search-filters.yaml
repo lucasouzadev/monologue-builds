@@ -13,20 +13,17 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: ".*zebracrossing needle.*"
     timeout: 10000
-- openLink: "monologue:///"
-- runFlow:
-    when:
-      visible: "Open in.*Monologue.*"
-    commands:
-      - tapOn: "Open"
+# A fresh launch, like flow 19: the message is already persisted (see 92).
+- launchApp
 - extendedWaitUntil:
     visible: "More creation options"
     timeout: 30000
 - tapOn: "More creation options"
 - tapOn: "Wide search"
+# The chips are a horizontal carousel: Favorites sits to the right of the screen edge.
 - extendedWaitUntil:
     visible:
-      id: "search-chip-favorite"
+      id: "search-filter-carousel"
     timeout: 10000
 - tapOn:
     id: "home-search-input"
@@ -36,6 +33,11 @@ appId: app.monologue.mobile
     timeout: 10000
 - takeScreenshot: 91-hit
 # A filter that excludes the fixture (it is not a favorite) must hide the hit.
+- scrollUntilVisible:
+    element:
+      id: "search-chip-favorite"
+    direction: RIGHT
+    timeout: 15000
 - tapOn:
     id: "search-chip-favorite"
 - assertNotVisible: ".*zebracrossing needle.*"
