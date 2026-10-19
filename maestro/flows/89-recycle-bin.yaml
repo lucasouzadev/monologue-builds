@@ -21,12 +21,10 @@ appId: app.monologue.mobile
     from:
       text: ${".*" + output.qaTitle + ".*"}
     direction: RIGHT   # the delete gesture is a swipe to the right (swipe-to-delete.tsx: activeOffsetX 12, failOffsetX -10)
-- extendedWaitUntil:
-    visible:
-      id: "swipe-delete-action"
-    timeout: 10000
+# A full swipe may already complete the deletion; a half swipe leaves the button to tap.
 - tapOn:
     id: "swipe-delete-action"
+    optional: true
 - extendedWaitUntil:
     notVisible: ${".*" + output.qaTitle + ".*"}
     timeout: 10000

@@ -32,11 +32,15 @@ appId: app.monologue.mobile
     timeout: 10000
 - takeScreenshot: 91-hit
 # A filter that excludes the fixture (it is not a favorite) must hide the hit.
-- scrollUntilVisible:
-    element:
-      id: "search-chip-favorite"
-    direction: RIGHT
-    timeout: 15000
+# scrollUntilVisible swipes from the screen centre and would miss this top carousel: swipe the carousel itself.
+- swipe:
+    from:
+      id: "search-filter-carousel"
+    direction: LEFT
+- swipe:
+    from:
+      id: "search-filter-carousel"
+    direction: LEFT
 - tapOn:
     id: "search-chip-favorite"
 - assertNotVisible: ".*zebracrossing needle.*"
