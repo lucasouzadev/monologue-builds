@@ -1,0 +1,55 @@
+# platform: android
+# #133 P0.3: chat -> camera -> capture -> the photo is in the tray -> open the editor from the tray -> cancel -> still in the tray -> send. The Android emulator runs
+# with an emulated back camera (e2e-android.yml). The iOS simulator has no camera, so this flow is skipped there.
+# NOT YET RUN when this was written.
+appId: app.monologue.mobile
+---
+- launchApp:
+    permissions:
+      camera: allow
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Camera"
+- tapOn:
+    id: "composer-tools-trigger"
+- tapOn:
+    id: "composer-tools-tool-camera"
+- extendedWaitUntil:
+    visible:
+      id: "camera-panel"
+    timeout: 15000
+- takeScreenshot: 97-camera-open
+- extendedWaitUntil:
+    visible:
+      id: "camera-preview"
+    timeout: 20000
+- tapOn:
+    id: "camera-shutter"
+- extendedWaitUntil:
+    visible:
+      id: "composer-attachment-tray"
+    timeout: 30000
+- takeScreenshot: 97-captured-in-tray
+- tapOn:
+    id: "tray-preview"
+    index: 0
+- extendedWaitUntil:
+    visible:
+      id: "media-editor"
+    timeout: 10000
+- tapOn:
+    id: "media-editor-cancel"
+- extendedWaitUntil:
+    notVisible:
+      id: "media-editor"
+    timeout: 10000
+- extendedWaitUntil:
+    visible:
+      id: "composer-attachment-tray"
+    timeout: 10000
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: "Photo.*"
+    timeout: 20000
+- takeScreenshot: 97-sent

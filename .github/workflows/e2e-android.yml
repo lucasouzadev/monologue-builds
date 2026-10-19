@@ -15,7 +15,7 @@ on:
         required: false
         default: ''
       profile:
-        description: Optional device profile for the emulator (tall-gestures = 1080x2460, gesture navigation, like the owner's phone)
+        description: Optional device profile for the emulator (tall-gestures = 1080x2460, gesture navigation, like the owner's phone; small-phone = 720x1280; tablet = 1600x2560)
         type: string
         required: false
         default: ''
@@ -92,7 +92,7 @@ jobs:
           ram-size: 4096M
           heap-size: 1536M
           disk-size: 8192M
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
           disable-animations: true
           # The action executes each script line in a separate shell. Fold the
           # entire conditional into one command; otherwise its first line fails.

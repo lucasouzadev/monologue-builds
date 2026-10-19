@@ -1,0 +1,22 @@
+# platform: android
+# #133 P1.5 Share to Monologue (Android SEND intent, baseline 21): a text share opens the destination picker; choosing "New conversation" opens it with the text in
+# the Composer as a draft (nothing is sent), once. The hook maestro/hooks/96-share-text-android.sh delivers the intent right before this flow.
+# NOT YET RUN when this was written.
+appId: app.monologue.mobile
+---
+- extendedWaitUntil:
+    visible:
+      id: "share-target-sheet"
+    timeout: 60000
+- assertVisible: ".*texto compartilhado pelo teste.*"
+- takeScreenshot: 96-share-picker
+- tapOn:
+    id: "share-new-conversation"
+# The conversation opens with the shared words in the field, not sent.
+- extendedWaitUntil:
+    visible: ".*texto compartilhado pelo teste.*"
+    timeout: 20000
+- assertNotVisible:
+    id: "share-target-sheet"
+- takeScreenshot: 96-share-draft
+- assertVisible: "Send message"
