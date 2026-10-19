@@ -2,7 +2,9 @@ name: Monologue OTA update (private source)
 run-name: ${{ inputs.recover_apk_build_run_id && format('Recover APK upload from {0}', inputs.recover_apk_build_run_id) || format('OTA {0} / {1} @ {2} (baseline {3})', inputs.platform, inputs.channel, inputs.source_ref, inputs.native_baseline) }}
 
 # Manual only. Publishes a JS/asset-only update to the Expo project; never compiles a native binary.
-# The runtime label must match the installed binary; the current tester baseline is 16.
+# The runtime label must match the installed binary. KEEP THIS FILE CURRENT: every new native baseline is added to `native_baseline` (and becomes its default once the binary is in the testers' hands).
+# Current testers binaries (2026-10-18): baseline 21 on both platforms (Android build run 39147740710, iOS build run 39150845810 without the Share Extension).
+# iOS testers on the old TestFlight build stay on baseline 20 until they install the new one; publish an extra ios + 20 OTA only if someone is still on it.
 on:
   workflow_dispatch:
     inputs:
@@ -12,15 +14,15 @@ on:
         required: false
         default: ''
       source_ref:
-        description: Branch, tag or SHA of the private lucasouzadev/monologue repository
+        description: Branch, tag or SHA of the private lucasouzadev/monologue repository (the active app branch is claude/m2-format-feedback; use a FULL SHA to pin exactly what was validated)
         type: string
         required: true
-        default: main
+        default: claude/m2-format-feedback
       channel:
-        description: EAS update channel (testers uses the production EAS environment)
+        description: EAS update channel (preview = staging, validate there first; testers uses the production EAS environment)
         type: choice
         required: true
-        default: development
+        default: preview
         options: [development, preview, production, testers]
       platform:
         description: Platform(s) to publish
@@ -29,7 +31,7 @@ on:
         default: all
         options: [all, ios, android]
       native_baseline:
-        description: Runtime label of the installed binary (must match it)
+        description: Runtime label of the installed binary (must match it; testers = 21 on both platforms)
         type: choice
         required: true
         default: '18'
