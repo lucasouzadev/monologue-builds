@@ -1,0 +1,64 @@
+# #133 P0 (media lifecycle): a caption typed in the composer and a staged photo survive opening the photo editor and cancelling it.
+# Tapping a photo in the composer tray opens the editor (media-editor), which shows the composer caption. Cancel must leave the tray and the caption exactly as they were,
+# and sending afterwards must produce ONE photo bubble with the caption.
+# NOT YET RUN when this was written: the tile coordinates are the ones of the existing gallery flows (06/30/71).
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Legenda"
+- tapOn: "Message.*"
+- inputText: "legenda da foto"
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Expand editor"
+    timeout: 10000
+- tapOn: "Photos"
+- tapOn:
+    point: "20%,47%"
+- tapOn:
+    point: "86%,90%"
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 20000
+- assertVisible: ".*legenda da foto.*"
+- takeScreenshot: 93-tray-with-caption
+# Open the editor from the tray tile.
+- tapOn:
+    id: "tray-preview"
+    index: 0
+- extendedWaitUntil:
+    visible:
+      id: "media-editor"
+    timeout: 10000
+- assertVisible:
+    id: "media-editor-caption"
+- assertVisible: ".*legenda da foto.*"
+- takeScreenshot: 93-editor-open
+# Draw a stroke, then cancel: nothing may change in the tray or in the caption.
+- tapOn:
+    id: "media-editor-draw"
+- swipe:
+    start: "30%,45%"
+    end: "70%,55%"
+    duration: 400
+- takeScreenshot: 93-editor-drawn
+- tapOn:
+    id: "media-editor-cancel"
+- extendedWaitUntil:
+    notVisible:
+      id: "media-editor"
+    timeout: 10000
+- assertVisible: "Attachments"
+- assertVisible: ".*legenda da foto.*"
+- takeScreenshot: 93-after-cancel
+# Send: one photo bubble with the caption, an empty tray.
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: "Photo.*"
+    timeout: 20000
+- assertVisible: ".*legenda da foto.*"
+- assertNotVisible: "Attachments"
+- takeScreenshot: 93-sent
