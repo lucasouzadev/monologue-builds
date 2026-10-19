@@ -43,7 +43,10 @@ appId: app.monologue.mobile
     direction: LEFT
 - tapOn:
     id: "search-chip-favorite"
-- assertNotVisible: ".*zebracrossing needle.*"
+# The search is asynchronous: wait for the filtered list instead of asserting at once.
+- extendedWaitUntil:
+    notVisible: ".*zebracrossing needle.*"
+    timeout: 10000
 - takeScreenshot: 91-favorite-filter-excludes
 - tapOn:
     id: "search-chip-favorite"
