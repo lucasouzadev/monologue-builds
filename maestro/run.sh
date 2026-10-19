@@ -32,7 +32,12 @@ for flow in *.yaml; do
   if [ -n "${FLOW_ONLY:-}" ] && ! echo " $FLOW_ONLY " | grep -q " ${flow%.yaml} "; then continue; fi
   echo; echo "=== $flow ($(date +%H:%M:%S)) ==="
   flow_result=0
-  $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" "$flow" || flow_result=$?
+  FLOW_OUT="$(mktemp)"
+  $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" "$flow" 2>&1 | tee "$FLOW_OUT"
+  flow_result=${PIPESTATUS[0]}
+  # Public: only the failing Maestro step of the (public) flow YAML, so a failure can be triaged without the encrypted evidence.
+  if [ "$flow_result" -ne 0 ]; then grep -aE 'FAILED|not found|Assertion is false|Timeout' "$FLOW_OUT" | head -3 | cut -c1-220 | sed "s|^|STEP ${flow%.yaml}: |"; fi
+  rm -f "$FLOW_OUT"
   if [ "$flow" = "00b-build-stamp.yaml" ] && [ "$flow_result" -ne 0 ]; then
     # Before feature acceptance only: slow update downloads can need another
     # launch. Each bounded retry must still prove the exact expected OTA stamp.
