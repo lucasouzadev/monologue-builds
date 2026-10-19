@@ -2,6 +2,12 @@
 appId: app.monologue.mobile
 ---
 - launchApp
+# Same setup as 91: create a chat, then relaunch so Home is the starting point regardless of where the previous flow left the app.
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Marcas"
+- launchApp
 - extendedWaitUntil:
     visible: "More creation options"
     timeout: 60000
