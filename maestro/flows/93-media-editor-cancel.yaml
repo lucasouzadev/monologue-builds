@@ -75,7 +75,10 @@ appId: app.monologue.mobile
     notVisible:
       id: "media-editor"
     timeout: 10000
-- assertVisible: "Attachments"
+# The editor is a modal: on iOS the tray is reachable only after the dismiss animation ends.
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 10000
 - assertVisible: ".*legenda da foto.*"
 - takeScreenshot: 93-after-cancel
 # Send: one photo bubble with the caption, an empty tray.

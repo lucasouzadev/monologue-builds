@@ -35,9 +35,22 @@ appId: app.monologue.mobile
 - tapOn:
     id: "search-chip-favorite"
 - takeScreenshot: 19-favorites-list
+# The carousel may re-render after the Favorites filter (iOS): bring Pinned back into view before each tap.
+- swipe:
+    from:
+      id: "search-filter-carousel"
+    direction: LEFT
+- extendedWaitUntil:
+    visible:
+      id: "search-chip-pin"
+    timeout: 10000
 - tapOn:
     id: "search-chip-pin"
 - takeScreenshot: 19-pinned-list
+- swipe:
+    from:
+      id: "search-filter-carousel"
+    direction: LEFT
 - tapOn:
     id: "search-chip-pin"
 - takeScreenshot: 19-chips-off
