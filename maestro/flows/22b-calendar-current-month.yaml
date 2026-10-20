@@ -1,0 +1,22 @@
+# The Home calendar opens on the CURRENT month. Only the current month page exposes `home-calendar-month-page` and `home-calendar-day-N`; on Android the pager used to sit on
+# the previous month's page (a September grid under "October 2026", no day ids), so these assertions fail on that bug and pass on the fix. One screenshot for the visual check.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Activity calendar"
+    timeout: 60000
+- tapOn: "Activity calendar"
+- extendedWaitUntil:
+    visible:
+      id: "activity-month-controls"
+    timeout: 10000
+- extendedWaitUntil:
+    visible:
+      id: "home-calendar-month-page"
+    timeout: 5000
+- assertVisible:
+    id: "home-calendar-day-1"
+- takeScreenshot: 22b-calendar-current-month
+- tapOn:
+    id: "home-calendar-done"

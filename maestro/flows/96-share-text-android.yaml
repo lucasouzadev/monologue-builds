@@ -12,11 +12,14 @@ appId: app.monologue.mobile
 - takeScreenshot: 96-share-picker
 - tapOn:
     id: "share-new-conversation"
-# The conversation opens with the shared words in the field, not sent.
+# The picker must CLOSE after the delivery (it used to stay over the conversation: the hook's state was never refreshed after the native clear), and the conversation
+# opens with the shared words in the field, not sent. The words are also in the picker's summary, so wait for the picker to go first, then look for them.
+- extendedWaitUntil:
+    notVisible:
+      id: "share-target-sheet"
+    timeout: 15000
 - extendedWaitUntil:
     visible: ".*texto compartilhado pelo teste.*"
     timeout: 20000
-- assertNotVisible:
-    id: "share-target-sheet"
 - takeScreenshot: 96-share-draft
 - assertVisible: "Send message"

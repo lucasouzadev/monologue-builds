@@ -1,0 +1,24 @@
+# platform: android
+# #133 P1.5: a link that cannot be resolved (the host does not answer) must still reach the picker and then the draft, not vanish. expo-sharing resolves a shared URL over the
+# network and, on failure, reports an error with an empty resolved list; the app falls back to the raw payload. The hook maestro/hooks/96b-share-link-unresolvable-android.sh
+# delivers the intent right before this flow.
+appId: app.monologue.mobile
+---
+- extendedWaitUntil:
+    visible:
+      id: "share-target-sheet"
+    timeout: 60000
+- assertVisible: ".*monologue-qa-nonexistent-host-9f3a.*"
+- takeScreenshot: 96b-share-link-picker
+- tapOn:
+    id: "share-new-conversation"
+# The picker closes, and the link (also in the picker's summary, hence the wait for the picker first) is in the conversation's field.
+- extendedWaitUntil:
+    notVisible:
+      id: "share-target-sheet"
+    timeout: 15000
+- extendedWaitUntil:
+    visible: ".*monologue-qa-nonexistent-host-9f3a.*"
+    timeout: 20000
+- takeScreenshot: 96b-share-link-draft
+- assertVisible: "Send message"

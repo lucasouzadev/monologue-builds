@@ -1,7 +1,7 @@
 # #133 P0 (media lifecycle): a caption typed in the composer and a staged photo survive opening the photo editor and cancelling it.
 # Tapping a photo in the composer tray opens the editor (media-editor), which shows the composer caption. Cancel must leave the tray and the caption exactly as they were,
 # and sending afterwards must produce ONE photo bubble with the caption.
-# NOT YET RUN when this was written: the tile coordinates are the ones of the existing gallery flows (06/30/71).
+# Android PASS (run 39362318859); iOS selectors fixed after run 39363576131 (the import button was behind the keyboard coordinates).
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -16,11 +16,10 @@ appId: app.monologue.mobile
     visible: "Expand editor"
     timeout: 10000
 - tapOn: "Photos"
-# The second tile is a photo on both platforms (the first can be a video).
-- tapOn:
-    point: "55%,47%"
-- tapOn:
-    point: "86%,90%"
+# By label, not by point: with the keyboard open (the caption was typed) the panel sits above it on iOS, so the import button is at ~74% of the screen height and
+# a tap at 86%,90% lands on the keyboard; and the tile at 55%,47% is the VIDEO there. Tile 2 is a photo on both platforms (the video is tile 5).
+- tapOn: "(Photo|Foto) 2"
+- tapOn: "(Import|Importar) 1"
 # Named by id so a failure here says "the tray never appeared" (the later text check says "it did not come back").
 - extendedWaitUntil:
     visible:
