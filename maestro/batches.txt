@@ -1,0 +1,5 @@
+# E2E batches (owner 2026-10-20): ONE batch = ONE targeted run, at most 5 flows, so a run is minutes (not hours) and a dead emulator costs one batch.
+# Dispatch with e2e-android.yml / e2e-ios.yml `only` = the flow names of one line (00-warm-update first when the run needs the staging OTA). Flows tagged
+# "# platform: android" run only there. Add a batch when you add flows; keep each flow small (one journey, one outcome).
+share-android: 00-warm-update 22b-calendar-current-month 96-share-text-android 96b-share-link-unresolvable-android
+media-both: 00-warm-update 19-search-marks 93-media-editor-cancel 97-camera-capture-android
