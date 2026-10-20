@@ -12,11 +12,11 @@ on:
         required: true
         default: false
       native_baseline:
-        description: Native baseline label embedded in the binaries (21 = 20 + Share to Monologue (iOS Share Extension + Android SEND intents), needs the IOS_SHARE_EXTENSION_PROVISIONING_PROFILE_BASE64 secret; 20 = 19 + Picture in Picture, video cut, PDF viewer, text-format protocol 3; 19 = installed testers baseline; 17 = runtime 1.0.0-native-baseline-17; 16 = previous tester baseline; 09 = 08 + Android NativeSurfaceHost attach guard; 08 = baseline 07 + expo-camera + react-native-document-scanner-plugin)
+        description: Native baseline label embedded in the binaries (22 = 21 + snapshot lift of the message menu + Home preview card colour (MonologueMessageActions only); 21 = 20 + Share to Monologue (iOS Share Extension + Android SEND intents), needs the IOS_SHARE_EXTENSION_PROVISIONING_PROFILE_BASE64 secret; 20 = 19 + Picture in Picture, video cut, PDF viewer, text-format protocol 3; 19 = installed testers baseline; 17 = runtime 1.0.0-native-baseline-17; 16 = previous tester baseline; 09 = 08 + Android NativeSurfaceHost attach guard; 08 = baseline 07 + expo-camera + react-native-document-scanner-plugin)
         type: choice
         required: true
-        default: '21'
-        options: ['21', '20', '19', '18', '17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
+        default: '22'
+        options: ['22', '21', '20', '19', '18', '17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
       platforms:
         description: Both by default; choose one only for an explicit scope or failed-platform retry
         type: choice
