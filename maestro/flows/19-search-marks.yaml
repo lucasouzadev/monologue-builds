@@ -2,6 +2,12 @@
 appId: app.monologue.mobile
 ---
 - launchApp
+# Same setup as 91: create a chat, then relaunch so Home is the starting point regardless of where the previous flow left the app.
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Marcas"
+- launchApp
 - extendedWaitUntil:
     visible: "More creation options"
     timeout: 60000
@@ -9,12 +15,37 @@ appId: app.monologue.mobile
 - tapOn: "Wide search"
 - extendedWaitUntil:
     visible:
-      id: "search-chip-favorite"
+      id: "search-filter-carousel"
     timeout: 10000
 - takeScreenshot: 19-wide-search-chips
+# The chips are a horizontal carousel: Favorites and Pinned sit past the right edge of the screen. Swipe the carousel itself
+# (scrollUntilVisible swipes from the screen centre and would miss it).
+- swipe:
+    from:
+      id: "search-filter-carousel"
+    direction: LEFT
+- swipe:
+    from:
+      id: "search-filter-carousel"
+    direction: LEFT
+- assertVisible:
+    id: "search-chip-favorite"
+- assertVisible:
+    id: "search-chip-pin"
 - tapOn:
     id: "search-chip-favorite"
 - takeScreenshot: 19-favorites-list
+# Each filter is checked on its own: switch Favorites off again before Pinned (on iOS the chip row re-lays out while a filter is on).
+- tapOn:
+    id: "search-chip-favorite"
+- swipe:
+    from:
+      id: "search-filter-carousel"
+    direction: LEFT
+- extendedWaitUntil:
+    visible:
+      id: "search-chip-pin"
+    timeout: 10000
 - tapOn:
     id: "search-chip-pin"
 - takeScreenshot: 19-pinned-list

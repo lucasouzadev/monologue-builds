@@ -13,6 +13,14 @@ case "${QA_MOTION:-existing}" in
 esac
 adb shell cmd uimode night "$([ "${QA_APPEARANCE:-light}" = dark ] && echo yes || echo no)" >/dev/null 2>&1
 case "${DEVICE_PROFILE:-}" in
+  small-phone)
+    # #123 viewport matrix: a small phone (720x1280 at 320 dpi, three-button navigation).
+    adb shell wm size 720x1280 >/dev/null 2>&1
+    adb shell wm density 320 >/dev/null 2>&1 ;;
+  tablet)
+    # #123 viewport matrix: a 10" tablet (1600x2560 at 320 dpi).
+    adb shell wm size 1600x2560 >/dev/null 2>&1
+    adb shell wm density 320 >/dev/null 2>&1 ;;
   tall-gestures)
     # The owner's phone: a taller screen (1080x2460) with gesture navigation (no navigation bar).
     adb shell wm size 1080x2460 >/dev/null 2>&1

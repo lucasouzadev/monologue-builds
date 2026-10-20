@@ -13,32 +13,41 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: ".*zebracrossing needle.*"
     timeout: 10000
-- openLink: "monologue:///"
-- runFlow:
-    when:
-      visible: "Open in.*Monologue.*"
-    commands:
-      - tapOn: "Open"
+# A fresh launch, like flow 19: the message is already persisted (see 92).
+- launchApp
 - extendedWaitUntil:
     visible: "More creation options"
     timeout: 30000
 - tapOn: "More creation options"
 - tapOn: "Wide search"
+# The chips are a horizontal carousel: Favorites sits to the right of the screen edge.
 - extendedWaitUntil:
     visible:
-      id: "search-chip-favorite"
+      id: "search-filter-carousel"
     timeout: 10000
-- tapOn:
-    id: "home-search-input"
+# The search field autofocuses when the screen opens.
 - inputText: "zebracrossing"
 - extendedWaitUntil:
     visible: ".*zebracrossing.*"
     timeout: 10000
 - takeScreenshot: 91-hit
 # A filter that excludes the fixture (it is not a favorite) must hide the hit.
+# scrollUntilVisible swipes from the screen centre and would miss this top carousel: swipe the carousel itself.
+- swipe:
+    from:
+      id: "search-filter-carousel"
+    direction: LEFT
+- swipe:
+    from:
+      id: "search-filter-carousel"
+    direction: LEFT
 - tapOn:
     id: "search-chip-favorite"
-- assertNotVisible: ".*zebracrossing needle.*"
+# The fixture is not a favorite, so the filter leaves nothing: the search screen shows its empty state.
+# (Not "notVisible" on the text: the Home list stays in the accessibility tree behind the search and shows the same preview.)
+- extendedWaitUntil:
+    visible: ".*(No results|No matching).*"
+    timeout: 10000
 - takeScreenshot: 91-favorite-filter-excludes
 - tapOn:
     id: "search-chip-favorite"

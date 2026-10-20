@@ -1,14 +1,13 @@
 # Flows pending triage (not run by CI)
 
-Authored 2026-10-19 without simulator access and run once on Android (build run 39257622593, staging OTA).
-They fail, and the failing steps below are all the public log shows. The screenshots are encrypted, so triage
-needs the decrypted evidence of the runs named here. Move a flow back to `maestro/flows/` once it passes.
+Flows that do not pass yet live here, out of the numeric suite. Move one back to `maestro/flows/` once it passes.
 
-| Flow | Last Android result (run) | Failing step |
-| --- | --- | --- |
-| 89-recycle-bin | FAIL (39265459338) | `conversation-selection-bar` not visible after long-press on the row (then "Delete") |
-| 90-edit-message | FAIL (39265459338) | `.*Corrected wording.*` not visible after Edit > erase > type > "Save edit" |
-| 91-search-filters | FAIL (39265459338, 39262875204) | `search-chip-favorite` not visible after More creation options > Wide search |
-
-Passing in the same runs and left in `maestro/flows/`: 88-draft-relaunch, 92-persistence-relaunch.
-Flow 89 also failed once earlier inside support/new-chat.yaml ("New conversation" not visible, run 39262875204); it passed that step on the next run, so that was likely emulator flakiness.
+## 89-recycle-bin
+Journey: swipe a fixture conversation to delete, find it in the Recycle Bin sheet, restore it, see it on Home.
+Android result, run 39292595375 (and 39290444986): the row is still on Home after `swipe` RIGHT from the row text
+(`swipe-delete-action` never appears; the tap on it was made optional and warned "not found").
+What the code says (apps/mobile/src/features/home/swipe-to-delete.tsx, home-screen.tsx:302): the pan gesture activates with
+`activeOffsetX(12)`, fails on a left swipe and on |dy| > 12, and `SwipeToDelete` wraps the row only when `onSwipeDelete` is set and no selection is active.
+So the gesture is a swipe to the RIGHT; what is not known is why the Maestro swipe does not trigger it (swipe speed/length, or the row's Pressable winning the touch).
+Next step: read the screenshots of those runs (decrypt, see SECURE_QA_ARTIFACTS.md) or try `swipe` with explicit start/end percentages and `duration`.
+Other deletion paths for reference: Android row long-press opens a preview whose menu "Delete" asks a system Alert ("Move to Recycle Bin?"); on iOS the row menu is native and not reachable by Maestro.

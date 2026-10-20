@@ -30,7 +30,11 @@ export MAESTRO_EXPECTED_UPDATE_ID="${EXPECTED_UPDATE_ID:-}"
 for flow in *.yaml; do
   # FLOW_ONLY="00-warm-update 00b-build-stamp 28-sheet-visuals": a verification subset (the staging gate runs this first, then the full suite).
   if [ -n "${FLOW_ONLY:-}" ] && ! echo " $FLOW_ONLY " | grep -q " ${flow%.yaml} "; then continue; fi
+  # A flow can say which platform it needs in its first lines: "# platform: android" is skipped on the iOS simulator (no camera, no Android intents).
+  if head -8 "$flow" | grep -q '^# platform: android' && command -v xcrun >/dev/null && [ -n "${1:-}" ]; then echo "SKIP $flow (android only)"; continue; fi
   echo; echo "=== $flow ($(date +%H:%M:%S)) ==="
+  # Optional per-flow setup that Maestro cannot do itself (an adb intent, for instance): maestro/hooks/<flow>.sh runs right before the flow.
+  if [ -f "$ROOT/hooks/${flow%.yaml}.sh" ]; then bash "$ROOT/hooks/${flow%.yaml}.sh" || echo "hook for $flow failed"; fi
   flow_result=0
   FLOW_OUT="$(mktemp)"
   $TMO maestro ${1:+--device "$1"} test --no-ansi -e "MAESTRO_EXPECTED_UPDATE_ID=$MAESTRO_EXPECTED_UPDATE_ID" "$flow" 2>&1 | tee "$FLOW_OUT"
