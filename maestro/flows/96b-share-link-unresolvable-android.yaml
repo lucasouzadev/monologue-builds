@@ -12,10 +12,13 @@ appId: app.monologue.mobile
 - takeScreenshot: 96b-share-link-picker
 - tapOn:
     id: "share-new-conversation"
+# The picker closes, and the link (also in the picker's summary, hence the wait for the picker first) is in the conversation's field.
+- extendedWaitUntil:
+    notVisible:
+      id: "share-target-sheet"
+    timeout: 15000
 - extendedWaitUntil:
     visible: ".*monologue-qa-nonexistent-host-9f3a.*"
     timeout: 20000
-- assertNotVisible:
-    id: "share-target-sheet"
 - takeScreenshot: 96b-share-link-draft
 - assertVisible: "Send message"
