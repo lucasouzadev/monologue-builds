@@ -97,7 +97,7 @@ jobs:
           # The action executes each script line in a separate shell. Fold the
           # entire conditional into one command; otherwise its first line fails.
           script: >-
-            bash maestro/android-e2e.sh > "$RUNNER_TEMP/monologue-maestro-android.log" 2>&1; rc=$?; grep -aE '^(RESULT|RECOVERY|STEP) ' "$RUNNER_TEMP/monologue-maestro-android.log" || true; if [ "$rc" -eq 0 ]; then echo 'Maestro Android: PASS (details encrypted)'; else echo 'Maestro Android: FAIL (details encrypted)'; exit 1; fi
+            adb logcat -c; (adb logcat -v time ReactNativeJS:I '*:S' > "$RUNNER_TEMP/android-perf-raw.log" 2>&1 &); bash maestro/android-e2e.sh > "$RUNNER_TEMP/monologue-maestro-android.log" 2>&1; rc=$?; sleep 1; grep -aoE 'monologue perf tx_[a-z_]+_ms ms=[0-9.]+( [a-z_]+=[0-9]+)*' "$RUNNER_TEMP/android-perf-raw.log" | sed 's/^monologue perf //' > "$RUNNER_TEMP/android-perf.log" || true; echo '--- transition timings (numbers only)'; cat "$RUNNER_TEMP/android-perf.log" || true; grep -aE '^(RESULT|RECOVERY|STEP) ' "$RUNNER_TEMP/monologue-maestro-android.log" || true; if [ "$rc" -eq 0 ]; then echo 'Maestro Android: PASS (details encrypted)'; else echo 'Maestro Android: FAIL (details encrypted)'; exit 1; fi
 
       # Content-free per-flow outcome (flow file names and PASS/FAIL only): lets an agent see WHICH acceptance flow failed without the encrypted evidence.
       - name: Per-flow results (names only)

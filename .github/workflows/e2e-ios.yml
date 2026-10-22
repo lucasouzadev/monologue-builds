@@ -176,6 +176,9 @@ jobs:
           EXPECTED_UPDATE_ID: ${{ inputs.expected_update_id }}
         run: |
           mkdir -p "$RUNNER_TEMP/qa-logs"
+          # Transition timings (M2-MOTION-2): the app logs `monologue perf tx_*` lines (numbers only). Captured for the whole run, printed in the next step.
+          xcrun simctl spawn "$SIM_UDID" log stream --style compact --predicate 'eventMessage CONTAINS "monologue perf tx_"' > "$RUNNER_TEMP/qa-logs/ios-perf-raw.log" 2>&1 &
+          echo $! > "$RUNNER_TEMP/perf-log.pid"
           if bash builds/maestro/run.sh "$SIM_UDID" > "$RUNNER_TEMP/qa-logs/ios-flows.log" 2>&1; then
             echo 'Maestro iOS: PASS (detailed evidence encrypted)'
             grep -aE '^(RESULT|RECOVERY|STEP) ' "$RUNNER_TEMP/qa-logs/ios-flows.log" || true
@@ -189,6 +192,15 @@ jobs:
       - name: Per-flow results (names only)
         if: always()
         run: grep -hE '^(RESULT|STEP) ' "$RUNNER_TEMP"/qa-logs/ios-*.log 2>/dev/null || echo 'No per-flow results recorded.'
+
+      # Content-free: only `tx_*` durations and counts (the app never logs ids, titles or text).
+      - name: Transition timings (numbers only)
+        if: always()
+        run: |
+          kill "$(cat "$RUNNER_TEMP/perf-log.pid" 2>/dev/null)" 2>/dev/null || true
+          grep -ahoE 'monologue perf tx_[a-z_]+_ms ms=[0-9.]+( [a-z_]+=[0-9]+)*' "$RUNNER_TEMP/qa-logs/ios-perf-raw.log" | sed 's/^monologue perf //' > "$RUNNER_TEMP/qa-logs/ios-perf.log" || true
+          cat "$RUNNER_TEMP/qa-logs/ios-perf.log" || true
+          [ -s "$RUNNER_TEMP/qa-logs/ios-perf.log" ] || echo 'No transition timings recorded.'
 
       - name: Audit passes (dark, large text, huge text)
         if: always() && steps.simulator.outcome == 'success' && inputs.only == ''
