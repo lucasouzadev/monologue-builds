@@ -1,0 +1,19 @@
+# M2-MOTION-2: the Home "+" opens the same New conversation sheet WITHOUT the drawer. Recorded to compare with m01-drawer-create (owner: the sheet from the drawer opens with a blank body, the one from "+" does not).
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "New conversation"
+    timeout: 60000
+- startRecording: m01b-plus-create
+- tapOn: "New conversation"
+- extendedWaitUntil:
+    visible: "Conversation title"
+    timeout: 4000
+- takeScreenshot: m01b-sheet-open
+- stopRecording
+- runFlow:
+    file: support/back.yaml
+- tapOn:
+    text: "Close.*"
+    optional: true
