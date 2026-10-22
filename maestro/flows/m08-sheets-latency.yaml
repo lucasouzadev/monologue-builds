@@ -3,10 +3,10 @@ appId: app.monologue.mobile
 ---
 - launchApp
 - extendedWaitUntil:
-    visible: ".*QA focus.*"
+    visible: ".*Ola.*"
     timeout: 60000
 - startRecording: m08-sheets-latency
-- longPressOn: ".*QA focus.*"
+- longPressOn: ".*Ola.*"
 - extendedWaitUntil:
     visible: "Customize"
     timeout: 8000
@@ -19,9 +19,9 @@ appId: app.monologue.mobile
     start: "50%,45%"
     end: "50%,95%"
 - extendedWaitUntil:
-    visible: ".*QA focus.*"
+    visible: ".*Ola.*"
     timeout: 8000
-- longPressOn: ".*QA focus.*"
+- longPressOn: ".*Ola.*"
 - extendedWaitUntil:
     visible: "Tags"
     timeout: 8000
