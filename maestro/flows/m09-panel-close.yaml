@@ -17,7 +17,7 @@ appId: app.monologue.mobile
     timeout: 15000
 - takeScreenshot: m09-panel-open
 - swipe:
-    start: "50%,82%"
+    start: "50%,78%"
     end: "50%,30%"
 - extendedWaitUntil:
     visible: "Message.*"
