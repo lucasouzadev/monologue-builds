@@ -17,16 +17,15 @@ appId: app.monologue.mobile
     visible: "Photos"
     timeout: 10000
 - tapOn: "Photos"
-- tapOn:
-    point: "20%,47%"
-- tapOn:
-    point: "86%,90%"
+- tapOn: "(Photo|Foto) 2"
+- tapOn: "(Import|Importar) 1"
 - extendedWaitUntil:
-    visible: "Attachments"
+    visible:
+      id: "composer-attachment-tray"
     timeout: 20000
 - takeScreenshot: m03-tray-open
 - tapOn:
-    text: "Remove.*"
+    text: "(Remove|Remover) .*"
     optional: true
 - takeScreenshot: m03-tray-removed
 - stopRecording

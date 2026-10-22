@@ -22,8 +22,9 @@ appId: app.monologue.mobile
 - takeScreenshot: m02-sent-title
 - tapOn: "Message.*"
 - inputText: "# Secao"
+- takeScreenshot: m02-space-title-typed
 - pressKey: Enter
-- extendedWaitUntil:
-    visible: ".*# Secao#.*"
-    timeout: 5000
 - takeScreenshot: m02-space-title
+- extendedWaitUntil:
+    visible: ".*Secao#.*"
+    timeout: 5000
