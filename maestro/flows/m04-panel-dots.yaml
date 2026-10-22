@@ -1,0 +1,33 @@
+# M2-MOTION #11: the panel's page dots follow the page (tile tap and swipe).
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Ola.*"
+    timeout: 60000
+- tapOn: ".*Ola.*"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 20000
+- startRecording: m04-panel-dots
+- tapOn: "Conversation info"
+- extendedWaitUntil:
+    visible:
+      id: "conversation-info-title"
+    timeout: 15000
+- tapOn:
+    id: "info-favorites"
+- assertVisible: ".*Page 2 / .*"
+- takeScreenshot: m04-dots-page2
+- swipe:
+    from:
+      id: "conversation-info-pages"
+    direction: LEFT
+- assertVisible: ".*Page 3 / .*"
+- takeScreenshot: m04-dots-page3
+- stopRecording
+- tapOn:
+    id: "pin-back"
+    optional: true
+- swipe:
+    direction: UP

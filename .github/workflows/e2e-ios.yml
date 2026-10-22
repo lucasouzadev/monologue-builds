@@ -244,9 +244,9 @@ jobs:
           mkdir -p "$dir/data"
           if [ -f builds/maestro/maestro-quality-evidence.json ]; then cp builds/maestro/maestro-quality-evidence.json "$dir/data/"; fi
           find builds/maestro/flows builds/maestro/shots builds/maestro/audit-* builds/maestro/stress builds/maestro/stress-android \
-            -type f -name '*.png' -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
+            -type f \( -name '*.png' -o -name '*.mp4' \) -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
           if [ -d "$HOME/.maestro/tests" ]; then
-            find "$HOME/.maestro/tests" -type f -name '*.png' -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
+            find "$HOME/.maestro/tests" -type f \( -name '*.png' -o -name '*.mp4' \) -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
           fi
           if [ -d "$RUNNER_TEMP/qa-logs" ]; then cp "$RUNNER_TEMP/qa-logs/"*.log "$dir/data/" 2>/dev/null || true; fi
           if [ -f "$RUNNER_TEMP/monologue-maestro-android.log" ]; then

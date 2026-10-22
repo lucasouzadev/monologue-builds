@@ -1,0 +1,32 @@
+# M2-MOTION #10: attaching a photo grows the Composer and the messages glide with it (no one-frame jump). Video for the frame check.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "QA glide"
+- tapOn: "Message.*"
+- inputText: "one"
+- tapOn: "Send message"
+- inputText: "two"
+- tapOn: "Send message"
+- startRecording: m03-attach-glide
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Photos"
+    timeout: 10000
+- tapOn: "Photos"
+- tapOn:
+    point: "20%,47%"
+- tapOn:
+    point: "86%,90%"
+- extendedWaitUntil:
+    visible: "Attachments"
+    timeout: 20000
+- takeScreenshot: m03-tray-open
+- tapOn:
+    text: "Remove.*"
+    optional: true
+- takeScreenshot: m03-tray-removed
+- stopRecording

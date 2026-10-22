@@ -3,3 +3,4 @@
 # "# platform: android" run only there. Add a batch when you add flows; keep each flow small (one journey, one outcome).
 share-android: 00-warm-update 22b-calendar-current-month 96-share-text-android 96b-share-link-unresolvable-android
 media-both: 00-warm-update 19-search-marks 93-media-editor-cancel 97-camera-capture-android
+motion-1: 00-warm-update m01-drawer-create m02-title-autoclose m03-attach-glide m04-panel-dots

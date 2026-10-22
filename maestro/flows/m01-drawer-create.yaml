@@ -1,0 +1,26 @@
+# M2-MOTION #1: Drawer → Create opens the new-conversation sheet while the drawer is still closing (no dead gap). Video + a bounded wait.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 60000
+- tapOn: "Open personal space"
+- extendedWaitUntil:
+    visible:
+      id: "profile-create-conversation"
+    timeout: 10000
+- startRecording: m01-drawer-create
+- tapOn:
+    id: "profile-create-conversation"
+- extendedWaitUntil:
+    visible: "Conversation title"
+    timeout: 2500
+- takeScreenshot: m01-sheet-open
+- stopRecording
+# Leave nothing behind: close the sheet without creating.
+- runFlow:
+    file: support/back.yaml
+- tapOn:
+    text: "Close.*"
+    optional: true

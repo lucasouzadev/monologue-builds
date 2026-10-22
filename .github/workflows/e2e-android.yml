@@ -119,9 +119,9 @@ jobs:
           mkdir -p "$dir/data"
           if [ -f maestro/maestro-quality-evidence.json ]; then cp maestro/maestro-quality-evidence.json "$dir/data/"; fi
           find maestro/flows maestro/shots maestro/audit-* maestro/stress maestro/stress-android \
-            -type f -name '*.png' -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
+            -type f \( -name '*.png' -o -name '*.mp4' \) -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
           if [ -d "$HOME/.maestro/tests" ]; then
-            find "$HOME/.maestro/tests" -type f -name '*.png' -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
+            find "$HOME/.maestro/tests" -type f \( -name '*.png' -o -name '*.mp4' \) -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
           fi
           if [ -d "$RUNNER_TEMP/qa-logs" ]; then cp "$RUNNER_TEMP/qa-logs/"*.log "$dir/data/" 2>/dev/null || true; fi
           if [ -f "$RUNNER_TEMP/monologue-maestro-android.log" ]; then

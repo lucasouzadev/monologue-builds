@@ -1,0 +1,29 @@
+# M2-MOTION #9 (owner D2): "#Title" + Enter closes the title by itself ("#Title#"); "# Title" with a space also opens one; only the title is a title when sent.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "QA title"
+- tapOn: "Message.*"
+- inputText: "#Meu titulo"
+- pressKey: Enter
+- inputText: "resto"
+- extendedWaitUntil:
+    visible: ".*#Meu titulo#.*"
+    timeout: 5000
+- takeScreenshot: m02-composer-faint-symbols
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*Meu titulo.*"
+    timeout: 10000
+- assertNotVisible: ".*#Meu titulo.*"
+- takeScreenshot: m02-sent-title
+- tapOn: "Message.*"
+- inputText: "# Secao"
+- pressKey: Enter
+- extendedWaitUntil:
+    visible: ".*# Secao#.*"
+    timeout: 5000
+- takeScreenshot: m02-space-title
