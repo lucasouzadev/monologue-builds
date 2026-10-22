@@ -1,0 +1,25 @@
+# M2-MOTION-2 F1: the conversation panel (Reveal) opens and closes with the video running, so the close can be checked frame by frame (no jump of the messages as the card goes back up).
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Ola.*"
+    timeout: 60000
+- tapOn: ".*Ola.*"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 20000
+- startRecording: m09-panel-close
+- tapOn: "Conversation info"
+- extendedWaitUntil:
+    visible:
+      id: "conversation-info-title"
+    timeout: 15000
+- takeScreenshot: m09-panel-open
+- swipe:
+    direction: UP
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 15000
+- takeScreenshot: m09-panel-closed
+- stopRecording
