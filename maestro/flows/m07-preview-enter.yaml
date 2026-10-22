@@ -3,10 +3,10 @@ appId: app.monologue.mobile
 ---
 - launchApp
 - extendedWaitUntil:
-    visible: ".*Teste.*"
+    visible: ".*QA focus.*"
     timeout: 60000
 - startRecording: m07-preview-enter
-- longPressOn: ".*Teste.*"
+- longPressOn: ".*QA focus.*"
 - extendedWaitUntil:
     visible: "Open .*"
     timeout: 6000
