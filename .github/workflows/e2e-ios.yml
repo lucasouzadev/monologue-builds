@@ -200,6 +200,12 @@ jobs:
           kill "$(cat "$RUNNER_TEMP/perf-log.pid" 2>/dev/null)" 2>/dev/null || true
           grep -ahoE 'monologue perf tx_[a-z_]+_ms ms=[0-9.]+( [a-z_]+=[0-9]+)*' "$RUNNER_TEMP/qa-logs/ios-perf-raw.log" | sed 's/^monologue perf //' > "$RUNNER_TEMP/qa-logs/ios-perf.log" || true
           cat "$RUNNER_TEMP/qa-logs/ios-perf.log" || true
+          # A release iOS build writes nothing to the system log: the staging app also keeps its `tx_*` lines (numbers only) in Documents/perf-tx.log.
+          DATA=$(xcrun simctl get_app_container "$SIM_UDID" app.monologue.mobile data 2>/dev/null || true)
+          if [ -n "$DATA" ] && [ -f "$DATA/Documents/perf-tx.log" ]; then
+            grep -aoE 'monologue perf tx_[a-z_]+_ms ms=[0-9.]+( [a-z_]+=[0-9]+)*' "$DATA/Documents/perf-tx.log" | sed 's/^monologue perf //' > "$RUNNER_TEMP/qa-logs/ios-perf.log" || true
+            cat "$RUNNER_TEMP/qa-logs/ios-perf.log" || true
+          fi
           [ -s "$RUNNER_TEMP/qa-logs/ios-perf.log" ] || echo 'No transition timings recorded.'
 
       - name: Audit passes (dark, large text, huge text)
