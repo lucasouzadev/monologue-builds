@@ -4,3 +4,4 @@
 share-android: 00-warm-update 22b-calendar-current-month 96-share-text-android 96b-share-link-unresolvable-android
 media-both: 00-warm-update 19-search-marks 93-media-editor-cancel 97-camera-capture-android
 motion-1: 01-create-open-send m01-drawer-create m02-title-autoclose m03-attach-glide m04-panel-dots
+motion-2: 01-create-open-send m05-focus-reply m06-merge-reveal m07-preview-enter
