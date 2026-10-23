@@ -33,23 +33,21 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Write.*"
     timeout: 6000
-- retry:
-    maxRetries: 3
-    commands:
-      - tapOn: "Write.*"
-      - extendedWaitUntil:
-          visible: "Edit"
-          timeout: 4000
+- tapOn:
+    text: "Write"
+    optional: true
 - tapOn: "Edit"
 - extendedWaitUntil:
-    visible: "Cancel editing"
+    visible:
+      id: "edit-bubble-cancel"
     timeout: 10000
 - extendedWaitUntil:
     visible: "never-visible-sentinel"
     timeout: 1500
     optional: true
 - takeScreenshot: m14-edit-open
-- tapOn: "Cancel editing"
+- tapOn:
+    id: "edit-bubble-cancel"
 - extendedWaitUntil:
     visible: "never-visible-sentinel"
     timeout: 2000
