@@ -21,7 +21,7 @@ appId: app.monologue.mobile
     id: "profile-section-storage"
 - extendedWaitUntil:
     visible:
-      id: "storage-settings"
+      id: "storage-(choose|create)"
     timeout: 6000
 - takeScreenshot: m11-storage-first-frame
 - stopRecording
