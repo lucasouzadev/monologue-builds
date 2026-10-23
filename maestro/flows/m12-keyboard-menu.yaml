@@ -19,9 +19,9 @@ appId: app.monologue.mobile
     timeout: 1200
     optional: true
 - startRecording: m12-keyboard-menu
+# The bubbles are right-aligned and the last one sits just above the Composer: pressed by position, the text of a bubble is not one element.
 - longPressOn:
-    text: "linha"
-    index: 4
+    point: "86%,47%"
 - extendedWaitUntil:
     visible: ".*(Copy|Copiar).*"
     timeout: 6000
