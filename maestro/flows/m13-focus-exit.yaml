@@ -20,7 +20,7 @@ appId: app.monologue.mobile
 - startRecording: m13-focus-exit
 - longPressOn:
     text: "linha"
-    index: 10
+    index: 3
 - runFlow:
     when:
       platform: iOS

@@ -21,7 +21,7 @@ appId: app.monologue.mobile
 - startRecording: m12-keyboard-menu
 - longPressOn:
     text: "linha"
-    index: 8
+    index: 4
 - extendedWaitUntil:
     visible: ".*(Copy|Copiar).*"
     timeout: 6000
