@@ -209,8 +209,8 @@ jobs:
             cat "$RUNNER_TEMP/qa-logs/ios-perf.log" || true
           fi
           [ -s "$RUNNER_TEMP/qa-logs/ios-perf.log" ] || echo 'No transition timings recorded.'
-          # Performance gate (owner plan A8): median per metric against maestro/perf-budget.json. Report only until budgets are recorded for every transition.
-          node tools/perf-gate.mjs "$RUNNER_TEMP/qa-logs/ios-perf.log" ios || true
+          # Performance gate (owner plan A8): median per metric against maestro/perf-budget.json. Enforced at the end of the job (after the evidence is encrypted and uploaded).
+          node tools/perf-gate.mjs "$RUNNER_TEMP/qa-logs/ios-perf.log" ios --enforce || echo "PERF_GATE_FAILED=1" >> "$GITHUB_ENV"
 
       - name: Audit passes (dark, large text, huge text)
         if: always() && steps.simulator.outcome == 'success' && inputs.only == ''
@@ -288,3 +288,8 @@ jobs:
           path: visual-evidence.tgz.enc
           if-no-files-found: error
           retention-days: 7
+
+      # Performance gate verdict (owner plan A8), after the evidence is uploaded so a regression never costs the screenshots.
+      - name: Performance gate verdict
+        if: always() && env.PERF_GATE_FAILED == '1'
+        run: echo '::error::A performance budget was exceeded (see the "Transition timings" step).'; exit 1

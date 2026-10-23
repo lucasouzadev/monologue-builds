@@ -1,8 +1,14 @@
 {
-  "_note": "Budgets for tools/perf-gate.mjs: median per metric of one E2E run, about 25 % above a healthy run. Add a metric only after its numbers are recorded; a metric without a budget is only reported. ios = simulator on a GitHub runner, android = emulator.",
+  "_note": "Budgets for tools/perf-gate.mjs (enforced in e2e-ios.yml and e2e-android.yml): median per metric of one E2E run, about 25 % above a healthy run. Add a metric only after its numbers are recorded; a metric without a budget is only reported, a budget whose metric the run did not measure is skipped. ios = simulator on a GitHub runner, android = emulator (software GPU, noisier).",
   "ios": {
-    "tx_plus_new_conversation_total_ms": { "max": 1150, "note": "recorded 913 ms (2026-10-23)" },
+    "tx_cold_start_total_ms": { "max": 2200, "note": "recorded median ~1746 ms (2026-10-23)" },
+    "tx_plus_new_conversation_sheet_content_laid_out_ms": { "max": 200, "note": "recorded 141 ms (2026-10-23)" },
+    "tx_plus_new_conversation_total_ms": { "max": 1150, "note": "recorded 843-913 ms (2026-10-23)" },
     "tx_preview_to_chat_total_ms": { "max": 2900, "note": "recorded 2328 ms before the first-page cache (2026-10-22); tighten when re-measured" }
   },
-  "android": {}
+  "android": {
+    "tx_cold_start_total_ms": { "max": 2200, "note": "recorded median 1736 ms, n=7 (2026-10-23)" },
+    "tx_plus_new_conversation_sheet_content_laid_out_ms": { "max": 150, "note": "recorded 76-88 ms, single samples (2026-10-23)" },
+    "tx_plus_new_conversation_total_ms": { "max": 1700, "note": "recorded 1194-1470 ms, single samples (2026-10-23); tighten with more runs" }
+  }
 }
