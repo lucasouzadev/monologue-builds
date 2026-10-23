@@ -1,0 +1,39 @@
+# Owner QA 2026-10-23 (items 2 and 4): with the keyboard open, a long press on a balloon takes the keyboard away and leaves a black band with the Composer floating.
+# Recorded: the frames show where the Composer and the plane under it are while the menu is open, and after it closes.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "QA kbd"
+- repeat:
+    times: 9
+    commands:
+      - tapOn: "Message.*"
+      - inputText: "linha"
+      - tapOn: "Send message"
+- tapOn: "Message.*"
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1200
+    optional: true
+- startRecording: m12-keyboard-menu
+- longPressOn:
+    text: "linha"
+    index: 8
+- extendedWaitUntil:
+    visible: ".*(Copy|Copiar).*"
+    timeout: 6000
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1200
+    optional: true
+- takeScreenshot: m12-menu-open
+- runFlow: support/close-menu.yaml
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1500
+    optional: true
+- takeScreenshot: m12-after-close
+- stopRecording

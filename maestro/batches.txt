@@ -8,3 +8,4 @@ motion-2: 01-create-open-send m05-focus-reply m06-merge-reveal m07-preview-enter
 perf-0: 00-warm-update 01-create-open-send m01-drawer-create m01b-plus-create m04-panel-dots m07-preview-enter m08-sheets-latency
 perf-1: 00-warm-update 01-create-open-send m09-panel-close
 qa-1: 00-warm-update 01-create-open-send m10-drawer-repeat m11-storage-first-open m07-preview-enter
+qa-2: 00-warm-update m12-keyboard-menu m13-focus-exit
