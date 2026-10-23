@@ -1,0 +1,27 @@
+# Owner QA 2026-10-23: the first time Storage is opened after the app starts, its folder card delivers the buttons late (the native glass buttons measure on first
+# layout). The panel is now built invisibly once the first opening has settled; this records the first visit with a pause long enough for that to happen.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 60000
+- tapOn: "Open personal space"
+- extendedWaitUntil:
+    visible:
+      id: "profile-section-storage"
+    timeout: 10000
+# Wait ~2 s with the drawer open: the invisible Storage build starts when the opening has settled.
+- extendedWaitUntil:
+    visible: "pause-token-never-on-screen"
+    timeout: 2000
+    optional: true
+- startRecording: m11-storage-first-open
+- tapOn:
+    id: "profile-section-storage"
+- extendedWaitUntil:
+    visible:
+      id: "storage-settings"
+    timeout: 6000
+- takeScreenshot: m11-storage-first-frame
+- stopRecording

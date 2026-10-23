@@ -1,0 +1,40 @@
+# Owner QA 2026-10-23: pulling the Home to open the drawer several times in a row made the opening animation repeat (the native host reverts a state the JS thread
+# confirms later than 250 ms and then opens again). Six open/close pulls with the video running; the app logs tx_drawer_open_* (confirmed latency, jank, renders).
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 60000
+- startRecording: m10-drawer-repeat
+- repeat:
+    times: 6
+    commands:
+      - swipe:
+          start: 88%, 45%
+          end: 8%, 45%
+          duration: 220
+      - extendedWaitUntil:
+          visible:
+            id: "profile-create-conversation"
+          timeout: 4000
+      - swipe:
+          start: 12%, 45%
+          end: 92%, 45%
+          duration: 220
+      - extendedWaitUntil:
+          visible: "Open personal space"
+          timeout: 4000
+- swipe:
+    start: 88%, 45%
+    end: 8%, 45%
+    duration: 220
+- extendedWaitUntil:
+    visible:
+      id: "profile-create-conversation"
+    timeout: 4000
+- takeScreenshot: m10-drawer-open-after-repeats
+- stopRecording
+- tapOn:
+    id: "profile-foreground-dismiss"
+    optional: true
