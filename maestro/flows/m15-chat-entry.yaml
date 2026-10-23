@@ -13,7 +13,7 @@ appId: app.monologue.mobile
       - tapOn: "Message.*"
       - inputText: "linha de teste para a entrada"
       - tapOn: "Send message"
-- runFlow: support/back.yaml
+- tapOn: "Back"
 - extendedWaitUntil:
     visible: ${".*" + output.qaTitle + ".*"}
     timeout: 20000
