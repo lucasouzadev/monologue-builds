@@ -1,0 +1,34 @@
+# Owner QA 2026-10-23 (evening): entering a chat shows the screen without its balloons, which then appear all at once. Recorded: the frames after tapping the Home row
+# must show the balloons from the first frame the chat is on screen.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "QA entry"
+- repeat:
+    times: 12
+    commands:
+      - tapOn: "Message.*"
+      - inputText: "linha de teste para a entrada"
+      - tapOn: "Send message"
+- runFlow: support/back.yaml
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 20000
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1500
+    optional: true
+- startRecording: m15-chat-entry
+- tapOn: ${".*" + output.qaTitle + ".*"}
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 20000
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1500
+    optional: true
+- takeScreenshot: m15-chat-open
+- stopRecording
