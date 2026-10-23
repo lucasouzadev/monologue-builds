@@ -207,6 +207,8 @@ jobs:
             cat "$RUNNER_TEMP/qa-logs/ios-perf.log" || true
           fi
           [ -s "$RUNNER_TEMP/qa-logs/ios-perf.log" ] || echo 'No transition timings recorded.'
+          # Performance gate (owner plan A8): median per metric against maestro/perf-budget.json. Report only until budgets are recorded for every transition.
+          node tools/perf-gate.mjs "$RUNNER_TEMP/qa-logs/ios-perf.log" ios || true
 
       - name: Audit passes (dark, large text, huge text)
         if: always() && steps.simulator.outcome == 'success' && inputs.only == ''

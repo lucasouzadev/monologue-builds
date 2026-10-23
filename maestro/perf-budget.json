@@ -1,0 +1,8 @@
+{
+  "_note": "Budgets for tools/perf-gate.mjs: median per metric of one E2E run, about 25 % above a healthy run. Add a metric only after its numbers are recorded; a metric without a budget is only reported. ios = simulator on a GitHub runner, android = emulator.",
+  "ios": {
+    "tx_plus_new_conversation_total_ms": { "max": 1150, "note": "recorded 913 ms (2026-10-23)" },
+    "tx_preview_to_chat_total_ms": { "max": 2900, "note": "recorded 2328 ms before the first-page cache (2026-10-22); tighten when re-measured" }
+  },
+  "android": {}
+}
