@@ -38,6 +38,10 @@ on:
         description: Upload the signed IPA directly to App Store Connect (TestFlight processing follows)
         type: boolean
         default: true
+      ios_widget_extension:
+        description: Include the iOS widgets extension (needs the Widgets App ID profile in IOS_WIDGET_EXTENSION_PROVISIONING_PROFILE_BASE64); turn off to build iOS without it
+        type: boolean
+        default: true
       publish_latest:
         description: Also publish the APK at the STABLE public key `latest/Monologue.apk` (the short link behind the custom domain); leave off for development/preview builds
         type: boolean
@@ -215,7 +219,7 @@ jobs:
       # Baseline 21: the iOS Share Extension is built only when its signing profile exists; without it the app ships without the extension (owner 2026-10-18).
       MONOLOGUE_IOS_SHARE_EXTENSION: ${{ secrets.IOS_SHARE_EXTENSION_PROVISIONING_PROFILE_BASE64 != '' && 'on' || 'off' }}
       # Baseline 25: the Widgets extension is ALWAYS on for a real build (the owner asked for widgets): a missing profile fails the credentials check below instead of silently shipping without them.
-      MONOLOGUE_IOS_WIDGET_EXTENSION: 'on'
+      MONOLOGUE_IOS_WIDGET_EXTENSION: ${{ inputs.ios_widget_extension && 'on' || 'off' }}
     steps:
       - uses: actions/checkout@v4
         with:
