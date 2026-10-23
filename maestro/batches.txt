@@ -10,3 +10,4 @@ perf-1: 00-warm-update 01-create-open-send m09-panel-close
 qa-1: 00-warm-update 01-create-open-send m10-drawer-repeat m11-storage-first-open m07-preview-enter
 qa-2: 00-warm-update m12-keyboard-menu m13-focus-exit
 qa-3: 00-warm-update m14-edit-exit m15-chat-entry
+qa-4: 00-warm-update m16-swipe-row
