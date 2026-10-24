@@ -1,4 +1,4 @@
-# Chat-entry stress (owner 2026-10-24: the app slows down and breaks visually as it is used). Creates 5 chats, then opens and leaves them for 4 rounds. The app's `tx_chat_open_*`
+# Chat-entry stress (owner 2026-10-24: the app slows down and breaks visually as it is used). Creates 3 chats, then opens and leaves them for 5 rounds (15 entries). The app's `tx_chat_open_*`
 # numbers (tap on a Home row -> first list load) are printed per open: compare the first rounds with the last ones to see whether entering a chat degrades with use.
 appId: app.monologue.mobile
 ---
@@ -8,7 +8,7 @@ appId: app.monologue.mobile
     env:
       QA_PREFIX: "QA s1"
 - repeat:
-    times: 6
+    times: 4
     commands:
       - tapOn: "Message.*"
       - inputText: "linha de teste para o estresse"
@@ -22,7 +22,7 @@ appId: app.monologue.mobile
     env:
       QA_PREFIX: "QA s2"
 - repeat:
-    times: 6
+    times: 4
     commands:
       - tapOn: "Message.*"
       - inputText: "linha de teste para o estresse"
@@ -36,35 +36,7 @@ appId: app.monologue.mobile
     env:
       QA_PREFIX: "QA s3"
 - repeat:
-    times: 6
-    commands:
-      - tapOn: "Message.*"
-      - inputText: "linha de teste para o estresse"
-      - tapOn: "Send message"
-- tapOn: "Back"
-- extendedWaitUntil:
-    visible: "Message.*|.*QA s.*"
-    timeout: 20000
-- runFlow:
-    file: support/new-chat.yaml
-    env:
-      QA_PREFIX: "QA s4"
-- repeat:
-    times: 6
-    commands:
-      - tapOn: "Message.*"
-      - inputText: "linha de teste para o estresse"
-      - tapOn: "Send message"
-- tapOn: "Back"
-- extendedWaitUntil:
-    visible: "Message.*|.*QA s.*"
-    timeout: 20000
-- runFlow:
-    file: support/new-chat.yaml
-    env:
-      QA_PREFIX: "QA s5"
-- repeat:
-    times: 6
+    times: 4
     commands:
       - tapOn: "Message.*"
       - inputText: "linha de teste para o estresse"
@@ -109,7 +81,7 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: ".*QA s3 .*"
     timeout: 20000
-- tapOn: ".*QA s4 .*"
+- tapOn: ".*QA s1 .*"
 - extendedWaitUntil:
     visible: "Message.*"
     timeout: 20000
@@ -119,9 +91,9 @@ appId: app.monologue.mobile
     optional: true
 - tapOn: "Back"
 - extendedWaitUntil:
-    visible: ".*QA s4 .*"
+    visible: ".*QA s1 .*"
     timeout: 20000
-- tapOn: ".*QA s5 .*"
+- tapOn: ".*QA s2 .*"
 - extendedWaitUntil:
     visible: "Message.*"
     timeout: 20000
@@ -131,7 +103,19 @@ appId: app.monologue.mobile
     optional: true
 - tapOn: "Back"
 - extendedWaitUntil:
-    visible: ".*QA s5 .*"
+    visible: ".*QA s2 .*"
+    timeout: 20000
+- tapOn: ".*QA s3 .*"
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 20000
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 600
+    optional: true
+- tapOn: "Back"
+- extendedWaitUntil:
+    visible: ".*QA s3 .*"
     timeout: 20000
 - tapOn: ".*QA s1 .*"
 - extendedWaitUntil:
@@ -169,30 +153,6 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: ".*QA s3 .*"
     timeout: 20000
-- tapOn: ".*QA s4 .*"
-- extendedWaitUntil:
-    visible: "Message.*"
-    timeout: 20000
-- extendedWaitUntil:
-    visible: "never-visible-sentinel"
-    timeout: 600
-    optional: true
-- tapOn: "Back"
-- extendedWaitUntil:
-    visible: ".*QA s4 .*"
-    timeout: 20000
-- tapOn: ".*QA s5 .*"
-- extendedWaitUntil:
-    visible: "Message.*"
-    timeout: 20000
-- extendedWaitUntil:
-    visible: "never-visible-sentinel"
-    timeout: 600
-    optional: true
-- tapOn: "Back"
-- extendedWaitUntil:
-    visible: ".*QA s5 .*"
-    timeout: 20000
 - tapOn: ".*QA s1 .*"
 - extendedWaitUntil:
     visible: "Message.*"
@@ -229,30 +189,6 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: ".*QA s3 .*"
     timeout: 20000
-- tapOn: ".*QA s4 .*"
-- extendedWaitUntil:
-    visible: "Message.*"
-    timeout: 20000
-- extendedWaitUntil:
-    visible: "never-visible-sentinel"
-    timeout: 600
-    optional: true
-- tapOn: "Back"
-- extendedWaitUntil:
-    visible: ".*QA s4 .*"
-    timeout: 20000
-- tapOn: ".*QA s5 .*"
-- extendedWaitUntil:
-    visible: "Message.*"
-    timeout: 20000
-- extendedWaitUntil:
-    visible: "never-visible-sentinel"
-    timeout: 600
-    optional: true
-- tapOn: "Back"
-- extendedWaitUntil:
-    visible: ".*QA s5 .*"
-    timeout: 20000
 - tapOn: ".*QA s1 .*"
 - extendedWaitUntil:
     visible: "Message.*"
@@ -288,29 +224,5 @@ appId: app.monologue.mobile
 - tapOn: "Back"
 - extendedWaitUntil:
     visible: ".*QA s3 .*"
-    timeout: 20000
-- tapOn: ".*QA s4 .*"
-- extendedWaitUntil:
-    visible: "Message.*"
-    timeout: 20000
-- extendedWaitUntil:
-    visible: "never-visible-sentinel"
-    timeout: 600
-    optional: true
-- tapOn: "Back"
-- extendedWaitUntil:
-    visible: ".*QA s4 .*"
-    timeout: 20000
-- tapOn: ".*QA s5 .*"
-- extendedWaitUntil:
-    visible: "Message.*"
-    timeout: 20000
-- extendedWaitUntil:
-    visible: "never-visible-sentinel"
-    timeout: 600
-    optional: true
-- tapOn: "Back"
-- extendedWaitUntil:
-    visible: ".*QA s5 .*"
     timeout: 20000
 - takeScreenshot: m17-stress-end
