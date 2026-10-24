@@ -210,7 +210,7 @@ jobs:
           fi
           [ -s "$RUNNER_TEMP/qa-logs/ios-perf.log" ] || echo 'No transition timings recorded.'
           # Performance gate (owner plan A8): median per metric against maestro/perf-budget.json. Enforced at the end of the job (after the evidence is encrypted and uploaded).
-          node tools/perf-gate.mjs "$RUNNER_TEMP/qa-logs/ios-perf.log" ios --enforce || echo "PERF_GATE_FAILED=1" >> "$GITHUB_ENV"
+          node builds/tools/perf-gate.mjs "$RUNNER_TEMP/qa-logs/ios-perf.log" ios --enforce || echo "PERF_GATE_FAILED=1" >> "$GITHUB_ENV"
 
       - name: Audit passes (dark, large text, huge text)
         if: always() && steps.simulator.outcome == 'success' && inputs.only == ''
