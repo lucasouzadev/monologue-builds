@@ -11,3 +11,4 @@ qa-1: 00-warm-update 01-create-open-send m10-drawer-repeat m11-storage-first-ope
 qa-2: 00-warm-update m12-keyboard-menu m13-focus-exit
 qa-3: 00-warm-update m14-edit-exit m15-chat-entry
 qa-4: 00-warm-update m16-swipe-row
+qa-5: 00-warm-update m17-chat-stress
