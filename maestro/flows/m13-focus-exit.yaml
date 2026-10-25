@@ -1,0 +1,58 @@
+# Owner QA 2026-10-23 (item 3): leaving the Focus makes the timeline scroll down a little (the list lands short of the latest, then a repin). Recorded at native frame rate:
+# the chat is at the latest before the Focus; the frames after leaving must not move the rows.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "QA exit"
+- repeat:
+    times: 14
+    commands:
+      - tapOn: "Message.*"
+      - inputText: "linha"
+      - tapOn: "Send message"
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1500
+    optional: true
+- startRecording: m13-focus-exit
+- longPressOn:
+    point: "86%,32%"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - runFlow:
+          when:
+            notVisible: "Write.*"
+          commands:
+            - longPressOn:
+                point: "82%,83%"
+- extendedWaitUntil:
+    visible: "Write.*"
+    timeout: 6000
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- extendedWaitUntil:
+    visible:
+      id: thought-focus-close
+    timeout: 8000
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1500
+    optional: true
+- takeScreenshot: m13-focus-open
+- tapOn:
+    id: thought-focus-close
+- extendedWaitUntil:
+    notVisible:
+      id: thought-focus-close
+    timeout: 6000
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1500
+    optional: true
+- takeScreenshot: m13-back-in-chat
+- stopRecording

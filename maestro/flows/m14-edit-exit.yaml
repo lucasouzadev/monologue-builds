@@ -1,0 +1,56 @@
+# Owner QA 2026-10-23 (evening): leaving the edit bubble shows the Timeline at a wrong offset for a few frames (another message, and one under the Composer) before it settles.
+# Recorded at native frame rate: the frames after the edit closes must show the latest message in place from the first frame.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "QA edit"
+- repeat:
+    times: 10
+    commands:
+      - tapOn: "Message.*"
+      - inputText: "linha de teste para o fim da conversa"
+      - tapOn: "Send message"
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1500
+    optional: true
+- startRecording: m14-edit-exit
+- longPressOn:
+    point: "86%,47%"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - runFlow:
+          when:
+            notVisible: "Write.*"
+          commands:
+            - longPressOn:
+                point: "82%,83%"
+- extendedWaitUntil:
+    visible: "Write.*"
+    timeout: 6000
+- tapOn:
+    text: "Write"
+    optional: true
+- tapOn: "Edit"
+- extendedWaitUntil:
+    visible:
+      id: "edit-bubble-cancel"
+    timeout: 10000
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1500
+    optional: true
+- takeScreenshot: m14-edit-open
+- tapOn:
+    id: "edit-bubble-cancel"
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 2000
+    optional: true
+- takeScreenshot: m14-back-in-chat
+- stopRecording

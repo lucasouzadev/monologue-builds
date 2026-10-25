@@ -1,0 +1,80 @@
+# M2-MOTION #7: Reply focus — the thread arrives with motion, no "0 replies" placeholder; leaving restores the chat without a settle. Video for the frame check.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "QA focus"
+- startRecording: m05-focus-reply
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  - longPressOn:
+                      point: "82%,83%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- extendedWaitUntil:
+    visible:
+      id: thought-focus-close
+    timeout: 8000
+- takeScreenshot: m05-focus-open
+# Android does not raise the keyboard on its own in the Focus: tap the field first (iOS already has it focused, the tap is harmless).
+- tapOn:
+    text: "Reply….*"
+    optional: true
+- inputText: "first answer"
+- tapOn: "Send message"
+- extendedWaitUntil:
+    visible: ".*1 reply.*"
+    timeout: 8000
+- takeScreenshot: m05-focus-one-reply
+- tapOn:
+    id: thought-focus-close
+- extendedWaitUntil:
+    notVisible:
+      id: thought-focus-close
+    timeout: 6000
+- takeScreenshot: m05-back-in-chat
+# Re-open the thread that already has its reply: the count must never read "0" first (owner video: "0 respostas" became "1 resposta").
+- retry:
+    maxRetries: 3
+    commands:
+      - longPressOn: ".*QA root.*"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - runFlow:
+                when:
+                  notVisible: "Write.*"
+                commands:
+                  - longPressOn:
+                      point: "82%,83%"
+      - extendedWaitUntil:
+          visible: "Write.*"
+          timeout: 5000
+- tapOn: "Write.*"
+- tapOn: "Reply"
+- extendedWaitUntil:
+    visible:
+      id: thought-focus-close
+    timeout: 8000
+- assertNotVisible: "0 replies"
+- extendedWaitUntil:
+    visible: ".*1 reply.*"
+    timeout: 5000
+- takeScreenshot: m05-reopened-one-reply
+- stopRecording

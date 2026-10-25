@@ -1,0 +1,23 @@
+# Owner QA 2026-10-23: swiping a Home banner must round its left end for real (the panel colour shows through the clipped corners), not only draw an outline arc.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "QA swipe"
+- tapOn: "Back"
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 20000
+- startRecording: m16-swipe-row
+- swipe:
+    start: "15%, 16%"
+    end: "55%, 16%"
+    duration: 1400
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1200
+    optional: true
+- takeScreenshot: m16-swipe-open
+- stopRecording

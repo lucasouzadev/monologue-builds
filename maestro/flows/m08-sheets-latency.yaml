@@ -1,0 +1,35 @@
+# M2-MOTION-2 phase 0: how long the Home sheets take (Customize, Tags) from the long-press menu. The numbers come from the app's `tx_*` log lines; the video is the frame check.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Ola.*"
+    timeout: 60000
+- startRecording: m08-sheets-latency
+- longPressOn: ".*Ola.*"
+- extendedWaitUntil:
+    visible: "Customize"
+    timeout: 8000
+- tapOn: "Customize"
+- extendedWaitUntil:
+    visible:
+      id: "customize-sheet"
+    timeout: 8000
+- takeScreenshot: m08-customize
+- swipe:
+    start: "50%,45%"
+    end: "50%,95%"
+- extendedWaitUntil:
+    visible: ".*Ola.*"
+    timeout: 8000
+- longPressOn: ".*Ola.*"
+- extendedWaitUntil:
+    visible: "Tags"
+    timeout: 8000
+- tapOn: "Tags"
+- extendedWaitUntil:
+    visible: "Name"
+    timeout: 8000
+    optional: true
+- takeScreenshot: m08-tags
+- stopRecording

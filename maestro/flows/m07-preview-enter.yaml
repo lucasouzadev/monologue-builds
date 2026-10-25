@@ -1,0 +1,22 @@
+# M2-MOTION #4: Home long-press preview → open: the chat is never shown empty under the expanding card. Video for the frame check (iOS native preview window).
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: ".*Ola.*"
+    timeout: 60000
+- startRecording: m07-preview-enter
+- longPressOn: ".*Ola.*"
+- extendedWaitUntil:
+    visible: "Open .*"
+    timeout: 6000
+    optional: true
+- takeScreenshot: m07-preview
+- tapOn:
+    text: "Open .*"
+    optional: true
+- extendedWaitUntil:
+    visible: "Message.*"
+    timeout: 15000
+- takeScreenshot: m07-chat
+- stopRecording

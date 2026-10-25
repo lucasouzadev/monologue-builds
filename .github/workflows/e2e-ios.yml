@@ -26,7 +26,7 @@ on:
         type: choice
         required: true
         default: '17'
-        options: ['23', '22', '21', '20', '19', '18', '17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
+        options: ['24', '23', '22', '21', '20', '19', '18', '17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
       only:
         description: Verification subset — space-separated flow names (e.g. '00-warm-update 00b-build-stamp 01-create-open-send 15-conversation-panel 28-sheet-visuals'); empty = the full suite + audit + stress
         type: string
@@ -176,6 +176,9 @@ jobs:
           EXPECTED_UPDATE_ID: ${{ inputs.expected_update_id }}
         run: |
           mkdir -p "$RUNNER_TEMP/qa-logs"
+          # Transition timings (M2-MOTION-2): the app logs `monologue perf tx_*` lines (numbers only). Captured for the whole run, printed in the next step.
+          xcrun simctl spawn "$SIM_UDID" log stream --style compact --predicate 'eventMessage CONTAINS "monologue perf tx_"' > "$RUNNER_TEMP/qa-logs/ios-perf-raw.log" 2>&1 &
+          echo $! > "$RUNNER_TEMP/perf-log.pid"
           if bash builds/maestro/run.sh "$SIM_UDID" > "$RUNNER_TEMP/qa-logs/ios-flows.log" 2>&1; then
             echo 'Maestro iOS: PASS (detailed evidence encrypted)'
             grep -aE '^(RESULT|RECOVERY|STEP) ' "$RUNNER_TEMP/qa-logs/ios-flows.log" || true
@@ -189,6 +192,23 @@ jobs:
       - name: Per-flow results (names only)
         if: always()
         run: grep -hE '^(RESULT|STEP) ' "$RUNNER_TEMP"/qa-logs/ios-*.log 2>/dev/null || echo 'No per-flow results recorded.'
+
+      # Content-free: only `tx_*` durations and counts (the app never logs ids, titles or text).
+      - name: Transition timings (numbers only)
+        if: always()
+        run: |
+          kill "$(cat "$RUNNER_TEMP/perf-log.pid" 2>/dev/null)" 2>/dev/null || true
+          grep -ahoE 'monologue perf tx_[a-z_]+_ms ms=[0-9.]+( [a-z_]+=[0-9]+)*' "$RUNNER_TEMP/qa-logs/ios-perf-raw.log" | sed 's/^monologue perf //' > "$RUNNER_TEMP/qa-logs/ios-perf.log" || true
+          cat "$RUNNER_TEMP/qa-logs/ios-perf.log" || true
+          # A release iOS build writes nothing to the system log: the staging app also keeps its `tx_*` lines (numbers only) in Documents/perf-tx.log.
+          DATA=$(xcrun simctl get_app_container "$SIM_UDID" app.monologue.mobile data 2>/dev/null || true)
+          if [ -n "$DATA" ] && [ -f "$DATA/Documents/perf-tx.log" ]; then
+            grep -aoE 'monologue perf tx_[a-z_]+_ms ms=[0-9.]+( [a-z_]+=[0-9]+)*' "$DATA/Documents/perf-tx.log" | sed 's/^monologue perf //' > "$RUNNER_TEMP/qa-logs/ios-perf.log" || true
+            cat "$RUNNER_TEMP/qa-logs/ios-perf.log" || true
+          fi
+          [ -s "$RUNNER_TEMP/qa-logs/ios-perf.log" ] || echo 'No transition timings recorded.'
+          # Performance gate (owner plan A8): median per metric against maestro/perf-budget.json. Report only until budgets are recorded for every transition.
+          node tools/perf-gate.mjs "$RUNNER_TEMP/qa-logs/ios-perf.log" ios || true
 
       - name: Audit passes (dark, large text, huge text)
         if: always() && steps.simulator.outcome == 'success' && inputs.only == ''
@@ -244,9 +264,9 @@ jobs:
           mkdir -p "$dir/data"
           if [ -f builds/maestro/maestro-quality-evidence.json ]; then cp builds/maestro/maestro-quality-evidence.json "$dir/data/"; fi
           find builds/maestro/flows builds/maestro/shots builds/maestro/audit-* builds/maestro/stress builds/maestro/stress-android \
-            -type f -name '*.png' -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
+            -type f \( -name '*.png' -o -name '*.mp4' \) -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
           if [ -d "$HOME/.maestro/tests" ]; then
-            find "$HOME/.maestro/tests" -type f -name '*.png' -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
+            find "$HOME/.maestro/tests" -type f \( -name '*.png' -o -name '*.mp4' \) -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
           fi
           if [ -d "$RUNNER_TEMP/qa-logs" ]; then cp "$RUNNER_TEMP/qa-logs/"*.log "$dir/data/" 2>/dev/null || true; fi
           if [ -f "$RUNNER_TEMP/monologue-maestro-android.log" ]; then
