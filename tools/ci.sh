@@ -48,7 +48,12 @@ case "$cmd" in
     dispatch ota.yml "platform=${1:-android}" "channel=${OTA_CHANNEL:-development}" "source_ref=${2:-$BRANCH_DEFAULT}" \
       "native_baseline=$BASELINE" "message=${3:-OTA}" ;;
   stage)   # MANDATORY step 1 of every round: publish the JS to the STAGING stream (channel preview). Never touches the owner's devices.
-    OTA_CHANNEL=preview dispatch ota.yml "platform=all" "channel=preview" "source_ref=${1:-$BRANCH_DEFAULT}" "native_baseline=$BASELINE" "message=${2:-staging}" ;;
+    # An OTA only reaches binaries of its own runtime (native baseline). The iOS simulator binary is compiled per run with $BASELINE, but the Android emulator installs an APK from a
+    # past build.yml run (APK_BUILD_RUN, baseline $ANDROID_EMULATOR_BASELINE): without its own OTA it silently keeps running OLD JS and every Android E2E result is stale (found 2026-10-23).
+    OTA_CHANNEL=preview dispatch ota.yml "platform=all" "channel=preview" "source_ref=${1:-$BRANCH_DEFAULT}" "native_baseline=$BASELINE" "message=${2:-staging}"
+    if [ "${ANDROID_EMULATOR_BASELINE:-23}" != "$BASELINE" ]; then
+      OTA_CHANNEL=preview dispatch ota.yml "platform=android" "channel=preview" "source_ref=${1:-$BRANCH_DEFAULT}" "native_baseline=${ANDROID_EMULATOR_BASELINE:-23}" "message=${2:-staging} (android emulator runtime)"
+    fi ;;
   e2e-android)
     dispatch e2e-android.yml "build_run_id=${1:-${STAGING_APK_BUILD_RUN:-$APK_BUILD_RUN}}" "only=${E2E_ONLY:-}" ;;
   e2e-ios)
