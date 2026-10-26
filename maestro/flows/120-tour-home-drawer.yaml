@@ -143,7 +143,7 @@ appId: app.monologue.mobile
 - takeScreenshot: 120-settings-top
 - scrollUntilVisible:
     element:
-      id: "theme-options"
+      id: "theme-choice"
     optional: true
 - takeScreenshot: 120-settings-theme
 - scrollUntilVisible:
