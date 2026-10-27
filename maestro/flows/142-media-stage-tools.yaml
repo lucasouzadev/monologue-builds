@@ -1,0 +1,60 @@
+# M2-MEDIA-UX: one media stage changes tool panels in place. Run with
+# EXPO_PUBLIC_MEDIA_STAGE=1 in the preview OTA; compare screenshots in both themes.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "MediaStageUX"
+- tapOn: "Tools.*"
+- extendedWaitUntil:
+    visible: "Photos"
+    timeout: 10000
+- tapOn: "Photos"
+- tapOn: "(Photo|Foto) 2"
+- tapOn: "(Import|Importar) 1"
+- extendedWaitUntil:
+    visible:
+      id: "composer-attachment-tray"
+    timeout: 20000
+- tapOn:
+    id: "tray-preview"
+    index: 0
+- extendedWaitUntil:
+    visible:
+      id: "media-stage"
+    timeout: 10000
+- assertVisible:
+    id: "stage-title"
+- takeScreenshot: 142-stage
+- tapOn:
+    id: "stage-tool-crop"
+- assertVisible:
+    id: "stage-title"
+- assertVisible:
+    id: "media-editor-crop-mode"
+- takeScreenshot: 142-crop
+- tapOn:
+    id: "media-editor-crop-cancel"
+- tapOn:
+    id: "stage-tool-draw"
+- assertVisible:
+    id: "stage-title"
+- assertVisible:
+    id: "media-editor-draw-mode"
+- takeScreenshot: 142-draw
+- tapOn:
+    id: "media-editor-draw-cancel"
+- tapOn:
+    id: "stage-tool-text"
+- assertVisible:
+    id: "stage-title"
+- assertVisible:
+    id: "stage-text-mode"
+- takeScreenshot: 142-text-keyboard
+- tapOn:
+    id: "stage-text-cancel"
+- assertVisible:
+    id: "stage-caption"
+- takeScreenshot: 142-return
