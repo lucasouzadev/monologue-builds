@@ -1,0 +1,40 @@
+# M2-MEDIA-UX: tapping an already-open photo keeps the viewer actions available.
+# A second tap used to switch to a bare image with no close or edit controls.
+# Review 141-open / 141-first-tap / 141-second-tap side by side in light and dark
+# on iOS and Android; Maestro assertions alone cannot judge layout or contrast.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "MediaControls"
+- runFlow:
+    file: support/attach-photo.yaml
+    env:
+      CAPTION: "Media controls check"
+- tapOn:
+    text: "Photo.*"
+    index: 0
+- extendedWaitUntil:
+    visible: "Close viewer"
+    timeout: 10000
+- assertVisible:
+    id: "viewer-bottom-bar"
+- takeScreenshot: 141-open
+- tapOn:
+    id: "viewer-card"
+- assertVisible: "Close viewer"
+- assertVisible:
+    id: "viewer-bottom-bar"
+- assertNotVisible:
+    id: "viewer-bottom-hidden"
+- takeScreenshot: 141-first-tap
+- tapOn:
+    id: "viewer-card"
+- assertVisible: "Close viewer"
+- assertVisible:
+    id: "viewer-bottom-bar"
+- assertNotVisible:
+    id: "viewer-bottom-hidden"
+- takeScreenshot: 141-second-tap
