@@ -1,5 +1,7 @@
 # platform: android
-# Field report 2026-10-28: a pinned conversation that was archived and brought back was still pinned. Archiving now lets go of the pin: after Archive -> Unarchive the row menu offers "Pin" again, never "Unpin".
+# Field report 2026-10-28: a pinned conversation that was archived and brought back was still pinned. Archiving now lets go of the pin: after Archive -> Unarchive the row menu
+# offers "Pin" again, never "Unpin". (The older flows 10 and 11 look for "Options for .*", a label the app no longer has, and pass without doing anything.) The row menu is the
+# long press on the row; the filter is "Filter conversations".
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -9,33 +11,25 @@ appId: app.monologue.mobile
       QA_PREFIX: "Fixo"
 - pressKey: back
 - extendedWaitUntil:
-    visible: "Options for .*"
+    visible: ${".*" + output.qaTitle + ".*"}
     timeout: 20000
-- tapOn:
-    text: "Options for .*"
-    index: 0
+- longPressOn: ${".*" + output.qaTitle + ".*"}
 - tapOn: "Pin"
 - takeScreenshot: r10-02-pinned
-- tapOn:
-    text: "Options for .*"
-    index: 0
+- longPressOn: ${".*" + output.qaTitle + ".*"}
 - assertVisible: "Unpin"
 - tapOn: "Archive"
-- tapOn:
-    text: "Filter conversations.*"
+- tapOn: "Filter conversations"
 - tapOn: "Archived"
-- tapOn:
-    text: "Options for .*"
-    index: 0
+- longPressOn: ${".*" + output.qaTitle + ".*"}
 - tapOn: "Unarchive"
-- pressKey: back
+- tapOn: "Filter conversations"
+- tapOn: "All"
 - extendedWaitUntil:
-    visible: "Options for .*"
+    visible: ${".*" + output.qaTitle + ".*"}
     timeout: 15000
-- tapOn:
-    text: "Options for .*"
-    index: 0
+- longPressOn: ${".*" + output.qaTitle + ".*"}
 - takeScreenshot: r10-02-after-unarchive
-# It is not pinned any more: the menu says Pin (and does not say Unpin).
+# It is not pinned any more: the menu says Pin and does not say Unpin.
 - assertVisible: "Pin"
 - assertNotVisible: "Unpin"
