@@ -19,6 +19,8 @@ appId: app.monologue.mobile
     visible:
       id: "camera-panel"
     timeout: 15000
+- waitForAnimationToEnd:
+    timeout: 4000
 - takeScreenshot: 97-camera-open
 - extendedWaitUntil:
     visible:
