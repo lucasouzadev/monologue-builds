@@ -1,0 +1,37 @@
+# platform: android
+# Field report 2026-10-28: a pinned conversation that was archived and brought back was still pinned. Archiving now lets go of the pin: after Archive -> Unarchive the row menu
+# offers "Pin" again, never "Unpin". (The older flows 10 and 11 look for "Options for .*", a label the app no longer has, and pass without doing anything.) The row menu is the
+# long press on the row; the filter is "Filter conversations".
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Fixo"
+- pressKey: back
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 20000
+- longPressOn: ${".*" + output.qaTitle + ".*"}
+- tapOn: "Pin"
+- takeScreenshot: r10-02-pinned
+- longPressOn: ${".*" + output.qaTitle + ".*"}
+- assertVisible: "Unpin"
+- takeScreenshot: r10-02-menu-open
+- tapOn: "Archive"
+- takeScreenshot: r10-02-after-archive-tap
+- tapOn: "Filter conversations.*"
+- tapOn: "Archived"
+- longPressOn: ${".*" + output.qaTitle + ".*"}
+- tapOn: "Unarchive"
+- tapOn: "Filter conversations.*"
+- tapOn: "All"
+- extendedWaitUntil:
+    visible: ${".*" + output.qaTitle + ".*"}
+    timeout: 15000
+- longPressOn: ${".*" + output.qaTitle + ".*"}
+- takeScreenshot: r10-02-after-unarchive
+# It is not pinned any more: the menu says Pin and does not say Unpin.
+- assertVisible: "Pin"
+- assertNotVisible: "Unpin"

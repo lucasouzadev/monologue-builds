@@ -1,0 +1,31 @@
+# platform: android
+# Field report 2026-10-28 (Android): the Home search keyboard closes as soon as a letter is typed. Flow 34 typed "abc" in ONE inputText, which passes even when the
+# field loses focus after the first letter. Here each letter is its own inputText with a pause: if the field lost focus after "a", "b" and "c" never arrive and
+# "abc" is not on screen. Round 10 fix: the route keeps the calendar Reveal's gesture state steady while the person only types.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Busca"
+- pressKey: back
+- extendedWaitUntil:
+    visible:
+      id: "home-search-input"
+    timeout: 20000
+- tapOn:
+    id: "home-search-input"
+- inputText: "a"
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1500
+    optional: true
+- inputText: "b"
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 1500
+    optional: true
+- inputText: "c"
+- takeScreenshot: r10-01-typed
+- assertVisible: "abc"
