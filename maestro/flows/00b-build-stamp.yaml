@@ -74,7 +74,12 @@ appId: app.monologue.mobile
             id: "build-stamp"
           timeout: 20000
 - takeScreenshot: 00b-build-stamp
-- assertNotVisible: ".*embedded.*"
+# MAESTRO_EXPECTED_UPDATE_ID=embedded: the simulator binary was compiled from the very source under test, so the embedded bundle IS that JS.
+- runFlow:
+    when:
+      true: ${MAESTRO_EXPECTED_UPDATE_ID != 'embedded'}
+    commands:
+      - assertNotVisible: ".*embedded.*"
 - runFlow:
     when:
       true: ${MAESTRO_EXPECTED_UPDATE_ID != null && MAESTRO_EXPECTED_UPDATE_ID.length > 0}
