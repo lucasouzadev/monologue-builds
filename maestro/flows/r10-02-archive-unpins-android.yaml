@@ -21,11 +21,11 @@ appId: app.monologue.mobile
 - takeScreenshot: r10-02-menu-open
 - tapOn: "Archive"
 - takeScreenshot: r10-02-after-archive-tap
-- tapOn: "Filter conversations"
+- tapOn: "Filter conversations.*"
 - tapOn: "Archived"
 - longPressOn: ${".*" + output.qaTitle + ".*"}
 - tapOn: "Unarchive"
-- tapOn: "Filter conversations"
+- tapOn: "Filter conversations.*"
 - tapOn: "All"
 - extendedWaitUntil:
     visible: ${".*" + output.qaTitle + ".*"}
