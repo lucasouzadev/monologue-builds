@@ -1,0 +1,41 @@
+# platform: android
+# Field report 2026-10-28: a pinned conversation that was archived and brought back was still pinned. Archiving now lets go of the pin: after Archive -> Unarchive the row menu offers "Pin" again, never "Unpin".
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "Fixo"
+- pressKey: back
+- extendedWaitUntil:
+    visible: "Options for .*"
+    timeout: 20000
+- tapOn:
+    text: "Options for .*"
+    index: 0
+- tapOn: "Pin"
+- takeScreenshot: r10-02-pinned
+- tapOn:
+    text: "Options for .*"
+    index: 0
+- assertVisible: "Unpin"
+- tapOn: "Archive"
+- tapOn:
+    text: "Filter conversations.*"
+- tapOn: "Archived"
+- tapOn:
+    text: "Options for .*"
+    index: 0
+- tapOn: "Unarchive"
+- pressKey: back
+- extendedWaitUntil:
+    visible: "Options for .*"
+    timeout: 15000
+- tapOn:
+    text: "Options for .*"
+    index: 0
+- takeScreenshot: r10-02-after-unarchive
+# It is not pinned any more: the menu says Pin (and does not say Unpin).
+- assertVisible: "Pin"
+- assertNotVisible: "Unpin"

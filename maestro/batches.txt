@@ -13,3 +13,5 @@ qa-2: 00-warm-update m12-keyboard-menu m13-focus-exit
 qa-3: 00-warm-update m14-edit-exit m15-chat-entry
 qa-4: 00-warm-update m16-swipe-row
 qa-5: 00-warm-update m17-chat-stress
+r10-android: 00-warm-update 00b-build-stamp r10-01-search-typing-android r10-02-archive-unpins-android 34-home-search-focus
+r10-media: 00-warm-update 00b-build-stamp 33-media-viewer 141-media-viewer-controls 06-photos-panel
