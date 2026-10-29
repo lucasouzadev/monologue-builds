@@ -16,6 +16,19 @@ appId: app.monologue.mobile
       visible: "Open in.*Monologue.*"
     commands:
       - tapOn: "Open"
+# A fresh install on a production-like channel (testers) opens the introduction (staging skips it). Leave it through its own Skip so every
+# later flow starts on Home, then return to Home by link (Skip lands in the new chat).
+- runFlow:
+    when:
+      visible:
+        id: "intro-skip"
+    commands:
+      - tapOn:
+          id: "intro-skip"
+      - extendedWaitUntil:
+          visible: "Message.*"
+          timeout: 30000
+      - openLink: "monologue:///"
 - extendedWaitUntil:
     visible: "Monologue"
     timeout: 60000
