@@ -2,8 +2,8 @@ name: Monologue OTA update (private source)
 run-name: ${{ inputs.recover_apk_build_run_id && format('Recover APK upload from {0}', inputs.recover_apk_build_run_id) || format('OTA {0} / {1} @ {2} (baseline {3})', inputs.platform, inputs.channel, inputs.source_ref, inputs.native_baseline) }}
 
 # Manual only. Publishes a JS/asset-only update to the Expo project; never compiles a native binary.
-# The runtime label must match the installed binary. KEEP THIS FILE CURRENT: every new native baseline is added to `native_baseline` (and becomes its default once the binary is in the testers' hands).
-# Baseline 22 is added as an option; it becomes the default only once the baseline-22 binaries are installed by the testers.
+# The runtime label must match the installed binary. KEEP THIS FILE CURRENT: every new native baseline is added to the `native_baseline` options.
+# The default is the placeholder `select-baseline`, which makes the job fail on purpose: a stale default would silently label an update with the wrong runtime when a newer baseline exists (SEC-24). Always pick the baseline of the installed binary.
 # Current testers binaries (2026-10-18): baseline 21 on both platforms (Android build run 39147740710, iOS build run 39150845810 without the Share Extension).
 # iOS testers on the old TestFlight build stay on baseline 20 until they install the new one; publish an extra ios + 20 OTA only if someone is still on it.
 on:
@@ -32,16 +32,11 @@ on:
         default: all
         options: [all, ios, android]
       native_baseline:
-        description: Runtime label of the installed binary (must match it; testers = 21 on both platforms)
+        description: Runtime label of the installed binary (must match it; testers = 21 on both platforms). No default on purpose; keeping `select-baseline` fails the run
         type: choice
         required: true
-        default: '21'
-        options: ['25', '24', '23', '22', '21', '20', '19', '18', '17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
-      geometry_trace:
-        description: Build the bundle with the content-free geometry trace ON (E2E probes; keep OFF for the owner's devices)
-        type: boolean
-        required: false
-        default: false
+        default: select-baseline
+        options: [select-baseline, '25', '24', '23', '22', '21', '20', '19', '18', '17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
       message:
         description: Update message
         type: string
@@ -68,18 +63,27 @@ jobs:
     env:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Require an explicit native baseline
+        env:
+          BASELINE: ${{ inputs.native_baseline }}
+        run: |
+          if [ "$BASELINE" = select-baseline ]; then
+            echo '::error::native_baseline was left at the placeholder `select-baseline`. Re-run and choose the runtime label of the installed binary (never guess it).'
+            exit 1
+          fi
+          [[ "$BASELINE" =~ ^[0-9]{2}$ ]] || { echo "::error::Unsupported native_baseline: $BASELINE"; exit 1; }
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: lucasouzadev/monologue
           ref: ${{ inputs.source_ref }}
           token: ${{ secrets.SOURCE_REPO_TOKEN }}
           persist-credentials: false
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: pnpm
-      - uses: expo/expo-github-action@v8
+      - uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
         with:
           eas-version: 24.8.0
           packager: npm
@@ -122,18 +126,27 @@ jobs:
       RECOVERY_CHANNEL: ${{ inputs.channel }}
       RECOVERY_BASELINE: ${{ inputs.native_baseline }}
     steps:
+      - name: Require an explicit native baseline
+        env:
+          BASELINE: ${{ inputs.native_baseline }}
+        run: |
+          if [ "$BASELINE" = select-baseline ]; then
+            echo '::error::native_baseline was left at the placeholder `select-baseline`. Re-run and choose the runtime label of the installed binary (never guess it).'
+            exit 1
+          fi
+          [[ "$BASELINE" =~ ^[0-9]{2}$ ]] || { echo "::error::Unsupported native_baseline: $BASELINE"; exit 1; }
       - name: Validate recovery identifiers
         run: |
           [[ "$RECOVERY_BUILD_RUN" =~ ^[0-9]+$ ]] || exit 1
           [[ "$RECOVERY_BASELINE" =~ ^[0-9]{2}$ ]] || exit 1
           case "$RECOVERY_CHANNEL" in development|preview|production|testers) ;; *) exit 1 ;; esac
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: monologue-android-${{ inputs.recover_apk_build_run_id }}-1
           run-id: ${{ inputs.recover_apk_build_run_id }}
