@@ -180,14 +180,18 @@ jobs:
           endpoint="https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com"
           key="releases/baseline-${{ inputs.native_baseline }}/${{ inputs.channel }}/$(openssl rand -hex 12)/Monologue-${{ inputs.native_baseline }}-${{ inputs.channel }}-${{ github.run_id }}.apk"
           aws s3 cp "$RUNNER_TEMP/monologue-artifacts/Monologue.apk" "s3://$R2_BUCKET/$key" --endpoint-url "$endpoint" --content-type application/vnd.android.package-archive --no-progress
-          case "$R2_PUBLIC_BASE_URL" in https://*) ;; *) [ -n "$R2_PUBLIC_BASE_URL" ] && echo "R2_PUBLIC_BASE_URL must be a full https:// URL (got '$R2_PUBLIC_BASE_URL'): printing a signed link instead."; R2_PUBLIC_BASE_URL='' ;; esac
+          # This repository's logs are public: mask every link before it can be printed. The links go to the encrypted artifact (apk-link.txt.enc), never to the log.
+          echo "::add-mask::${key##*/}"; echo "::add-mask::$(dirname "$key" | awk -F/ '{print $NF}')"; [ -n "$R2_PUBLIC_BASE_URL" ] && echo "::add-mask::${R2_PUBLIC_BASE_URL%/}"
+          : > "$RUNNER_TEMP/monologue-artifacts/apk-link.txt"
+          case "$R2_PUBLIC_BASE_URL" in https://*) ;; *) [ -n "$R2_PUBLIC_BASE_URL" ] && echo "R2_PUBLIC_BASE_URL must be a full https:// URL (value not shown): using a signed link instead."; R2_PUBLIC_BASE_URL='' ;; esac
           if [ "${{ inputs.publish_latest }}" = "true" ]; then
             aws s3 cp "$RUNNER_TEMP/monologue-artifacts/Monologue.apk" "s3://$R2_BUCKET/latest/Monologue.apk" --endpoint-url "$endpoint" --content-type application/vnd.android.package-archive --cache-control "no-cache" --no-progress
             sha256sum "$RUNNER_TEMP/monologue-artifacts/Monologue.apk" | cut -d' ' -f1 > "$RUNNER_TEMP/Monologue.apk.sha256.txt"
             aws s3 cp "$RUNNER_TEMP/Monologue.apk.sha256.txt" "s3://$R2_BUCKET/latest/Monologue.apk.sha256.txt" --endpoint-url "$endpoint" --content-type text/plain --cache-control "no-cache" --no-progress
-            [ -n "$R2_PUBLIC_BASE_URL" ] && echo "Stable APK: ${R2_PUBLIC_BASE_URL%/}/latest/Monologue.apk"
+            [ -n "$R2_PUBLIC_BASE_URL" ] && echo "Stable APK: ${R2_PUBLIC_BASE_URL%/}/latest/Monologue.apk" >> "$RUNNER_TEMP/monologue-artifacts/apk-link.txt"
           fi
-          if [ -n "$R2_PUBLIC_BASE_URL" ]; then echo "APK: ${R2_PUBLIC_BASE_URL%/}/$key"; else echo 'APK (signed, 7 days):'; aws s3 presign "s3://$R2_BUCKET/$key" --endpoint-url "$endpoint" --expires-in 604800; fi
+          if [ -n "$R2_PUBLIC_BASE_URL" ]; then echo "APK: ${R2_PUBLIC_BASE_URL%/}/$key" >> "$RUNNER_TEMP/monologue-artifacts/apk-link.txt"; else link="$(aws s3 presign "s3://$R2_BUCKET/$key" --endpoint-url "$endpoint" --expires-in 604800)"; echo "::add-mask::$link"; echo "APK (signed, 7 days): $link" >> "$RUNNER_TEMP/monologue-artifacts/apk-link.txt"; fi
+          echo 'APK uploaded to R2. The link is in the encrypted artifact apk-link.txt.enc (not printed here).'
           echo "sha256: $(sha256sum "$RUNNER_TEMP/monologue-artifacts/Monologue.apk" | cut -d' ' -f1)"
       - name: Check out the encryption tooling of this repository (after the build, never inside the app source tree)
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -201,11 +205,15 @@ jobs:
         run: |
           cd "$RUNNER_TEMP/monologue-artifacts"
           node "$GITHUB_WORKSPACE/.ci-tools/tools/encrypt-artifact.mjs" Monologue.apk Monologue.apk.enc
+          if [ -s apk-link.txt ]; then node "$GITHUB_WORKSPACE/.ci-tools/tools/encrypt-artifact.mjs" apk-link.txt apk-link.txt.enc; fi
+          rm -f apk-link.txt
           rm -f Monologue.apk
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: monologue-android-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/monologue-artifacts/Monologue.apk.enc*
+          path: |
+            ${{ runner.temp }}/monologue-artifacts/Monologue.apk.enc*
+            ${{ runner.temp }}/monologue-artifacts/apk-link.txt.enc
           if-no-files-found: error
           retention-days: 7
           compression-level: 0

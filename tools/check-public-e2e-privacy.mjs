@@ -25,5 +25,15 @@ for (const file of readdirSync(wfDir).filter((f) => f.endsWith('.yml'))) {
     `Passphrase must come from the environment, never a command-line argument: ${file}`);
 }
 const buildYml = readFileSync(new URL('build.yml', wfDir), 'utf8');
-assert((buildYml.match(/encrypt-artifact\.mjs/g) || []).length === 2, 'build.yml must encrypt the APK and the IPA with encrypt-artifact.mjs');
+assert((buildYml.match(/encrypt-artifact\.mjs/g) || []).length === 3, 'build.yml must encrypt the APK, its link file and the IPA with encrypt-artifact.mjs');
 console.log('PASS: build artifacts use AES-256-GCM tooling; no passphrase on command lines');
+
+// SEC-22: the logs are public; build.yml must never print the APK link, only store it in the encrypted artifact.
+const buildSrc = readFileSync(new URL('../.github/workflows/build.yml', import.meta.url), 'utf8');
+for (const line of buildSrc.split('\n')) {
+  if (/(echo|aws s3 presign)[^\n]*(APK:|APK \(signed|Stable APK|presign)/.test(line)) {
+    assert(/apk-link\.txt|link="\$\(aws s3 presign/.test(line), `APK link must not be printed to the public log: ${line.trim().slice(0, 80)}`);
+  }
+}
+assert(buildSrc.includes('::add-mask::') && buildSrc.includes('apk-link.txt.enc'), 'build.yml must mask the APK link and ship it encrypted');
+console.log('PASS: APK link is masked and only stored in the encrypted artifact');
