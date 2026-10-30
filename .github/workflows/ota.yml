@@ -37,6 +37,11 @@ on:
         required: true
         default: '21'
         options: ['25', '24', '23', '22', '21', '20', '19', '18', '17', '16', '15', '14', '13', '12', '11', '10', '09', '08', '07', '06']
+      geometry_trace:
+        description: Build the bundle with the content-free geometry trace ON (E2E probes; keep OFF for the owner's devices)
+        type: boolean
+        required: false
+        default: false
       message:
         description: Update message
         type: string
@@ -94,6 +99,7 @@ jobs:
           # Keep stress verification available only in the staging stream.
           EXPO_PUBLIC_ENABLE_STRESS_LAB: ${{ inputs.channel == 'preview' && '1' || '0' }}
           # M2-MEDIA-STAGE-B (owner 2026-10-22): the unified media stage is ON in the staging and testers streams. An installed protocol-1 binary degrades gracefully (trim only, other video tools dimmed).
+          EXPO_PUBLIC_GEOMETRY_TRACE: ${{ inputs.geometry_trace && '1' || '0' }}
           EXPO_PUBLIC_MEDIA_STAGE: ${{ (inputs.channel == 'preview' || inputs.channel == 'testers') && '1' || '0' }}
         run: |
           case "$CHANNEL" in
