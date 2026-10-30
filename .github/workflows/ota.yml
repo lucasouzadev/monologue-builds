@@ -103,6 +103,7 @@ jobs:
           # Keep stress verification available only in the staging stream.
           EXPO_PUBLIC_ENABLE_STRESS_LAB: ${{ inputs.channel == 'preview' && '1' || '0' }}
           # M2-MEDIA-STAGE-B (owner 2026-10-22): the unified media stage is ON in the staging and testers streams. An installed protocol-1 binary degrades gracefully (trim only, other video tools dimmed).
+          EXPO_PUBLIC_GEOMETRY_TRACE: ${{ inputs.geometry_trace && '1' || '0' }}
           EXPO_PUBLIC_MEDIA_STAGE: ${{ (inputs.channel == 'preview' || inputs.channel == 'testers') && '1' || '0' }}
         run: |
           case "$CHANNEL" in
