@@ -43,6 +43,9 @@ Rollout order (a consumer running from a branch without the new decrypt cannot r
 
 Local use: `read -rs ARTIFACT_PASSPHRASE; export ARTIFACT_PASSPHRASE; node tools/decrypt-artifact.mjs Monologue.apk.enc Monologue.apk; unset ARTIFACT_PASSPHRASE`. The tool refuses to overwrite an existing output.
 
+## APK links (R2)
+Logs are public, so `build.yml` never prints the R2 link of the APK (random-token path, public base URL or 7-day signed link). It masks them and writes them to `apk-link.txt`, which is encrypted (AES-256-GCM, same tool and passphrase) into the artifact `apk-link.txt.enc`. Read it with `tools/decrypt-artifact.mjs apk-link.txt.enc apk-link.txt`. The `recover-apk-upload` job of `ota.yml` still prints its link and is unchanged.
+
 ## Security limits and unresolved legacy risks
 - **Encryption mitigates public artifact exposure; it does not make all public-runner activity confidential.** Build/source checkouts, third-party actions, caches, command errors, debug logs and a compromised runner can expose information before encryption.
 - The repository has **historical `screens-android*` and `screens-ios*` branches** created by older workflows; this PR does not erase or revoke them. Review and remove them using authorized repository administration, and audit previously uploaded artifacts for accidental exposure. Rotate any potentially disclosed test credentials.
