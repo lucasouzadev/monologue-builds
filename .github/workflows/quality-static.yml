@@ -4,14 +4,14 @@ on:
   pull_request:
     paths:
       - 'maestro/**'
-      - '.github/workflows/e2e-android.yml'
-      - '.github/workflows/e2e-ios.yml'
-      - '.github/workflows/quality-static.yml'
+      - 'tools/**'
+      - '.github/workflows/**'
   push:
     branches: [main]
     paths:
       - 'maestro/**'
-      - '.github/workflows/quality-static.yml'
+      - 'tools/**'
+      - '.github/workflows/**'
 
 permissions:
   contents: read
@@ -25,6 +25,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Public-repo tripwires (no raw evidence, authenticated artifact encryption)
+        run: node tools/check-public-e2e-privacy.mjs
+      - name: Artifact encryption tests (GCM round trip, tamper, legacy CBC, short/absent passphrase)
+        run: node --test tools/artifact-crypto.test.mjs
       - name: Shell and Python syntax
         run: |
           bash -n maestro/run.sh maestro/audit-passes.sh maestro/android-e2e.sh
