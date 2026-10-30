@@ -103,7 +103,11 @@ jobs:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
       GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Require a strong ARTIFACT_PASSPHRASE before spending a build on it
+        env:
+          ARTIFACT_PASSPHRASE: ${{ secrets.ARTIFACT_PASSPHRASE }}
+        run: node -e "if ((process.env.ARTIFACT_PASSPHRASE || '').length < 24) { console.error('ARTIFACT_PASSPHRASE must have at least 24 characters (authenticated artifact encryption).'); process.exit(2); }"
+      - uses: actions/checkout@v4
         with:
           repository: lucasouzadev/monologue
           ref: ${{ inputs.source_ref }}
@@ -185,13 +189,18 @@ jobs:
           fi
           if [ -n "$R2_PUBLIC_BASE_URL" ]; then echo "APK: ${R2_PUBLIC_BASE_URL%/}/$key"; else echo 'APK (signed, 7 days):'; aws s3 presign "s3://$R2_BUCKET/$key" --endpoint-url "$endpoint" --expires-in 604800; fi
           echo "sha256: $(sha256sum "$RUNNER_TEMP/monologue-artifacts/Monologue.apk" | cut -d' ' -f1)"
-      - name: Encrypt artifact (this repository is public)
+      - name: Check out the encryption tooling of this repository (after the build, never inside the app source tree)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          sparse-checkout: tools
+          path: .ci-tools
+          persist-credentials: false
+      - name: Encrypt artifact with AES-256-GCM (this repository is public)
         env:
           ARTIFACT_PASSPHRASE: ${{ secrets.ARTIFACT_PASSPHRASE }}
         run: |
-          test -n "$ARTIFACT_PASSPHRASE" || { echo 'ARTIFACT_PASSPHRASE is required.'; exit 1; }
           cd "$RUNNER_TEMP/monologue-artifacts"
-          openssl enc -aes-256-cbc -pbkdf2 -iter 600000 -salt -pass env:ARTIFACT_PASSPHRASE -in Monologue.apk -out Monologue.apk.enc
+          node "$GITHUB_WORKSPACE/.ci-tools/tools/encrypt-artifact.mjs" Monologue.apk Monologue.apk.enc
           rm -f Monologue.apk
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -221,7 +230,11 @@ jobs:
       # Baseline 25: the Widgets extension is ALWAYS on for a real build (the owner asked for widgets): a missing profile fails the credentials check below instead of silently shipping without them.
       MONOLOGUE_IOS_WIDGET_EXTENSION: ${{ inputs.ios_widget_extension && 'on' || 'off' }}
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Require a strong ARTIFACT_PASSPHRASE before spending a build on it
+        env:
+          ARTIFACT_PASSPHRASE: ${{ secrets.ARTIFACT_PASSPHRASE }}
+        run: node -e "if ((process.env.ARTIFACT_PASSPHRASE || '').length < 24) { console.error('ARTIFACT_PASSPHRASE must have at least 24 characters (authenticated artifact encryption).'); process.exit(2); }"
+      - uses: actions/checkout@v4
         with:
           repository: lucasouzadev/monologue
           ref: ${{ inputs.source_ref }}
@@ -287,13 +300,18 @@ jobs:
           --ipa "$RUNNER_TEMP/monologue-artifacts/Monologue.ipa"
           --skip_waiting_for_build_processing true
           --skip_submission true
-      - name: Encrypt artifact (this repository is public)
+      - name: Check out the encryption tooling of this repository (after the build, never inside the app source tree)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          sparse-checkout: tools
+          path: .ci-tools
+          persist-credentials: false
+      - name: Encrypt artifact with AES-256-GCM (this repository is public)
         env:
           ARTIFACT_PASSPHRASE: ${{ secrets.ARTIFACT_PASSPHRASE }}
         run: |
-          test -n "$ARTIFACT_PASSPHRASE" || { echo 'ARTIFACT_PASSPHRASE is required.'; exit 1; }
           cd "$RUNNER_TEMP/monologue-artifacts"
-          openssl enc -aes-256-cbc -pbkdf2 -iter 600000 -salt -pass env:ARTIFACT_PASSPHRASE -in Monologue.ipa -out Monologue.ipa.enc
+          node "$GITHUB_WORKSPACE/.ci-tools/tools/encrypt-artifact.mjs" Monologue.ipa Monologue.ipa.enc
           rm -f Monologue.ipa
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

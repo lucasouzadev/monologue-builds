@@ -31,6 +31,18 @@ tar -xzf visual-evidence.tgz -C private-review
 
 Store the decrypted files outside the public repository; delete local plaintext when finished. Never post decrypted screenshots in PRs or issues, and always inspect them in a private environment before marking visual QA PASS.
 
+## Build artifacts (APK/IPA): authenticated encryption and rollout
+`build.yml` encrypts `Monologue.apk` / `Monologue.ipa` with `tools/encrypt-artifact.mjs` (format `MQAAR001`: magic + 16-byte salt + 12-byte nonce + AES-256-GCM ciphertext + 16-byte tag, scrypt N=2^17, header bound as AAD). The file names (`Monologue.apk.enc`, `Monologue.ipa.enc`) and artifact names are unchanged. `ARTIFACT_PASSPHRASE` must have at least 24 characters; `build.yml` checks this before the build starts.
+
+`tools/decrypt-artifact.mjs` reads **both** formats, detected by the first 8 bytes: `MQAAR001` (GCM) and `Salted__` (legacy `openssl enc -aes-256-cbc -pbkdf2`, unauthenticated, kept for the 7-day retention of older artifacts). The passphrase comes only from `ARTIFACT_PASSPHRASE`; a command-line argument is refused. Consumers: `e2e-android.yml`, `android-smoke.yml`, `ota.yml` (`recover-apk-upload`).
+
+Rollout order (a consumer running from a branch without the new decrypt cannot read a GCM artifact):
+1. Merge this change to `main`. From that point every consumer started from `main` reads both formats.
+2. Builds dispatched from `main` after the merge produce GCM artifacts. Do not run a consumer from an older branch against a build made after the merge.
+3. Artifacts from builds made before the merge expire in 7 days (CBC); after that the legacy reader is dead code and can be removed.
+
+Local use: `read -rs ARTIFACT_PASSPHRASE; export ARTIFACT_PASSPHRASE; node tools/decrypt-artifact.mjs Monologue.apk.enc Monologue.apk; unset ARTIFACT_PASSPHRASE`. The tool refuses to overwrite an existing output.
+
 ## Security limits and unresolved legacy risks
 - **Encryption mitigates public artifact exposure; it does not make all public-runner activity confidential.** Build/source checkouts, third-party actions, caches, command errors, debug logs and a compromised runner can expose information before encryption.
 - The repository has **historical `screens-android*` and `screens-ios*` branches** created by older workflows; this PR does not erase or revoke them. Review and remove them using authorized repository administration, and audit previously uploaded artifacts for accidental exposure. Rotate any potentially disclosed test credentials.

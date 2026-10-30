@@ -68,7 +68,7 @@ jobs:
       - name: Decrypt APK
         env:
           ARTIFACT_PASSPHRASE: ${{ secrets.ARTIFACT_PASSPHRASE }}
-        run: node tools/decrypt-artifact.mjs apk/Monologue.apk.enc Monologue.apk "$ARTIFACT_PASSPHRASE"
+        run: node tools/decrypt-artifact.mjs apk/Monologue.apk.enc Monologue.apk
       - name: Install Maestro
         run: curl -Ls "https://get.maestro.mobile.dev" | bash
       - name: Enable KVM
