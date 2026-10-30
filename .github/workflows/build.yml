@@ -76,14 +76,14 @@ jobs:
           test "$NATIVE_BUILD_AUTHORIZED" = true || { echo 'Explicit native build authorization is required.'; exit 1; }
           case "$BUILD_CHANNEL" in development|preview|production|testers) ;; *) exit 1 ;; esac
           case "$PLATFORMS" in both|android|ios) ;; *) exit 1 ;; esac
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: lucasouzadev/monologue
           ref: ${{ inputs.source_ref }}
           token: ${{ secrets.SOURCE_REPO_TOKEN }}
           persist-credentials: false
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: pnpm
@@ -103,7 +103,7 @@ jobs:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
       GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: lucasouzadev/monologue
           ref: ${{ inputs.source_ref }}
@@ -116,16 +116,16 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: node scripts/ci/local-build-credentials.cjs check android
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: pnpm
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
         with:
           distribution: temurin
           java-version: 17
-      - uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
         with:
           # The runner image already ships the SDK; the action's default `tools` package no longer exists and fails the job.
           packages: ''
@@ -133,7 +133,7 @@ jobs:
         run: |
           { yes || true; } | sdkmanager --licenses > /dev/null
           sdkmanager 'platforms;android-36' 'build-tools;36.0.0' 'ndk;27.1.12297006' 'cmake;3.22.1'
-      - uses: expo/expo-github-action@v8
+      - uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
         with:
           eas-version: 24.8.0
           packager: npm
@@ -193,7 +193,7 @@ jobs:
           cd "$RUNNER_TEMP/monologue-artifacts"
           openssl enc -aes-256-cbc -pbkdf2 -iter 600000 -salt -pass env:ARTIFACT_PASSPHRASE -in Monologue.apk -out Monologue.apk.enc
           rm -f Monologue.apk
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: monologue-android-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/monologue-artifacts/Monologue.apk.enc*
@@ -201,7 +201,7 @@ jobs:
           retention-days: 7
           compression-level: 0
       - name: Remove signing files
-        if: always() && steps.signing.outcome == 'success'
+        if: always()
         run: node scripts/ci/local-build-credentials.cjs cleanup
 
   ios:
@@ -221,7 +221,7 @@ jobs:
       # Baseline 25: the Widgets extension is ALWAYS on for a real build (the owner asked for widgets): a missing profile fails the credentials check below instead of silently shipping without them.
       MONOLOGUE_IOS_WIDGET_EXTENSION: ${{ inputs.ios_widget_extension && 'on' || 'off' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: lucasouzadev/monologue
           ref: ${{ inputs.source_ref }}
@@ -246,12 +246,12 @@ jobs:
           xcrun --sdk iphoneos --show-sdk-version
           fastlane --version
           pod --version
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: pnpm
-      - uses: expo/expo-github-action@v8
+      - uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
         with:
           eas-version: 24.8.0
           packager: npm
@@ -295,7 +295,7 @@ jobs:
           cd "$RUNNER_TEMP/monologue-artifacts"
           openssl enc -aes-256-cbc -pbkdf2 -iter 600000 -salt -pass env:ARTIFACT_PASSPHRASE -in Monologue.ipa -out Monologue.ipa.enc
           rm -f Monologue.ipa
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: monologue-ios-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/monologue-artifacts/Monologue.ipa.enc*
@@ -303,5 +303,5 @@ jobs:
           retention-days: 7
           compression-level: 0
       - name: Remove signing and API files
-        if: always() && steps.signing.outcome == 'success'
+        if: always()
         run: node scripts/ci/local-build-credentials.cjs cleanup
