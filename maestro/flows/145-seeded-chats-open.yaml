@@ -1,5 +1,5 @@
 # Perf round: realistic content. Seeds 10 chats x 300 messages (text, long, formatted, tasks, links, Reply, Continue, Merge) through the real commands, then opens five of
-# them twice. The numbers come from the tx_* log (chat_open_total: frames/jank/worst/r_home_row/r_message_cell), the screenshots are the visual check.
+# them twice (newest first: Finanças, Receitas, Estudos, Casa). The numbers come from the tx_* log (chat_open_total: frames/jank/worst/r_home_row/r_message_cell), the screenshots are the visual check.
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -20,43 +20,43 @@ appId: app.monologue.mobile
 - tapOn:
     id: "seed-home"
 - extendedWaitUntil:
-    visible: ".*Tarefas.*"
+    visible: ".*Finan.*"
     timeout: 30000
 - takeScreenshot: 145-home-seeded
 - repeat:
     times: 2
     commands:
-      - tapOn: ".*Tarefas.*"
+      - tapOn: ".*Finan.*"
       - extendedWaitUntil:
           visible: "Message.*"
           timeout: 20000
-      - takeScreenshot: 145-chat-tarefas
+      - takeScreenshot: 145-chat-1
       - tapOn: "Back"
       - extendedWaitUntil:
-          visible: ".*Ideias.*"
+          visible: ".*Receitas.*"
           timeout: 20000
-      - tapOn: ".*Ideias.*"
+      - tapOn: ".*Receitas.*"
       - extendedWaitUntil:
           visible: "Message.*"
           timeout: 20000
-      - takeScreenshot: 145-chat-ideias
+      - takeScreenshot: 145-chat-2
       - tapOn: "Back"
       - extendedWaitUntil:
-          visible: ".*Projetos.*"
+          visible: ".*Estudos.*"
           timeout: 20000
-      - tapOn: ".*Projetos.*"
-      - extendedWaitUntil:
-          visible: "Message.*"
-          timeout: 20000
-      - tapOn: "Back"
-      - extendedWaitUntil:
-          visible: ".*Leituras.*"
-          timeout: 20000
-      - tapOn: ".*Leituras.*"
+      - tapOn: ".*Estudos.*"
       - extendedWaitUntil:
           visible: "Message.*"
           timeout: 20000
       - tapOn: "Back"
       - extendedWaitUntil:
-          visible: ".*Tarefas.*"
+          visible: ".*Casa.*"
+          timeout: 20000
+      - tapOn: ".*Casa.*"
+      - extendedWaitUntil:
+          visible: "Message.*"
+          timeout: 20000
+      - tapOn: "Back"
+      - extendedWaitUntil:
+          visible: ".*Finan.*"
           timeout: 20000
