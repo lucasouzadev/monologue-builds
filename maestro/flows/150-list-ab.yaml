@@ -1,21 +1,18 @@
-# M1-PERFORMANCE-001: list engine A/B. The same 300 synthetic bubbles drawn by FlashList and by LegendList, 3 runs each, alternating, opened by deep link (diagnostics builds only).
-# Numbers are in the tx_list_ab_* log lines (loaded, total, frames, jank, worst frame, r_listab_cell, r_listab_shift).
+# M1-PERFORMANCE-001: list engine A/B in ONE screen (FlashList and LegendList, 3 runs each, alternating, 300 synthetic bubbles). Numbers: tx_list_ab_* log lines.
 appId: app.monologue.mobile
 ---
 - launchApp
 - extendedWaitUntil:
     visible: "Open personal space"
     timeout: 60000
-- repeat:
-    times: 3
-    commands:
-      - openLink: "monologue:///__diagnostics/list-ab?engine=flash&count=300"
-      - extendedWaitUntil:
-          visible: "LISTAB DONE engine=flash.*"
-          timeout: 60000
-      - takeScreenshot: 150-list-flash
-      - openLink: "monologue:///__diagnostics/list-ab?engine=legend&count=300"
-      - extendedWaitUntil:
-          visible: "LISTAB DONE engine=legend.*"
-          timeout: 60000
-      - takeScreenshot: 150-list-legend
+- tapOn: "Open personal space"
+- scrollUntilVisible:
+    element:
+      id: "profile-list-ab"
+    timeout: 30000
+- tapOn:
+    id: "profile-list-ab"
+- extendedWaitUntil:
+    visible: "LISTAB DONE all"
+    timeout: 240000
+- takeScreenshot: 150-list-ab-done
