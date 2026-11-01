@@ -1,0 +1,39 @@
+# M1-PERFORMANCE-001: list engine A/B. The same 300 synthetic bubbles drawn by FlashList and by LegendList, 3 runs each, alternating. Numbers are in the tx_list_ab_* log lines.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 60000
+- tapOn: "Open personal space"
+- scrollUntilVisible:
+    element:
+      id: "profile-list-ab-flash"
+    timeout: 20000
+- repeat:
+    times: 3
+    commands:
+      - tapOn:
+          id: "profile-list-ab-flash"
+      - extendedWaitUntil:
+          visible: "LISTAB DONE.*"
+          timeout: 60000
+      - takeScreenshot: 150-list-flash
+      - tapOn:
+          id: "list-ab-back"
+      - scrollUntilVisible:
+          element:
+            id: "profile-list-ab-legend"
+          timeout: 20000
+      - tapOn:
+          id: "profile-list-ab-legend"
+      - extendedWaitUntil:
+          visible: "LISTAB DONE.*"
+          timeout: 60000
+      - takeScreenshot: 150-list-legend
+      - tapOn:
+          id: "list-ab-back"
+      - scrollUntilVisible:
+          element:
+            id: "profile-list-ab-flash"
+          timeout: 20000
