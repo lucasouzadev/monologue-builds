@@ -1,0 +1,47 @@
+# Perf round diagnosis: after opening a seeded chat WITH photos, which of these are on screen? Each `assertNotVisible` that is false prints a "Warning: Assertion is false" line
+# (the public RESULT/STEP log keeps the first three), so the first visible ones identify the screen without a readable screenshot.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 60000
+- tapOn: "Open personal space"
+- scrollUntilVisible:
+    element:
+      id: "profile-seed-media-small"
+    timeout: 20000
+- tapOn:
+    id: "profile-seed-media-small"
+- extendedWaitUntil:
+    visible: "SEED DONE.*images=[1-9].*"
+    timeout: 600000
+- tapOn:
+    id: "seed-home"
+- extendedWaitUntil:
+    visible: ".*Projetos.*"
+    timeout: 30000
+- tapOn: ".*Projetos.*"
+- extendedWaitUntil:
+    visible: "never-visible-sentinel"
+    timeout: 6000
+    optional: true
+- assertNotVisible:
+    text: ".*(ideia|projeto|reunião|amanhã|café|lembrar|ação|viagem|livro|música|trabalho|família|cidade|tempo|pensar|escrever|conversa|caminho|semana|código|design|nota|manhã|noite).*"
+    optional: true
+- assertNotVisible:
+    text: ".*[0-9][0-9]:[0-9][0-9].*"
+    optional: true
+- assertNotVisible:
+    text: "Back"
+    optional: true
+- assertNotVisible:
+    text: "Message.*"
+    optional: true
+- assertNotVisible:
+    text: ".*foto.*"
+    optional: true
+- assertNotVisible:
+    text: ".*seed-.*"
+    optional: true
+- assertVisible: "zzz-diagnosis-end"
