@@ -1,0 +1,36 @@
+# Perf round, seeder phase 2: seeds 3 chats x 80 messages WITH real PNG photos (committed like imports), then opens the newest chats. The SEED DONE line carries images=N.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 60000
+- tapOn: "Open personal space"
+- scrollUntilVisible:
+    element:
+      id: "profile-seed-media-small"
+    timeout: 20000
+- tapOn:
+    id: "profile-seed-media-small"
+- extendedWaitUntil:
+    visible: "SEED DONE.*images=[1-9].*"
+    timeout: 600000
+- takeScreenshot: 147-seed-media-report
+- tapOn:
+    id: "seed-home"
+- extendedWaitUntil:
+    visible: ".*Viagem.*|.*Projetos.*|.*Ideias.*"
+    timeout: 30000
+- takeScreenshot: 147-home-media
+- repeat:
+    times: 2
+    commands:
+      - tapOn: ".*Projetos.*"
+      - extendedWaitUntil:
+          visible: "Message.*"
+          timeout: 20000
+      - takeScreenshot: 147-chat-media
+      - tapOn: "Back"
+      - extendedWaitUntil:
+          visible: ".*Ideias.*"
+          timeout: 20000
