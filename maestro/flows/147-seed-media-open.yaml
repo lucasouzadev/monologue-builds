@@ -27,8 +27,12 @@ appId: app.monologue.mobile
     commands:
       - tapOn: ".*Projetos.*"
       - extendedWaitUntil:
-          visible: "Message.*"
+          visible: "Back"
           timeout: 20000
+      - extendedWaitUntil:
+          visible: "never-visible-sentinel"
+          timeout: 1500
+          optional: true
       - takeScreenshot: 147-chat-media
       - tapOn: "Back"
       - extendedWaitUntil:
