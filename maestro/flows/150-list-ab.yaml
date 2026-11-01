@@ -24,7 +24,17 @@ appId: app.monologue.mobile
       - scrollUntilVisible:
           element:
             id: "profile-list-ab-legend"
-          timeout: 20000
+          direction: DOWN
+          visibilityPercentage: 50
+          timeout: 4000
+          optional: true
+      - scrollUntilVisible:
+          element:
+            id: "profile-list-ab-legend"
+          direction: UP
+          visibilityPercentage: 50
+          timeout: 8000
+          optional: true
       - tapOn:
           id: "profile-list-ab-legend"
       - extendedWaitUntil:
@@ -36,4 +46,14 @@ appId: app.monologue.mobile
       - scrollUntilVisible:
           element:
             id: "profile-list-ab-flash"
-          timeout: 20000
+          direction: DOWN
+          visibilityPercentage: 50
+          timeout: 4000
+          optional: true
+      - scrollUntilVisible:
+          element:
+            id: "profile-list-ab-flash"
+          direction: UP
+          visibilityPercentage: 50
+          timeout: 8000
+          optional: true
