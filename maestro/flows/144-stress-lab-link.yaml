@@ -1,0 +1,19 @@
+# Perf round: the stress lab is reachable from the drawer on development/preview binaries (no deep link needed) and the burst completes.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 60000
+- tapOn: "Open personal space"
+- scrollUntilVisible:
+    element:
+      id: "profile-stress-lab"
+    timeout: 20000
+- takeScreenshot: 144-stress-link-visible
+- tapOn:
+    id: "profile-stress-lab"
+- extendedWaitUntil:
+    visible: "STRESS DONE.*"
+    timeout: 300000
+- takeScreenshot: 144-stress-report

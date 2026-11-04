@@ -1,0 +1,34 @@
+# Perf round: the owner's device got 8x slower sends once the app held 21 chats / 3700 messages (send p50 155 ms -> 1316 ms, and 127 message-cell renders per send versus 35).
+# Seeds 10 chats x 300 messages, then runs the 300-message stress burst. The STRESS DONE line carries send p50/p95, JS stall and `cells` (message-cell renders).
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Open personal space"
+    timeout: 60000
+- tapOn: "Open personal space"
+- scrollUntilVisible:
+    element:
+      id: "profile-seed"
+    timeout: 20000
+- tapOn:
+    id: "profile-seed"
+- extendedWaitUntil:
+    visible: "SEED DONE.*"
+    timeout: 600000
+- tapOn:
+    id: "seed-home"
+- extendedWaitUntil:
+    visible: ".*Finan.*"
+    timeout: 30000
+- tapOn: "Open personal space"
+- scrollUntilVisible:
+    element:
+      id: "profile-stress-lab"
+    timeout: 20000
+- tapOn:
+    id: "profile-stress-lab"
+- extendedWaitUntil:
+    visible: "STRESS DONE.*"
+    timeout: 900000
+- takeScreenshot: 146-stress-after-seed
