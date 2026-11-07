@@ -88,11 +88,13 @@ jobs:
           arch: x86_64
           target: default
           profile: pixel_6
-          cores: 2
-          ram-size: 4096M
+          # The hosted runner has 4 vCPUs and 16 GB. The guest used to get 2 cores / 4 GB and the emulator
+          # process vanished mid-flow (device 'emulator-5554' not found) twice in a row.
+          cores: 4
+          ram-size: 6144M
           heap-size: 1536M
           disk-size: 8192M
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -no-metrics -camera-back emulated -camera-front emulated
           disable-animations: true
           # The action executes each script line in a separate shell. Fold the
           # entire conditional into one command; otherwise its first line fails.
