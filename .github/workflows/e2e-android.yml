@@ -88,16 +88,27 @@ jobs:
           arch: x86_64
           target: default
           profile: pixel_6
-          cores: 2
-          ram-size: 4096M
+          # The hosted runner has 4 vCPUs and 16 GB. The guest used to get 2 cores / 4 GB and the emulator
+          # process vanished mid-flow (device 'emulator-5554' not found) twice in a row.
+          cores: 4
+          ram-size: 6144M
           heap-size: 1536M
           disk-size: 8192M
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -no-metrics -camera-back emulated -camera-front emulated
           disable-animations: true
           # The action executes each script line in a separate shell. Fold the
           # entire conditional into one command; otherwise its first line fails.
+          # qa-logs/android-logcat-full.log (whole logcat) and qa-logs/host-mem.log (host memory every 5 s) only go into the encrypted evidence.
           script: >-
-            adb logcat -G 16M; adb logcat -c; (adb logcat -v time ReactNativeJS:I '*:S' > "$RUNNER_TEMP/android-perf-raw.log" 2>&1 &); bash maestro/android-e2e.sh > "$RUNNER_TEMP/monologue-maestro-android.log" 2>&1; rc=$?; sleep 1; grep -aoE 'monologue perf tx_[a-z_]+_ms ms=[0-9.]+( [a-z_]+=[0-9]+)*' "$RUNNER_TEMP/android-perf-raw.log" | sed 's/^monologue perf //' > "$RUNNER_TEMP/android-perf.log" || true; echo '--- transition timings (numbers only)'; cat "$RUNNER_TEMP/android-perf.log" || true; grep -aE '^(RESULT|RECOVERY|STEP) ' "$RUNNER_TEMP/monologue-maestro-android.log" || true; if [ "$rc" -eq 0 ]; then echo 'Maestro Android: PASS (details encrypted)'; else echo 'Maestro Android: FAIL (details encrypted)'; exit 1; fi
+            mkdir -p "$RUNNER_TEMP/qa-logs"; adb logcat -G 16M; adb logcat -c; (adb logcat -v threadtime > "$RUNNER_TEMP/qa-logs/android-logcat-full.log" 2>&1 &); (while true; do date +%T; free -m | sed -n 2p; ps -eo rss,comm --sort=-rss | head -3; sleep 5; done > "$RUNNER_TEMP/qa-logs/host-mem.log" 2>&1 &); (adb logcat -v time ReactNativeJS:I '*:S' > "$RUNNER_TEMP/android-perf-raw.log" 2>&1 &); bash maestro/android-e2e.sh > "$RUNNER_TEMP/monologue-maestro-android.log" 2>&1; rc=$?; sleep 1; grep -aoE 'monologue perf tx_[a-z_]+_ms ms=[0-9.]+( [a-z_]+=[0-9]+)*' "$RUNNER_TEMP/android-perf-raw.log" | sed 's/^monologue perf //' > "$RUNNER_TEMP/android-perf.log" || true; echo '--- transition timings (numbers only)'; cat "$RUNNER_TEMP/android-perf.log" || true; grep -aE '^(RESULT|RECOVERY|STEP) ' "$RUNNER_TEMP/monologue-maestro-android.log" || true; if [ "$rc" -eq 0 ]; then echo 'Maestro Android: PASS (details encrypted)'; else echo 'Maestro Android: FAIL (details encrypted)'; exit 1; fi
+
+      # Why did the emulator go away? Host kernel OOM lines and emulator files, into the encrypted evidence only (nothing is printed here).
+      - name: Collect host diagnostics for the encrypted evidence
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/qa-logs"
+          { echo '--- free'; free -m; echo '--- df'; df -h /; echo '--- kernel oom/kill'; sudo dmesg 2>/dev/null | grep -iE 'oom|killed process|out of memory|qemu' | tail -50; sudo journalctl -k --no-pager 2>/dev/null | grep -iE 'oom|killed process|out of memory' | tail -50; } > "$RUNNER_TEMP/qa-logs/host-kernel.log" 2>&1 || true
+          { ls -la /tmp/android-runner 2>/dev/null; ls -la "$HOME/.android/avd/test.avd" 2>/dev/null | head -40; } > "$RUNNER_TEMP/qa-logs/emulator-files.log" 2>&1 || true
 
       # Performance gate (owner plan A8): median per metric against maestro/perf-budget.json (numbers only). Enforced: a median over its budget fails the job (a metric the run did not measure is skipped).
       - name: Performance gate
