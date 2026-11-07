@@ -181,6 +181,8 @@ jobs:
           # Transition timings (M2-MOTION-2): the app logs `monologue perf tx_*` lines (numbers only). Captured for the whole run, printed in the next step.
           xcrun simctl spawn "$SIM_UDID" log stream --style compact --predicate 'eventMessage CONTAINS "monologue perf tx_"' > "$RUNNER_TEMP/qa-logs/ios-perf-raw.log" 2>&1 &
           echo $! > "$RUNNER_TEMP/perf-log.pid"
+          # Host memory every 5 s, only for the encrypted evidence (why did a run slow down or lose the simulator).
+          ( while true; do date +%T; vm_stat | head -8; sleep 5; done > "$RUNNER_TEMP/qa-logs/ios-host-mem.log" 2>&1 & echo $! > "$RUNNER_TEMP/mem-log.pid" )
           if bash builds/maestro/run.sh "$SIM_UDID" > "$RUNNER_TEMP/qa-logs/ios-flows.log" 2>&1; then
             echo 'Maestro iOS: PASS (detailed evidence encrypted)'
             grep -aE '^(RESULT|RECOVERY|STEP) ' "$RUNNER_TEMP/qa-logs/ios-flows.log" || true
@@ -194,6 +196,17 @@ jobs:
       - name: Per-flow results (names only)
         if: always()
         run: grep -hE '^(RESULT|STEP) ' "$RUNNER_TEMP"/qa-logs/ios-*.log 2>/dev/null || echo 'No per-flow results recorded.'
+
+      # Crash reports and the app's own system log, for the encrypted evidence only (nothing is printed here).
+      - name: Collect simulator crash reports and system log for the encrypted evidence
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/qa-logs"
+          kill "$(cat "$RUNNER_TEMP/mem-log.pid" 2>/dev/null)" 2>/dev/null || true
+          for f in "$HOME"/Library/Logs/DiagnosticReports/*.ips "$HOME"/Library/Logs/DiagnosticReports/*.crash; do
+            [ -f "$f" ] && cp "$f" "$RUNNER_TEMP/qa-logs/ios-crash-$(basename "$f").log" || true
+          done
+          xcrun simctl spawn "$SIM_UDID" log show --last 90m --style compact --predicate 'process == "Monologue" OR process CONTAINS "Monologue" OR eventMessage CONTAINS "jetsam" OR eventMessage CONTAINS "memory pressure"' > "$RUNNER_TEMP/qa-logs/ios-app-syslog.log" 2>&1 || true
 
       # Content-free: only `tx_*` durations and counts (the app never logs ids, titles or text).
       - name: Transition timings (numbers only)
