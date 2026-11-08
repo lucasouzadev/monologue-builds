@@ -1,8 +1,8 @@
 # Verification status of the templates
 
-Honest record. "Static" = `actionlint` (workflow syntax, expressions, contexts). "Runner" = actually executed on a GitHub-hosted runner against a real app. Nothing here is certified to work for your project: expect to tune selectors, SDK levels and scheme names on the first run.
+Honest record. "Static" = `actionlint` with `shellcheck` (workflow syntax, expressions, contexts). "Runner" = actually executed on a GitHub-hosted runner against a real app. Nothing here is certified to work for your project: expect to tune selectors, SDK levels and scheme names on the first run.
 
-| Template | Static (actionlint 1.7.12) | Runner |
+| Template | Static (actionlint 1.7.12 + shellcheck 0.11) | Runner |
 |---|---|---|
 | `check.yml` | clean | not yet |
 | `android-apk.yml` (expo / react-native / capacitor / native) | clean | not yet |

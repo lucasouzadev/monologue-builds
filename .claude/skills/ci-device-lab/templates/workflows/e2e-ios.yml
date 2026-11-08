@@ -33,7 +33,7 @@ jobs:
             capacitor) npm run build --if-present && npx cap sync ios ;;
           esac
           cd ios; [ -f Podfile ] && pod install
-          ws=$(ls -d *.xcworkspace 2>/dev/null | head -1); proj=$(ls -d *.xcodeproj | head -1)
+          ws=$(find . -maxdepth 1 -name '*.xcworkspace' | head -1); proj=$(find . -maxdepth 1 -name '*.xcodeproj' | head -1)
           target=(-project "$proj"); [ -n "$ws" ] && target=(-workspace "$ws")
           scheme=$(xcodebuild -list -json "${target[@]}" | python3 -c 'import json,sys;d=json.load(sys.stdin);print((d.get("workspace") or d.get("project"))["schemes"][0])')
           xcodebuild build "${target[@]}" -scheme "$scheme" -configuration Release -sdk iphonesimulator \
