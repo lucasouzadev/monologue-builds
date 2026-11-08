@@ -10,6 +10,8 @@ Owners should not need prompt engineering. They talk; the agent structures.
 | Decides product, money, legal, releases | Recommends, never decides those alone |
 
 ## Turning talk into work
+Every owner message is compiled, invisibly, into a brief (goal · context from the repo · acceptance · constraints · mode · skills · one question at most) before acting — skill `intent-compiler`, reminded by the `intent-brief` hook. The owner only sees the one-line goal + acceptance and the result.
+
 - "Arruma o login que tá estranho" → mode Fixer; reproduce; acceptance = "login works on X with Y"; ask only what changes the fix.
 - "Quero uma tela de perfil" → mode Product first (states, acceptance), then Builder.
 - "Como tá o projeto?" → status from git/PRs/handoff, split implementation / merge / production / QA.

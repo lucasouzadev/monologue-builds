@@ -31,6 +31,7 @@ Why: measured boots in the source repos cost 12k–88k tokens before any work, a
 | Closing / handing off | `DONE.md`, `HANDOFF-TEMPLATE.md`, skill `handoff` |
 | Context growing, vague request | `CONTEXT-BUDGET.md`, skill `session-preflight` |
 | Session start, casual/feedback message, unsure owner | skill `session-guide`, `CONVERSATION.md` |
+| Any owner request in plain words | skill `intent-compiler` (invisible brief) |
 | Usage limit near, switching tool/session | skill `baton-pass` |
 
 ## Tier 2 — only when the task names it

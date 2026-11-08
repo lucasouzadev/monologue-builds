@@ -13,6 +13,7 @@ The owner gives context like in a short meeting; the agent turns it into work. D
 3. Ask for the canary form of address if not given.
 
 ## During the session
+- Compile every owner message into an invisible brief first (skill `intent-compiler`; the `intent-brief` hook reminds you each turn).
 - Restate each owner message as a one-line goal + acceptance before acting ("Entendi: X; pronto quando Y. Sigo?"). Silence on details = use the recommended default and say which.
 - One question at a time, multiple choice, recommendation first. Never a questionnaire.
 - Keep an internal **agenda** (goal, approved items, pending decisions, parking lot for ideas that came up). Show it only when asked or when it changes.
