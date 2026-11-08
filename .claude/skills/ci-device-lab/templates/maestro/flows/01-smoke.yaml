@@ -1,0 +1,10 @@
+# Smoke: the app launches and shows its first screen. No login, no data changes.
+appId: ${APP_ID}          # replace with your bundle id / applicationId, or pass -e APP_ID=...
+tags: [smoke]
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: ".*"          # replace with a stable text or testID of your first screen
+    timeout: 30000
+- takeScreenshot: 01-launch

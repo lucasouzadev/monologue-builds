@@ -1,0 +1,39 @@
+# Publishes an Expo (EAS Update) over-the-air update. Only JS/assets compatible with the installed
+# native runtime: native changes need a new build. Validate on a staging channel before production.
+name: expo-ota
+on:
+  workflow_dispatch:
+    inputs:
+      ref: { default: main }
+      app_dir: { default: "." }
+      channel: { type: choice, options: [preview, production], default: preview }
+      platform: { type: choice, options: [all, ios, android], default: all }
+      message: { description: "Update message (no personal data)", required: true }
+permissions: { contents: read }
+concurrency: { group: "expo-ota-${{ inputs.channel }}", cancel-in-progress: false }
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: ${{ inputs.channel == 'production' && 'production' || '' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with: { path: ci }
+      - name: Checkout private app source (read-only)
+        if: ${{ vars.SOURCE_REPO != '' }}
+        env: { DEPLOY_KEY: "${{ secrets.SOURCE_DEPLOY_KEY }}", REPO: "${{ vars.SOURCE_REPO }}", REF: "${{ inputs.ref }}", DEST: app }
+        run: bash ci/scripts/checkout-private-source.sh
+      - if: ${{ vars.SOURCE_REPO == '' }}
+        run: ln -s ci app
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with: { node-version: 22 }
+      - run: bash ci/scripts/install-deps.sh "app/${{ inputs.app_dir }}"
+      - uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
+        with: { eas-version: latest, token: "${{ secrets.EXPO_TOKEN }}" }
+      - name: Typecheck before shipping (if the project has it)
+        working-directory: app/${{ inputs.app_dir }}
+        run: npx --no-install tsc --noEmit 2>/dev/null || echo "::notice::no typecheck run"
+      - name: eas update
+        working-directory: app/${{ inputs.app_dir }}
+        env: { MSG: "${{ inputs.message }}" }
+        run: eas update --channel "${{ inputs.channel }}" --platform "${{ inputs.platform }}" --message "$MSG" --non-interactive

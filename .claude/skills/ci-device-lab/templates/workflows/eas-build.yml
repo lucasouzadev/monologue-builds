@@ -1,0 +1,56 @@
+# Expo builds two ways:
+#  - cloud: EAS builds on Expo's servers (credentials managed by EAS; uses your EAS plan quota)
+#  - local: "eas build --local" on this runner (no EAS build quota; signing inputs must be on the runner)
+# Simulator/emulator profiles are test builds; store/internal-distribution profiles are REAL builds: owner order only.
+name: eas-build
+on:
+  workflow_dispatch:
+    inputs:
+      ref: { default: main }
+      app_dir: { default: "." }
+      platform: { type: choice, options: [android, ios], default: android }
+      profile: { description: "eas.json profile (e.g. preview, simulator, production)", default: preview }
+      mode: { type: choice, options: [cloud, local], default: local }
+      owner_ordered_real_build: { type: boolean, default: false, description: "Required for non-simulator profiles" }
+permissions: { contents: read }
+jobs:
+  build:
+    runs-on: ${{ inputs.platform == 'ios' && 'macos-latest' || 'ubuntu-latest' }}
+    timeout-minutes: 90
+    steps:
+      - name: Real builds need the owner's explicit order
+        if: ${{ !contains(inputs.profile, 'simulator') && !contains(inputs.profile, 'emulator') && !inputs.owner_ordered_real_build }}
+        run: echo "::error::profile '${{ inputs.profile }}' is a real build; tick owner_ordered_real_build only on the owner's order"; exit 1
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with: { path: ci }
+      - name: Checkout private app source (read-only)
+        if: ${{ vars.SOURCE_REPO != '' }}
+        env: { DEPLOY_KEY: "${{ secrets.SOURCE_DEPLOY_KEY }}", REPO: "${{ vars.SOURCE_REPO }}", REF: "${{ inputs.ref }}", DEST: app }
+        run: bash ci/scripts/checkout-private-source.sh
+      - if: ${{ vars.SOURCE_REPO == '' }}
+        run: ln -s ci app
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with: { node-version: 22 }
+      - if: ${{ inputs.platform == 'android' }}
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with: { distribution: temurin, java-version: 17 }
+      - run: bash ci/scripts/install-deps.sh "app/${{ inputs.app_dir }}"
+      - uses: expo/expo-github-action@c7b66a9c327a43a8fa7c0158e7f30d6040d2481e # v8
+        with: { eas-version: latest, token: "${{ secrets.EXPO_TOKEN }}" }
+      - name: Build
+        working-directory: app/${{ inputs.app_dir }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/out"
+          if [ "${{ inputs.mode }}" = local ]; then
+            eas build --local --platform "${{ inputs.platform }}" --profile "${{ inputs.profile }}" --non-interactive --output "$RUNNER_TEMP/out/app.$( [ ${{ inputs.platform }} = ios ] && echo ipa || echo apk )"
+          else
+            eas build --platform "${{ inputs.platform }}" --profile "${{ inputs.profile }}" --non-interactive --no-wait
+            echo "Cloud build queued: follow it on expo.dev" >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Encrypt when this repository is public
+        if: ${{ inputs.mode == 'local' && github.event.repository.visibility == 'public' }}
+        env: { ARTIFACT_PASSPHRASE: "${{ secrets.ARTIFACT_PASSPHRASE }}" }
+        run: for f in "$RUNNER_TEMP"/out/*; do node ci/scripts/encrypt-artifact.mjs "$f" "$f.enc" && rm "$f"; done
+      - if: ${{ inputs.mode == 'local' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with: { name: "eas-${{ inputs.platform }}-${{ github.run_id }}", path: "${{ runner.temp }}/out/", retention-days: 7 }

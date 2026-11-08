@@ -21,6 +21,7 @@ Why: measured boots in the source repos cost 12k–88k tokens before any work, a
 | Dependency, CI/CD, release, auto-update/OTA | skill `supply-chain` |
 | UI, lists, network, startup, perf regression, budgets | skill `performance-core` |
 | Platform code, deep links, IPC, WebView, headers/CSP | skill `platform-security` |
+| Native builds, simulators/emulators, OTA, TestFlight, Maestro, no device/Mac available | skill `ci-device-lab` |
 | Map an area before touching it | `MODES.md#lens` |
 | Money, quota, invite, webhook, concurrency, "is it safe?" | skill `fundamentals-audit` |
 | Any screen, control, sheet, list, motion | skill `ux-check` + project UX/design docs |

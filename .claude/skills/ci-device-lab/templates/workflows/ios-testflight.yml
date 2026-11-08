@@ -1,0 +1,77 @@
+# Archives, signs and uploads to TestFlight from a hosted Mac (bare React Native / Capacitor / native,
+# or Expo after prebuild). REAL build: e-mails testers. Owner's explicit order per execution;
+# the "release" Environment must require the owner's approval.
+name: ios-testflight
+on:
+  workflow_dispatch:
+    inputs:
+      ref: { default: main }
+      framework: { type: choice, options: [expo, react-native, capacitor, native], default: expo }
+      app_dir: { default: "." }
+      scheme: { description: "Xcode scheme", required: true }
+      confirm: { description: 'Type "owner ordered this build"', required: true }
+permissions: { contents: read }
+concurrency: { group: "ios-testflight", cancel-in-progress: false }
+jobs:
+  upload:
+    runs-on: macos-latest
+    timeout-minutes: 90
+    environment: release
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
+      BUILD_NUMBER_OFFSET: ${{ vars.BUILD_NUMBER_OFFSET || '100' }}
+    steps:
+      - name: Confirm the owner's order
+        if: ${{ inputs.confirm != 'owner ordered this build' }}
+        run: echo "::error::not confirmed"; exit 1
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with: { path: ci }
+      - name: Checkout private app source (read-only)
+        if: ${{ vars.SOURCE_REPO != '' }}
+        env: { DEPLOY_KEY: "${{ secrets.SOURCE_DEPLOY_KEY }}", REPO: "${{ vars.SOURCE_REPO }}", REF: "${{ inputs.ref }}", DEST: app }
+        run: bash ci/scripts/checkout-private-source.sh
+      - if: ${{ vars.SOURCE_REPO == '' }}
+        run: ln -s ci app
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with: { node-version: 22 }
+      - run: bash ci/scripts/install-deps.sh "app/${{ inputs.app_dir }}"
+      - name: Native project
+        working-directory: app/${{ inputs.app_dir }}
+        run: |
+          case "${{ inputs.framework }}" in
+            expo) npx expo prebuild --platform ios --no-install ;;
+            capacitor) npm run build --if-present && npx cap sync ios ;;
+          esac
+          if [ -f ios/Podfile ]; then (cd ios && pod install); fi
+      - name: App Store Connect API key (file only, never printed)
+        env: { P8: "${{ secrets.ASC_API_KEY_P8 }}", KID: "${{ secrets.ASC_KEY_ID }}" }
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          printf '%s\n' "$P8" > ~/.appstoreconnect/private_keys/AuthKey_$KID.p8
+          chmod 600 ~/.appstoreconnect/private_keys/AuthKey_$KID.p8
+      - name: Archive and export (automatic signing via the API key)
+        working-directory: app/${{ inputs.app_dir }}/ios
+        env: { KID: "${{ secrets.ASC_KEY_ID }}", ISS: "${{ secrets.ASC_ISSUER_ID }}", TEAM: "${{ secrets.APPLE_TEAM_ID }}" }
+        run: |
+          ws=$(ls -d *.xcworkspace 2>/dev/null | head -1); proj=$(ls -d *.xcodeproj | head -1)
+          target=(-project "$proj"); [ -n "$ws" ] && target=(-workspace "$ws")
+          auth=(-allowProvisioningUpdates -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_$KID.p8 -authenticationKeyID "$KID" -authenticationKeyIssuerID "$ISS")
+          xcodebuild archive "${target[@]}" -scheme "${{ inputs.scheme }}" -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/App.xcarchive" \
+            DEVELOPMENT_TEAM="$TEAM" CURRENT_PROJECT_VERSION=$((BUILD_NUMBER_OFFSET + BUILD_NUMBER)) "${auth[@]}" | tail -n 30
+          cat > "$RUNNER_TEMP/export.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict><key>method</key><string>app-store-connect</string><key>teamID</key><string>$TEAM</string><key>signingStyle</key><string>automatic</string></dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath "$RUNNER_TEMP/App.xcarchive" -exportOptionsPlist "$RUNNER_TEMP/export.plist" \
+            -exportPath "$RUNNER_TEMP/export" "${auth[@]}" | tail -n 20
+      - name: Upload to TestFlight
+        env: { KID: "${{ secrets.ASC_KEY_ID }}", ISS: "${{ secrets.ASC_ISSUER_ID }}" }
+        run: |
+          ipa=$(ls "$RUNNER_TEMP"/export/*.ipa | head -1)
+          out=$(xcrun altool --upload-app -f "$ipa" -t ios --apiKey "$KID" --apiIssuer "$ISS" 2>&1) ; rc=$?
+          echo "$out" | grep -E "UPLOAD SUCCEEDED|ERROR|error" | head -20
+          if [ $rc -ne 0 ] || echo "$out" | grep -q "ERROR"; then exit 1; fi
+          echo "Uploaded build $((BUILD_NUMBER_OFFSET + BUILD_NUMBER)); Apple processing not verified here" >> "$GITHUB_STEP_SUMMARY"
+      - if: always()
+        run: rm -rf ~/.appstoreconnect/private_keys "$RUNNER_TEMP/export" "$RUNNER_TEMP/App.xcarchive"
