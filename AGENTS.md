@@ -2,7 +2,7 @@
 
 CI only: native builds, OTA and Maestro E2E for the private `lucasouzadev/monologue` app. **No app source.** Everything here, including workflow logs and artifacts, can be read by anyone.
 Working rules live in the private repo: `AGENTS.md`, `docs/agents/TOOLING_AND_E2E_RUNBOOK.md`, `docs/agents/QUALITY_GATES_2026-10-14.md`.
-Built on agent-kit 1.1.0; generic rules in `docs/agents/standard/`. Owner decisions: `docs/agents/OWNER_DECISIONS.md`.
+Built on agent-kit 1.2.0; generic rules in `docs/agents/standard/`. Owner decisions: `docs/agents/OWNER_DECISIONS.md`.
 
 ## Session start
 Read this file and `README.md`. Newest state first (`tools/ci.sh`, latest runs). Output to the owner: caveman, ≤ 15 lines, in Brazilian Portuguese, canary = form of address the owner gives at session start, never stored (`docs/agents/standard/CANARY.md`).

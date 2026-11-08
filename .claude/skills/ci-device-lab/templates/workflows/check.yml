@@ -1,0 +1,28 @@
+# Lints workflows and Maestro flows. No secrets; safe on pull requests.
+name: check
+on:
+  pull_request:
+  workflow_dispatch:
+permissions: { contents: read }
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: actionlint
+        run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.7 -color
+      - name: No secret-bearing workflow has an automatic trigger
+        run: |
+          bad=0
+          for f in .github/workflows/*.yml; do
+            [ "$(basename "$f")" = check.yml ] && continue
+            if grep -q 'secrets\.' "$f" && grep -Eq '^\s*(push|pull_request|pull_request_target|schedule):' "$f"; then
+              echo "::error file=$f::uses secrets and has an automatic trigger"; bad=1; fi
+          done
+          exit $bad
+      - name: Maestro flow syntax
+        if: ${{ hashFiles('maestro/flows/**/*.yaml') != '' }}
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          export PATH="$HOME/.maestro/bin:$PATH"
+          for f in maestro/flows/*.yaml; do maestro check-syntax "$f"; done

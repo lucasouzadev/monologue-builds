@@ -1,0 +1,50 @@
+# Builds an iOS SIMULATOR app on a hosted Mac. No Mac, no Apple account and no signing needed.
+# Proves the app compiles and produces App.app for E2E; it does not install on a real iPhone.
+name: ios-simulator
+on:
+  workflow_dispatch:
+    inputs:
+      ref: { description: "App branch, tag or sha", default: main }
+      framework: { type: choice, options: [expo, react-native, capacitor, native], default: expo }
+      app_dir: { description: "App folder inside the repo", default: "." }
+      scheme: { description: "Xcode scheme (empty = first scheme found)", default: "" }
+permissions: { contents: read }
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with: { path: ci }
+      - name: Checkout private app source (read-only)
+        if: ${{ vars.SOURCE_REPO != '' }}
+        env: { DEPLOY_KEY: "${{ secrets.SOURCE_DEPLOY_KEY }}", REPO: "${{ vars.SOURCE_REPO }}", REF: "${{ inputs.ref }}", DEST: app }
+        run: bash ci/scripts/checkout-private-source.sh
+      - if: ${{ vars.SOURCE_REPO == '' }}
+        run: ln -s ci app
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with: { node-version: 22 }
+      - name: Install dependencies
+        run: bash ci/scripts/install-deps.sh "app/${{ inputs.app_dir }}"
+      - name: Generate the native iOS project
+        working-directory: app/${{ inputs.app_dir }}
+        run: |
+          case "${{ inputs.framework }}" in
+            expo) npx expo prebuild --platform ios --no-install ;;
+            capacitor) npm run build --if-present && npx cap sync ios ;;
+          esac
+          if [ -f ios/Podfile ]; then (cd ios && pod install); fi
+      - name: xcodebuild for the simulator (no signing)
+        working-directory: app/${{ inputs.app_dir }}/ios
+        run: |
+          ws=$(ls -d *.xcworkspace 2>/dev/null | head -1); proj=$(ls -d *.xcodeproj | head -1)
+          target=(-project "$proj"); [ -n "$ws" ] && target=(-workspace "$ws")
+          scheme="${{ inputs.scheme }}"
+          [ -z "$scheme" ] && scheme=$(xcodebuild -list -json "${target[@]}" | python3 -c 'import json,sys;d=json.load(sys.stdin);print((d.get("workspace") or d.get("project"))["schemes"][0])')
+          xcodebuild build "${target[@]}" -scheme "$scheme" -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/dd" CODE_SIGNING_ALLOWED=NO | tail -n 40
+          app=$(find "$RUNNER_TEMP/dd/Build/Products" -maxdepth 2 -name '*.app' -type d | head -1)
+          mkdir -p "$RUNNER_TEMP/out" && ditto -c -k --keepParent "$app" "$RUNNER_TEMP/out/ios-simulator-app.zip"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with: { name: "ios-simulator-${{ github.run_id }}", path: "${{ runner.temp }}/out/", retention-days: 7 }

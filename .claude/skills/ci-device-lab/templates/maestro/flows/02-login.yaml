@@ -1,0 +1,19 @@
+# Login with a DEDICATED, EMPTY test account (secrets E2E_EMAIL / E2E_PASSWORD). Read-only after login.
+appId: ${APP_ID}
+tags: [login]
+---
+- launchApp
+- tapOn:
+    id: "email"            # prefer testID / accessibility id over visible text
+- inputText: ${E2E_EMAIL}
+- tapOn:
+    id: "password"
+- inputText: ${E2E_PASSWORD}
+- hideKeyboard
+- tapOn:
+    id: "login-submit"
+- extendedWaitUntil:
+    visible:
+      id: "home"
+    timeout: 30000
+- takeScreenshot: 02-home
