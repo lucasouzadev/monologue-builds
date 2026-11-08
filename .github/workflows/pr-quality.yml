@@ -1,0 +1,32 @@
+# agent-kit PR quality: checks the structure and honesty of the PR description and flags risky areas.
+# No secrets: it only reads the PR with the workflow token. The script and config are taken from the BASE
+# commit, so a PR cannot weaken the check that judges it. It is a guide, not proof the change is correct.
+name: pr-quality
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+      - name: Check
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_DRAFT: ${{ github.event.pull_request.draft }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if [ ! -f .github/scripts/pr_quality.py ]; then
+            echo "::notice::pr_quality.py is not on the base branch yet; skipped until this PR is merged"; exit 0
+          fi
+          python3 .github/scripts/pr_quality.py --body-env PR_BODY --gh "$REPO" "$PR_NUMBER" --config .github/pr-quality.json

@@ -1,0 +1,2 @@
+# Routine, non-build workflows. Real builds still ask.
+gh workflow run (e2e|check|quality)

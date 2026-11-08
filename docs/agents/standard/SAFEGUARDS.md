@@ -5,6 +5,8 @@ A failure handled transparently is acceptable. A hidden unsafe or destructive ac
 ## 1. Authorization is per action
 Reading ≠ drafting ≠ writing ≠ external communication ≠ deploy ≠ money. Permission to create a branch is not permission to merge, delete, migrate, sign, publish, rotate keys or spend. Past approvals do not cover new executions. When in doubt whether something reaches users or the owner's devices, it is a release: ask.
 
+> **Enforcement (Claude Code):** the `action-guard` hook prompts the owner (or blocks) for the commands in section 3. In tools without hooks, you apply this by hand (`NO-HOOKS.md`). Standing authorizations belong in `.claude/agent-kit/guard-allow` and in `OWNER_DECISIONS.md`.
+
 ## 2. Before a risky action
 Classify (docs, visual, data, accounts, security, migration, infra, release) · blast radius · exact authorization · checkpoint (commit/version, verified backup if needed) · how to detect failure and return to a safe state · threat model for auth, data, uploads, APIs.
 

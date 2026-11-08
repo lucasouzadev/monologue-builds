@@ -14,6 +14,7 @@
 - `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` in `settings.json` `env` — compacts earlier, before quality degrades. Can only lower the threshold. If a Claude Code version ignores it in project settings, nothing breaks; `/autocompact <tokens>` is the manual alternative.
 - `PreCompact` hook — its output instructs the summary to keep the active state (goal, approvals, decisions, files, commands with results, next step).
 - `SessionStart` hook (`startup|resume|compact`) — re-injects branch, last commits and the session state file.
+- `UserPromptSubmit` hook `usage-guard` — reads the plan usage cached by the statusline; at weekly ≥ 85 % (or 5-hour ≥ 90 %) it asks the agent, once per level, to offer a baton (skill `baton-pass`). Usage data exists only for subscription plans.
 - `CLAUDE.md` is re-read from disk after compaction; durable rules belong there or in `AGENTS.md`, never only in chat.
 
 ## Habits

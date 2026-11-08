@@ -1,0 +1,5 @@
+# Agent hooks and config run on every agent session: changes need the owner's review.
+/.claude/ @lucasouzadev
+/AGENTS.md @lucasouzadev
+/CLAUDE.md @lucasouzadev
+/.github/ @lucasouzadev

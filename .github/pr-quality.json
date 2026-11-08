@@ -1,0 +1,11 @@
+{
+  "_comment": "agent-kit PR quality config for public CI repositories.",
+  "required_sections": [["summary", "resumo"], ["workflows, triggers", "workflows"], ["quality-g2", "\\bg2\\b", "evidence"]],
+  "evidence_sections": ["quality-g2", "\\bg2\\b", "evidence"],
+  "delivery": { "labels": ["delivery", "entrega"], "options": ["N/A", "redeploy"], "required": false },
+  "min_body_chars": 250,
+  "rules_extend": [
+    { "id": "automatic-trigger", "severity": "warn", "paths": [".github/workflows/*"],
+      "message": "new automatic trigger: only secret-free, build-free checks may have one", "forbid_added": ["^\\s*(schedule|push)\\s*:"] }
+  ]
+}

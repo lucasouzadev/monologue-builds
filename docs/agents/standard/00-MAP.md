@@ -28,8 +28,15 @@ Why: measured boots in the source repos cost 12k–88k tokens before any work, a
 | Plan with several tasks / parallel work | `ORCHESTRATION.md` |
 | Risky or irreversible action | `SAFEGUARDS.md` |
 | User-visible change | `CHANGELOG-GUIDE.md` |
+| Opening or reviewing a PR, "is this Done?" | skill `pr-quality`, `QUALITY-GATES.md` |
 | Closing / handing off | `DONE.md`, `HANDOFF-TEMPLATE.md`, skill `handoff` |
 | Context growing, vague request | `CONTEXT-BUDGET.md`, skill `session-preflight` |
+| Session start, casual/feedback message, unsure owner | skill `session-guide`, `CONVERSATION.md` |
+| Any owner request in plain words | skill `intent-compiler` (invisible brief) |
+| Usage limit near, switching tool/session | skill `baton-pass` |
+| Tool without hooks (Codex, Cursor, others) | `NO-HOOKS.md` |
+| Risky command, deploy, release, force-push | `SAFEGUARDS.md`; Claude Code asks via the `action-guard` hook |
+| "Is this paying off?", usage/economy review | `python3 .claude/agent-kit/metrics.py report` |
 
 ## Tier 2 — only when the task names it
 ADRs, old handoffs, design captures, QA evidence, research and audit documents. Never open them "for context".
