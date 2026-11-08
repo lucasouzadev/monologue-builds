@@ -46,16 +46,16 @@ jobs:
       - name: App Store Connect API key (file only, never printed)
         env: { P8: "${{ secrets.ASC_API_KEY_P8 }}", KID: "${{ secrets.ASC_KEY_ID }}" }
         run: |
-          mkdir -p ~/.appstoreconnect/private_keys
-          printf '%s\n' "$P8" > ~/.appstoreconnect/private_keys/AuthKey_$KID.p8
-          chmod 600 ~/.appstoreconnect/private_keys/AuthKey_$KID.p8
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          printf '%s\n' "$P8" > "$HOME/.appstoreconnect/private_keys/AuthKey_${KID}.p8"
+          chmod 600 "$HOME/.appstoreconnect/private_keys/AuthKey_${KID}.p8"
       - name: Archive and export (automatic signing via the API key)
         working-directory: app/${{ inputs.app_dir }}/ios
         env: { KID: "${{ secrets.ASC_KEY_ID }}", ISS: "${{ secrets.ASC_ISSUER_ID }}", TEAM: "${{ secrets.APPLE_TEAM_ID }}" }
         run: |
-          ws=$(ls -d *.xcworkspace 2>/dev/null | head -1); proj=$(ls -d *.xcodeproj | head -1)
+          ws=$(find . -maxdepth 1 -name '*.xcworkspace' | head -1); proj=$(find . -maxdepth 1 -name '*.xcodeproj' | head -1)
           target=(-project "$proj"); [ -n "$ws" ] && target=(-workspace "$ws")
-          auth=(-allowProvisioningUpdates -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_$KID.p8 -authenticationKeyID "$KID" -authenticationKeyIssuerID "$ISS")
+          auth=(-allowProvisioningUpdates -authenticationKeyPath "$HOME/.appstoreconnect/private_keys/AuthKey_${KID}.p8" -authenticationKeyID "$KID" -authenticationKeyIssuerID "$ISS")
           xcodebuild archive "${target[@]}" -scheme "${{ inputs.scheme }}" -configuration Release \
             -destination 'generic/platform=iOS' -archivePath "$RUNNER_TEMP/App.xcarchive" \
             DEVELOPMENT_TEAM="$TEAM" CURRENT_PROJECT_VERSION=$((BUILD_NUMBER_OFFSET + BUILD_NUMBER)) "${auth[@]}" | tail -n 30
@@ -68,10 +68,10 @@ jobs:
       - name: Upload to TestFlight
         env: { KID: "${{ secrets.ASC_KEY_ID }}", ISS: "${{ secrets.ASC_ISSUER_ID }}" }
         run: |
-          ipa=$(ls "$RUNNER_TEMP"/export/*.ipa | head -1)
+          ipa=$(find "$RUNNER_TEMP/export" -name '*.ipa' | head -1)
           out=$(xcrun altool --upload-app -f "$ipa" -t ios --apiKey "$KID" --apiIssuer "$ISS" 2>&1) ; rc=$?
           echo "$out" | grep -E "UPLOAD SUCCEEDED|ERROR|error" | head -20
           if [ $rc -ne 0 ] || echo "$out" | grep -q "ERROR"; then exit 1; fi
           echo "Uploaded build $((BUILD_NUMBER_OFFSET + BUILD_NUMBER)); Apple processing not verified here" >> "$GITHUB_STEP_SUMMARY"
       - if: always()
-        run: rm -rf ~/.appstoreconnect/private_keys "$RUNNER_TEMP/export" "$RUNNER_TEMP/App.xcarchive"
+        run: rm -rf "$HOME/.appstoreconnect/private_keys" "$RUNNER_TEMP/export" "$RUNNER_TEMP/App.xcarchive"
