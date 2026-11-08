@@ -1,6 +1,6 @@
 # SECURITY-PERFORMANCE — Stack-agnostic invariants
 
-Core only. Detailed modules (security-core, identity, data/crypto/privacy, supply chain & updates, performance-core, per-platform) are planned as on-demand skills (agent-kit phase 3), anchored on OWASP Top 10:2025, ASVS 5.0, MASVS v2.1, NIST SP 800-63-4, SSDF, SLSA, Core Web Vitals, Android vitals and Apple hang metrics.
+Core only, always applicable. Detail lives in on-demand skills: `security-core`, `identity-session`, `data-privacy`, `supply-chain`, `performance-core`, `platform-security` — anchored on OWASP Top 10:2025, ASVS 5.0, MASVS v2.1, NIST SP 800-63-4, SSDF, SLSA, Core Web Vitals, Android vitals and Apple hang metrics.
 
 1. **The client is hostile.** Authorization, validation and business rules (price, quota, limits, state) always on the server. No secret in binary, bundle, client env vars or repository.
 2. **Every trust boundary receives hostile input** (native bridge/IPC, deep link, WebView, dependency, update, webhook): minimal surface, validation, deny by default.

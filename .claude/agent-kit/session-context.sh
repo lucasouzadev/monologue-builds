@@ -4,14 +4,17 @@
 set -u
 cd "${CLAUDE_PROJECT_DIR:-.}" 2>/dev/null || exit 0
 event="${1:-startup}"
-echo "[agent-kit] session ${event}. Rules: AGENTS.md (approval gate, caveman ≤15 lines, canary, evidence states)."
+echo "[agent-kit] session ${event}. Rules: AGENTS.md (approval gate, caveman ≤15 lines, evidence states)."
+[ "$event" = startup ] && echo "[agent-kit] Canary: use the form of address the owner gives in this session; if none yet, ask once."
 if git rev-parse --git-dir >/dev/null 2>&1; then
   echo "branch: $(git branch --show-current 2>/dev/null)  dirty files: $(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')"
   echo "last commits:"; git log --oneline -5 2>/dev/null | sed 's/^/  /'
 fi
 # Session state file: first match wins. Projects may list extra paths in .claude/handoff-paths (one per line).
 candidates=()
-[ -f .claude/handoff-paths ] && while IFS= read -r p; do [ -n "$p" ] && candidates+=("$p"); done < .claude/handoff-paths
+for cfg in .claude/agent-kit/handoff-paths .claude/handoff-paths; do
+  [ -f "$cfg" ] && while IFS= read -r p; do [ -n "$p" ] && candidates+=("$p"); done < "$cfg"
+done
 candidates+=(HANDOFF.md docs/agents/HANDOFF.md docs/HANDOFF.md)
 for f in "${candidates[@]}"; do
   if [ -d "$f" ]; then

@@ -15,7 +15,12 @@ Why: measured boots in the source repos cost 12k–88k tokens before any work, a
 | Bug, regression, "broke again" | `MODES.md#fixer`, skill `systematic-debug`, `REWORK-LEDGER` of the project |
 | Feature | `MODES.md#builder`, `TASK-CONTRACT.md`, `QUALITY-GATES.md` |
 | Product question, scope, acceptance | `MODES.md#product` |
-| Architecture, schema, auth, deploy, rollback | `MODES.md#architect`, `THREAT-MODEL.md`, `SECURITY-PERFORMANCE.md` |
+| Architecture, schema, auth, deploy, rollback | `MODES.md#architect`, `THREAT-MODEL.md`, skill `security-core` |
+| Login, tokens, sessions, MFA, OAuth | skill `identity-session` |
+| Storage, encryption, PII, logs, analytics | skill `data-privacy` |
+| Dependency, CI/CD, release, auto-update/OTA | skill `supply-chain` |
+| UI, lists, network, startup, perf regression, budgets | skill `performance-core` |
+| Platform code, deep links, IPC, WebView, headers/CSP | skill `platform-security` |
 | Map an area before touching it | `MODES.md#lens` |
 | Money, quota, invite, webhook, concurrency, "is it safe?" | skill `fundamentals-audit` |
 | Any screen, control, sheet, list, motion | skill `ux-check` + project UX/design docs |
