@@ -30,6 +30,8 @@ Why: measured boots in the source repos cost 12k–88k tokens before any work, a
 | User-visible change | `CHANGELOG-GUIDE.md` |
 | Closing / handing off | `DONE.md`, `HANDOFF-TEMPLATE.md`, skill `handoff` |
 | Context growing, vague request | `CONTEXT-BUDGET.md`, skill `session-preflight` |
+| Session start, casual/feedback message, unsure owner | skill `session-guide`, `CONVERSATION.md` |
+| Usage limit near, switching tool/session | skill `baton-pass` |
 
 ## Tier 2 — only when the task names it
 ADRs, old handoffs, design captures, QA evidence, research and audit documents. Never open them "for context".
