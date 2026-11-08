@@ -3,10 +3,13 @@
 # brief (skill intent-compiler) before acting. Adds ~2 lines of context; skips approvals, tiny
 # acknowledgements and slash commands. Never prints the owner's text back. Read-only, offline.
 input="$(cat)"
-printf '%s' "$input" | python3 -c '
+here="$(cd "$(dirname "$0")" && pwd)"
+printf '%s' "$input" | HERE="$here" python3 -c '
+import subprocess,os
 import json,sys,re
-try: p=(json.load(sys.stdin) or {}).get("prompt","") or ""
+try: d=json.load(sys.stdin) or {}
 except Exception: sys.exit()
+p=d.get("prompt","") or ""; sid=d.get("session_id","")
 t=p.strip().lower()
 if not t or t.startswith("/"): sys.exit()
 acks={"ok","sim","pode","pode sim","manda","manda ver","segue","yes","go","ok pode","beleza","fechado","isso","valeu","obrigado","thanks","no","não","nao"}
@@ -19,6 +22,7 @@ elif re.search(r"\b(audit|auditoria|é seguro|is it safe|race|idempot|webhook|pa
 elif re.search(r"\b(mapeia|analisa|analyze|entender|onde fica|where is|dívida|debt)",t): mode="Lens"
 elif re.search(r"\b(arquitetura|schema|migration|deploy|rollback|performance|lento|slow)",t): mode="Architect"
 elif re.search(r"\b(ideia|queria|quero|seria bom|would like|feature|tela|screen|fluxo|flow)",t): mode="Product"
+subprocess.Popen(["python3",os.environ["HERE"]+"/metrics.py","log","prompt","mode="+mode,"len=%d"%len(p),"session="+sid],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
 print(f"[agent-kit] Before acting, silently compile the owner message into a brief (skill intent-compiler: goal, context from repo/handoff, acceptance, constraints, mode, skills, one blocking question at most). Likely mode: {mode}. Do not show the brief unless asked; restate only goal + acceptance in one line when non-trivial.")
 '
 exit 0

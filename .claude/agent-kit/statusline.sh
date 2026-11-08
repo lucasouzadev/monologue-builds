@@ -6,7 +6,8 @@ input="$(cat)"
 WINDOW="${CLAUDE_CODE_AUTO_COMPACT_WINDOW:-200000}"
 PROJ="${CLAUDE_PROJECT_DIR:-$PWD}"
 CACHE="${TMPDIR:-/tmp}/agent-kit-usage-$(printf '%s' "$PROJ" | cksum | cut -d' ' -f1).json"
-out="$(printf '%s' "$input" | W="$WINDOW" CACHE="$CACHE" python3 -c '
+here="$(cd "$(dirname "$0")" && pwd)"
+out="$(printf '%s' "$input" | HERE="$here" W="$WINDOW" CACHE="$CACHE" python3 -c '
 import json,sys,os,time
 try: d=json.load(sys.stdin)
 except Exception: print(""); sys.exit()
@@ -18,6 +19,13 @@ if isinstance(cu,dict) and cu:
     used=sum(int(cu.get(k) or 0) for k in ("input_tokens","cache_creation_input_tokens","cache_read_input_tokens"))
 w=int(os.environ.get("W","200000"))
 if used:
+    sid=d.get("session_id",""); b=used//25000
+    try:
+        st=json.load(open(os.environ["CACHE"]+".ctx")) if os.path.exists(os.environ["CACHE"]+".ctx") else {}
+    except Exception: st={}
+    if st.get(sid,-1) < b:
+        st[sid]=b; json.dump(st,open(os.environ["CACHE"]+".ctx","w"))
+        import subprocess; subprocess.Popen(["python3",os.environ["HERE"]+"/metrics.py","log","ctx","k=%d"%(used//1000),"session="+sid],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     p=round(100*used/w); parts.append(f"ctx {used//1000}k/{w//1000}k ({p}%)" + (" → handoff" if p>=70 else ""))
 elif cw.get("used_percentage") is not None:
     up=cw.get("used_percentage"); parts.append(f"ctx {up}%")
