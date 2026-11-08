@@ -34,4 +34,4 @@ Why: many people have one computer and one phone (or none of the right kind). Ho
 - Never ask the owner to run commands that delete, revoke, publish or pay without saying exactly what they do; never suggest disabling security settings to make a run pass.
 - Store-account actions (certificates, app records, submissions, billing) stay with the owner.
 
-Troubleshooting: [troubleshooting.md](troubleshooting.md).
+Troubleshooting: [troubleshooting.md](troubleshooting.md). What has and has not been verified on real runners: [VERIFIED.md](VERIFIED.md) — be upfront with the owner that the first run usually needs tuning.

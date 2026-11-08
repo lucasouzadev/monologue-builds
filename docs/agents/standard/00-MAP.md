@@ -28,6 +28,7 @@ Why: measured boots in the source repos cost 12k–88k tokens before any work, a
 | Plan with several tasks / parallel work | `ORCHESTRATION.md` |
 | Risky or irreversible action | `SAFEGUARDS.md` |
 | User-visible change | `CHANGELOG-GUIDE.md` |
+| Opening or reviewing a PR, "is this Done?" | skill `pr-quality`, `QUALITY-GATES.md` |
 | Closing / handing off | `DONE.md`, `HANDOFF-TEMPLATE.md`, skill `handoff` |
 | Context growing, vague request | `CONTEXT-BUDGET.md`, skill `session-preflight` |
 | Session start, casual/feedback message, unsure owner | skill `session-guide`, `CONVERSATION.md` |

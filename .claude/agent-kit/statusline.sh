@@ -2,12 +2,14 @@
 # agent-kit statusline: context use vs the compaction window, weekly/5h plan usage, branch.
 # Also caches plan usage for the usage-guard hook (hooks do not receive usage data).
 # Reads Claude Code's statusline JSON on stdin. No network. Only writes the small cache file.
+here="$(cd "$(dirname "$0")" && pwd)"
+. "$here/lib.sh"
+ak_require_py
 input="$(cat)"
 WINDOW="${CLAUDE_CODE_AUTO_COMPACT_WINDOW:-200000}"
 PROJ="${CLAUDE_PROJECT_DIR:-$PWD}"
 CACHE="${TMPDIR:-/tmp}/agent-kit-usage-$(printf '%s' "$PROJ" | cksum | cut -d' ' -f1).json"
-here="$(cd "$(dirname "$0")" && pwd)"
-out="$(printf '%s' "$input" | HERE="$here" W="$WINDOW" CACHE="$CACHE" python3 -c '
+out="$(printf '%s' "$input" | HERE="$here" W="$WINDOW" CACHE="$CACHE" "$PY" -c '
 import json,sys,os,time
 try: d=json.load(sys.stdin)
 except Exception: print(""); sys.exit()
@@ -25,7 +27,7 @@ if used:
     except Exception: st={}
     if st.get(sid,-1) < b:
         st[sid]=b; json.dump(st,open(os.environ["CACHE"]+".ctx","w"))
-        import subprocess; subprocess.Popen(["python3",os.environ["HERE"]+"/metrics.py","log","ctx","k=%d"%(used//1000),"session="+sid],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+        import subprocess; subprocess.Popen([sys.executable,os.environ["HERE"]+"/metrics.py","log","ctx","k=%d"%(used//1000),"session="+sid],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     p=round(100*used/w); parts.append(f"ctx {used//1000}k/{w//1000}k ({p}%)" + (" → handoff" if p>=70 else ""))
 elif cw.get("used_percentage") is not None:
     up=cw.get("used_percentage"); parts.append(f"ctx {up}%")

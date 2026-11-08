@@ -8,10 +8,12 @@
 # Project files (in .claude/agent-kit/): guard-allow = regexes for standing authorizations;
 # guard-extra = lines "ask|regex|reason" or "deny|regex|reason". AGENT_KIT_GUARD=0 disables.
 # Logs only the rule id (never the command). Offline, read-only.
+here="$(cd "$(dirname "$0")" && pwd)"
+. "$here/lib.sh"
+ak_require_py
 input=""; [ -t 0 ] || input="$(cat 2>/dev/null)"
 [ "${AGENT_KIT_GUARD:-1}" = 0 ] && exit 0
-here="$(cd "$(dirname "$0")" && pwd)"
-printf '%s' "$input" | HERE="$here" python3 -c '
+printf '%s' "$input" | HERE="$here" "$PY" -c '
 import json, os, re, subprocess, sys
 try: d = json.load(sys.stdin) or {}
 except Exception: sys.exit()
@@ -66,7 +68,7 @@ for rid, dec, rx, why in RULES:
 if not hit: sys.exit()
 rid, dec, why = hit
 try:
-    subprocess.Popen(["python3", os.path.join(os.environ.get("HERE", "."), "metrics.py"), "log", "guard", "rule=" + rid, "decision=" + dec, "session=" + str(d.get("session_id", ""))], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.Popen([sys.executable, os.path.join(os.environ.get("HERE", "."), "metrics.py"), "log", "guard", "rule=" + rid, "decision=" + dec, "session=" + str(d.get("session_id", ""))], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 except Exception: pass
 msg = ("agent-kit guard [" + rid + "]: " + why + ". " +
        ("Blocked. Ask the owner for an explicit instruction first." if dec == "deny" else "Needs the owner\x27s approval for this action; do not retry around it."))
