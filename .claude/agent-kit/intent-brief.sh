@@ -32,6 +32,11 @@ mode="unknown"
 for name,rx in MODES:
     if re.search(rx,t): mode=name; break
 subprocess.Popen([sys.executable,os.environ["HERE"]+"/metrics.py","log","prompt","mode="+mode,"len=%d"%len(p),"session="+sid],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
-print(f"[agent-kit] Before acting, silently compile the owner message into a brief (skill intent-compiler: goal, context from repo/handoff, acceptance, constraints, mode, skills, one blocking question at most). Likely mode: {mode}{" (no clear signal: infer it from the message and the repo)" if mode=="unknown" else ""}. Do not show the brief unless asked; restate only goal + acceptance in one line when non-trivial.")
+extra=""
+nmedia=len(re.findall(r"\[image( #?\d+)?\]",p,re.I))+len(re.findall(r"\S+\.(png|jpe?g|gif|webp|heic|mp4|mov|webm|mkv|m4v)\b",p,re.I))
+if nmedia: extra+=f" Media attached ({nmedia}): use skill media-investigation; analyze every attachment, including any the owner did not mention, and cite those explicitly."
+items=len(re.findall(r"(?m)^\s*(?:[-*\u2022]|\d+[.)])\s+\S",p))
+if items>=3: extra+=f" The message lists {items} items: use skill triage (split, size, order; quick wins batched, large items get spec/plan options)."
+print(f"[agent-kit] Before acting, silently compile the owner message into a brief (skill intent-compiler: goal, context from repo/handoff, acceptance, constraints, mode, skills, one blocking question at most). Likely mode: {mode}{" (no clear signal: infer it from the message and the repo)" if mode=="unknown" else ""}. Do not show the brief unless asked; restate only goal + acceptance in one line when non-trivial.{extra}")
 '
 exit 0

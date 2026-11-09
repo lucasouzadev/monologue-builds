@@ -25,6 +25,8 @@ Why: measured boots in the source repos cost 12k–88k tokens before any work, a
 | Map an area before touching it | `MODES.md#lens` |
 | Money, quota, invite, webhook, concurrency, "is it safe?" | skill `fundamentals-audit` |
 | Any screen, control, sheet, list, motion | skill `ux-check` + project UX/design docs |
+| Owner attaches an image, recording or video | skill `media-investigation` (read all, report extras, change nothing unapproved) |
+| Several asks, a list, a QA round, "o que faço primeiro" | skill `triage` |
 | Plan with several tasks / parallel work | `ORCHESTRATION.md` |
 | Risky or irreversible action | `SAFEGUARDS.md` |
 | User-visible change | `CHANGELOG-GUIDE.md` |

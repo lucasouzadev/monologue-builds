@@ -36,6 +36,7 @@ DEFAULT = {
         {"name": "Migrations / database", "paths": ["*migrations/*", "*.sql"], "remind": "Rollback plan; compatible with clients already in the field; cross-user denial test."},
         {"name": "Dependencies", "paths": ["package.json", "*lock*", "Gemfile*", "Podfile*", "*build.gradle*", "requirements*.txt", "go.mod", "Cargo.toml"], "remind": "Vulnerability scan, licence, install scripts; lockfile committed."},
         {"name": "Native shell", "paths": ["ios/*", "android/*", "*.entitlements", "*Info.plist", "*AndroidManifest.xml", "capacitor.config.*", "app.config.*"], "remind": "Needs a new native build, not an OTA."},
+        {"name": "Generated / synced files", "paths": ["*/public/assets/*", "ios/App/App/public/*", "android/app/src/main/assets/public/*", "*/Pods/*", "dist/*", "build/*", "*.xcuserstate", "*xcuserdata*", "*.tsbuildinfo", "*/.expo/*", "*/DerivedData/*"], "remind": "Usually produced by a build or native sync, not by the change itself; confirm each file belongs in this PR (stray sync files are a common cause of reverts)."},
         {"name": "Auth / security", "paths": ["*auth*", "*security*", "*rls*", "*policy*", "*permission*"], "remind": "Authorization test: user A cannot reach user B."},
     ],
     "tests_expected": {"source": ["src/*", "*/src/*", "apps/*", "packages/*", "services/*", "lib/*", "app/*"], "tests": ["*test*", "*spec*", "*__tests__*", "*e2e*", "*maestro*"]},
