@@ -86,6 +86,15 @@
             "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/agent-kit/action-guard.sh"
           }
         ]
+      },
+      {
+        "matcher": "Bash|mcp__.*github.*__(create|update)_pull_request",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR\"/.claude/agent-kit/pr-gate.sh"
+          }
+        ]
       }
     ]
   }
