@@ -39,7 +39,10 @@ appId: app.monologue.mobile
             visible: "Open in.*Monologue.*"
           commands:
             - tapOn: "Open"
-      - hideKeyboard
+      # hideKeyboard fails on iOS here (run 43264689306): a drag down over the list puts the keyboard away.
+      - swipe:
+          start: 50%, 40%
+          end: 50%, 75%
       - extendedWaitUntil:
           visible: "never-visible-sentinel"
           timeout: 1500
