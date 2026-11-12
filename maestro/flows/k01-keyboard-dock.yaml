@@ -1,0 +1,34 @@
+# Owner QA 2026-11-12 (recording 07:01): with the keyboard opening and closing, the Composer passes UNDER the keyboard for 2-4 frames and then moves in uneven steps.
+# This flow only drives the keyboard open/close 3 times in a chat with messages. The numbers come from the content-free geometry trace (OTA built with geometry_trace),
+# read from the app syslog: `monologue geo keyboard_*`, `dock_layout`, `viewport_layout`, `spacer_state` (timestamps `t`, ms). The recording is for the eye only: the CI simulator
+# records at ~13 fps, so frame smoothness is NOT judged from it.
+appId: app.monologue.mobile
+---
+- launchApp
+- runFlow:
+    file: support/new-chat.yaml
+    env:
+      QA_PREFIX: "QA kdock"
+- repeat:
+    times: 8
+    commands:
+      - tapOn: "Message.*"
+      - inputText: "linha"
+      - tapOn: "Send message"
+- startRecording: k01-keyboard-dock
+- repeat:
+    times: 3
+    commands:
+      - hideKeyboard
+      - extendedWaitUntil:
+          visible: "never-visible-sentinel"
+          timeout: 1500
+          optional: true
+      - takeScreenshot: k01-keyboard-down
+      - tapOn: "Message.*"
+      - extendedWaitUntil:
+          visible: "never-visible-sentinel"
+          timeout: 1500
+          optional: true
+      - takeScreenshot: k01-keyboard-up
+- stopRecording
