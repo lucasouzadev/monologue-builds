@@ -1,0 +1,17 @@
+# Search finds what was written.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 30000
+- tapOn: "Buscar no diário"
+- extendedWaitUntil:
+    visible: "Busque pelo que escreveu"
+    timeout: 10000
+- tapOn: "Busque pelo que escreveu"
+- inputText: "Primeira"
+- extendedWaitUntil:
+    visible: ".*Primeira E2E.*"
+    timeout: 15000
+- takeScreenshot: 04-search-result

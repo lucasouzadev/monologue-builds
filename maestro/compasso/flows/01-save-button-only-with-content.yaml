@@ -1,0 +1,18 @@
+# "Guardar" exists only when there is something to save (owner 2026-11-13).
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 30000
+- assertNotVisible: "Guardar"
+- tapOn: "Escreva para você…"
+- inputText: "Teste E2E"
+- extendedWaitUntil:
+    visible: "Guardar"
+    timeout: 8000
+- takeScreenshot: 01-with-content
+- eraseText: 30
+- extendedWaitUntil:
+    notVisible: "Guardar"
+    timeout: 8000
