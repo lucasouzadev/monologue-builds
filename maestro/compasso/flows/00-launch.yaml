@@ -1,0 +1,10 @@
+# Compasso: a clean first launch opens the diary (no gallery, no back button) with an empty today.
+appId: app.monologue.mobile
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 60000
+- assertVisible: "Compasso"
+- takeScreenshot: 00-launch

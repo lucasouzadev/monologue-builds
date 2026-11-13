@@ -1,0 +1,20 @@
+# Write, save, close the app, reopen: the entry is there once.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 30000
+- tapOn: "Escreva para você…"
+- inputText: "Primeira E2E"
+- tapOn: "Guardar"
+- extendedWaitUntil:
+    visible: "Primeira E2E"
+    timeout: 15000
+- takeScreenshot: 02-saved
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Primeira E2E"
+    timeout: 30000
+- takeScreenshot: 02-after-restart
