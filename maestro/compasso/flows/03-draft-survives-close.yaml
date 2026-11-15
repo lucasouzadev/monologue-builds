@@ -5,7 +5,8 @@ appId: app.monologue.mobile
 - extendedWaitUntil:
     visible: "Hoje"
     timeout: 30000
-- tapOn: "Texto da entrada"
+- tapOn:
+    text: "O que ficou na sua cabeça hoje\\?|Escreva para você…|Continue seu pensamento…"
 - inputText: "Rascunho E2E"
 - waitForAnimationToEnd
 - stopApp
