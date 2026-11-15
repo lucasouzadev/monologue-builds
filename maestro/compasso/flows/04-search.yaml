@@ -1,4 +1,4 @@
-# Search finds what was written.
+# Search finds what was written (02 wrote "Primeira E2E" on this simulator).
 appId: app.monologue.mobile
 ---
 - launchApp
@@ -7,9 +7,9 @@ appId: app.monologue.mobile
     timeout: 30000
 - tapOn: "Buscar no diário"
 - extendedWaitUntil:
-    visible: "Busque pelo que escreveu"
+    visible: "Texto para buscar"
     timeout: 10000
-- tapOn: "Busque pelo que escreveu"
+- tapOn: "Texto para buscar"
 - inputText: "Primeira"
 - extendedWaitUntil:
     visible: ".*Primeira E2E.*"

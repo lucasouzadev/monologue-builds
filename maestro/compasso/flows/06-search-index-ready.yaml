@@ -1,0 +1,22 @@
+# The search index (A5) is filled and says so in the side menu. Writes its own entry so it does not depend on 02.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 30000
+- tapOn: "Expandir compositor"
+- extendedWaitUntil:
+    visible: "Texto da entrada"
+    timeout: 10000
+- tapOn: "Texto da entrada"
+- inputText: "Indice E2E"
+- tapOn: "Guardar"
+- extendedWaitUntil:
+    visible: "Indice E2E"
+    timeout: 15000
+- tapOn: "Abrir menu lateral"
+- extendedWaitUntil:
+    visible: ".*Índice pronto · [1-9][0-9]* entradas.*"
+    timeout: 90000
+- takeScreenshot: 06-index-ready
