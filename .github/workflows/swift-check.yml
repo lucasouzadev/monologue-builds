@@ -1,0 +1,65 @@
+name: Swift check (compile and test the native packages)
+run-name: Swift check @ ${{ inputs.source_ref }}
+
+# Manual. Compiles the Swift packages under native/ of the private source and runs their unit tests ON THE MAC HOST
+# (`swift build` / `swift test`): no app build, no signing, no TestFlight, no installable artifact, no simulator.
+# It exists because Swift cannot be compiled in the agents' Linux containers; the result tells an agent whether the
+# Swift it wrote builds and passes the shared test vectors before any signed build is requested.
+# The only secret is the read token that checks the private source out (as every other workflow here does).
+# Public workflow: only package names, test names and PASS/FAIL are printed.
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: FULL SHA (or branch/tag) of the private lucasouzadev/monologue repository
+        type: string
+        required: true
+        default: main
+      package:
+        description: Package folder under native/ to check (empty = every package)
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swift-check-${{ inputs.source_ref }}
+  cancel-in-progress: true
+
+jobs:
+  swift:
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: ${{ vars.IOS_DEVELOPER_DIR || '/Applications/Xcode_26.6.app/Contents/Developer' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: lucasouzadev/monologue
+          ref: ${{ inputs.source_ref }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          persist-credentials: false
+          path: src
+      - name: Toolchain
+        run: swift --version
+      - name: Build and test the packages
+        env:
+          ONLY: ${{ inputs.package }}
+        working-directory: src/native
+        run: |
+          set -o pipefail
+          shopt -s nullglob
+          [[ -z "$ONLY" || "$ONLY" =~ ^[A-Za-z0-9_-]+$ ]] || { echo "::error::Invalid package name"; exit 1; }
+          found=0
+          for dir in */; do
+            name="${dir%/}"
+            [ -f "$name/Package.swift" ] || continue
+            if [ -n "$ONLY" ] && [ "$name" != "$ONLY" ]; then continue; fi
+            found=1
+            echo "::group::$name"
+            (cd "$name" && swift build 2>&1 | tail -n 60 && swift test 2>&1 | tail -n 120)
+            echo "::endgroup::"
+          done
+          [ "$found" = 1 ] || { echo "::error::No Swift package found"; exit 1; }
