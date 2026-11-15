@@ -42,3 +42,9 @@ and the dark pass keep their data). They need the **baseline 08** binary and an 
 
 Camera and scanner limits on CI: the iOS simulator and the AOSP Android emulator have no camera scene, and the Android emulator image
 has no Google Play services, so the ML Kit scanner can only report a failure there; they are judged on a real device.
+
+## `swift-check.yml` (added 2026-11-15)
+
+Manual. Compiles the Swift packages under `native/` of the private source and runs their unit tests on the macOS runner
+(`swift build` / `swift test`). It builds no app, signs nothing and uploads nothing; the only secret is the read token that
+checks the private source out. Use it before asking for any signed native build.
