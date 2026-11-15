@@ -6,8 +6,11 @@ appId: app.monologue.mobile
     visible: "Hoje"
     timeout: 30000
 - assertNotVisible: "Guardar"
-- tapOn:
-    text: "O que ficou na sua cabeça hoje\\?|Escreva para você…|Continue seu pensamento…"
+- tapOn: "Expandir compositor"
+- extendedWaitUntil:
+    visible: "Texto da entrada"
+    timeout: 10000
+- tapOn: "Texto da entrada"
 - inputText: "Teste E2E"
 - extendedWaitUntil:
     visible: "Guardar"
