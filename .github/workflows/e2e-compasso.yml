@@ -91,12 +91,19 @@ jobs:
           pnpm typecheck
           pnpm --filter @monologue/mobile test
           node scripts/validate-native-baseline.cjs
-      - name: Restore a previous simulator build when native inputs are unchanged
+      - name: Record the exact source commit under test
+        id: source
+        run: |
+          sha="$(git -C src rev-parse HEAD)"
+          echo "Simulator build and flows will test source commit $sha"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+      # The simulator binary embeds the whole JS bundle, so the cache key is the exact commit: a cache hit can only be this code.
+      - name: Restore a previous simulator build of this exact commit
         id: simcache
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ${{ runner.temp }}/sim/Compasso.tar.gz
-          key: sim-compasso-${{ inputs.channel }}-${{ hashFiles('src/pnpm-lock.yaml', 'src/apps/mobile/modules/**', 'src/apps/mobile/app.config.*', 'src/apps/mobile/package.json') }}
+          key: sim-compasso-${{ inputs.channel }}-${{ steps.source.outputs.sha }}
       - name: Compile the app for the iOS simulator (EAS --local, no signing)
         id: compile
         if: steps.simcache.outputs.cache-hit != 'true'
@@ -123,6 +130,9 @@ jobs:
           xcrun simctl install "$UDID" "$APP"
           xcrun simctl ui "$UDID" appearance light || true
           echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
+          echo "Installed simulator app built from $SOURCE_SHA"
+        env:
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
       - name: Install Maestro
         run: curl -Ls "https://get.maestro.mobile.dev" | bash
       - name: Run Maestro flows
