@@ -1,16 +1,23 @@
-# The calendar and the pages preview open and close; the pages are a preview (nothing to scroll).
+# The calendar (it lives in the side menu now) and the pages preview open and close.
 appId: app.monologue.mobile
 ---
 - launchApp
 - extendedWaitUntil:
     visible: "Hoje"
     timeout: 30000
+- tapOn: "Abrir menu lateral"
+- extendedWaitUntil:
+    visible: "Abrir calendário"
+    timeout: 10000
 - tapOn: "Abrir calendário"
 - extendedWaitUntil:
     visible: ".*2026.*"
     timeout: 10000
 - takeScreenshot: 05-calendar
 - launchApp
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 30000
 - tapOn: "Abrir páginas do diário"
 - extendedWaitUntil:
     visible: "Páginas"
