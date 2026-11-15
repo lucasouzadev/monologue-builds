@@ -6,7 +6,7 @@ appId: app.monologue.mobile
     visible: "Hoje"
     timeout: 30000
 - assertNotVisible: "Guardar"
-- tapOn: "Escreva para você…"
+- tapOn: "Texto da entrada"
 - inputText: "Teste E2E"
 - extendedWaitUntil:
     visible: "Guardar"
