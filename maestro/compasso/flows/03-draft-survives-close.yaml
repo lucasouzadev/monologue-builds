@@ -1,0 +1,17 @@
+# An unsaved draft is written in the background and survives the app being closed (no content lost).
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 30000
+- tapOn: "Escreva para você…"
+- inputText: "Rascunho E2E"
+- waitForAnimationToEnd
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: "Rascunho E2E"
+    timeout: 30000
+- takeScreenshot: 03-draft-restored
+- eraseText: 30
