@@ -164,6 +164,10 @@ jobs:
           if [ -d "$HOME/.maestro/tests" ]; then
             find "$HOME/.maestro/tests" -type f \( -name '*.png' -o -name '*.mp4' \) -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
           fi
+          # The simulator's crash reports for the app (encrypted with the rest; never published in plain text).
+          if [ -d "$HOME/Library/Logs/DiagnosticReports" ]; then
+            find "$HOME/Library/Logs/DiagnosticReports" -maxdepth 1 -type f -name 'Monologue*' -exec cp -- {} "$dir/data/" \; 2>/dev/null || true
+          fi
           if [ -d "$RUNNER_TEMP/qa-logs" ]; then cp "$RUNNER_TEMP/qa-logs/"*.log "$dir/data/" 2>/dev/null || true; fi
           tar -czf "$dir/visual-evidence.tgz" -C "$dir/data" .
           node builds/tools/encrypt-visual-evidence.mjs "$dir/visual-evidence.tgz" "$GITHUB_WORKSPACE/visual-evidence.tgz.enc"
