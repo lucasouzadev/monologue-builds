@@ -16,9 +16,8 @@ appId: app.monologue.mobile
 - takeScreenshot: 22-thread-line
 - longPressOn: ".*mais longa.*"
 - waitForAnimationToEnd
-- tapOn: "Organizar"
-- waitForAnimationToEnd
 - takeScreenshot: 22-organize
+# Fixar is a quick action on top of the menu (owner 17/11).
 - tapOn: "Fixar"
 - waitForAnimationToEnd
 - swipe:
@@ -27,7 +26,9 @@ appId: app.monologue.mobile
 - waitForAnimationToEnd
 - takeScreenshot: 22-pinned
 # Pinned: "comprar pao" is now also the chip under the header; the message is the second match.
-- longPressOn: ".*mais longa.*"
+- longPressOn:
+    text: ".*Oi.*"
+    index: 0
 - waitForAnimationToEnd
 - tapOn: "Organizar"
 - tapOn:
