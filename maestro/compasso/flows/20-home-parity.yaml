@@ -1,0 +1,54 @@
+# Home parity (Lote C): the same steps on the React home and on the native home, screenshots at each state, so the two
+# can be compared picture by picture. Writes a short, a long, a link and a task message.
+appId: app.monologue.mobile
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 60000
+- takeScreenshot: 20-empty
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn: "Texto da entrada"
+- inputText: "Oi"
+- tapOn: "Guardar"
+- extendedWaitUntil:
+    visible: "Oi"
+    timeout: 15000
+- tapOn: "Texto da entrada"
+- inputText: "Uma mensagem um pouco mais longa para ver como o balao quebra a linha no diario"
+- tapOn: "Guardar"
+- tapOn: "Texto da entrada"
+- inputText: "https://example.com"
+- tapOn: "Guardar"
+- tapOn: "Texto da entrada"
+- inputText: "- [ ] comprar pao"
+- tapOn: "Guardar"
+- extendedWaitUntil:
+    visible: ".*comprar pao.*"
+    timeout: 15000
+- takeScreenshot: 20-four-typing
+- hideKeyboard
+- waitForAnimationToEnd
+- takeScreenshot: 20-four
+- tapOn: "Abrir anexos"
+- waitForAnimationToEnd
+- takeScreenshot: 20-tray
+- tapOn:
+    text: "Fechar anexos"
+    optional: true
+- tapOn:
+    text: "Voltar ao teclado"
+    optional: true
+- hideKeyboard
+- longPressOn: "Oi"
+- waitForAnimationToEnd
+- takeScreenshot: 20-menu
+- tapOn:
+    point: "50%,8%"
+- waitForAnimationToEnd
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: 20-scrolled
