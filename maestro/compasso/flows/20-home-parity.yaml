@@ -11,19 +11,35 @@ appId: app.monologue.mobile
 - tapOn:
     text: "Expandir compositor"
     optional: true
-- tapOn: "Texto da entrada"
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
 - inputText: "Oi"
 - tapOn: "Guardar"
 - extendedWaitUntil:
     visible: "Oi"
     timeout: 15000
-- tapOn: "Texto da entrada"
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
 - inputText: "Uma mensagem um pouco mais longa para ver como o balao quebra a linha no diario"
 - tapOn: "Guardar"
-- tapOn: "Texto da entrada"
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
 - inputText: "https://example.com"
 - tapOn: "Guardar"
-- tapOn: "Texto da entrada"
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
 - inputText: "- [ ] comprar pao"
 - tapOn: "Guardar"
 - extendedWaitUntil:
