@@ -26,7 +26,10 @@ appId: app.monologue.mobile
     end: "50%,80%"
 - waitForAnimationToEnd
 - takeScreenshot: 22-pinned
-- longPressOn: "comprar pao"
+# Pinned: "comprar pao" is now also the chip under the header; the message is the second match.
+- longPressOn:
+    text: "comprar pao"
+    index: 1
 - waitForAnimationToEnd
 - tapOn: "Organizar"
 - tapOn:
