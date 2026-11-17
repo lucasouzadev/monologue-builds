@@ -1,0 +1,77 @@
+# Home parity (Lote C): the same steps on the React home and on the native home, screenshots at each state, so the two
+# can be compared picture by picture. Writes a short, a long, a link and a task message.
+appId: app.monologue.mobile
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 60000
+- takeScreenshot: 20-empty
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
+- inputText: "Oi"
+- tapOn: "Guardar"
+- extendedWaitUntil:
+    visible: "Oi"
+    timeout: 15000
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
+- inputText: "Uma mensagem um pouco mais longa para ver como o balao quebra a linha no diario"
+- tapOn: "Guardar"
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
+- inputText: "https://example.com"
+- tapOn: "Guardar"
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
+- inputText: "- [ ] comprar pao"
+- tapOn: "Guardar"
+- extendedWaitUntil:
+    visible: ".*comprar pao.*"
+    timeout: 15000
+- takeScreenshot: 20-four-typing
+- swipe:
+    start: "50%,35%"
+    end: "50%,60%"
+- waitForAnimationToEnd
+- takeScreenshot: 20-four
+- tapOn: "Abrir anexos"
+- extendedWaitUntil:
+    visible: "Tirar foto"
+    timeout: 5000
+- waitForAnimationToEnd
+- takeScreenshot: 20-tray
+- tapOn:
+    text: "Fechar anexos"
+    optional: true
+- waitForAnimationToEnd
+- longPressOn: "Oi"
+- waitForAnimationToEnd
+- takeScreenshot: 20-menu
+- tapOn:
+    text: "Mais emojis"
+    optional: true
+- waitForAnimationToEnd
+- takeScreenshot: 20-more-reactions
+- tapOn:
+    point: "50%,8%"
+- waitForAnimationToEnd
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: 20-scrolled

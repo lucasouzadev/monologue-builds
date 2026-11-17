@@ -1,0 +1,54 @@
+# Home parity, part 2 (run after 20-home-parity, same data): a long page that scrolls (the header collapses), the
+# swipe that opens the focus mode, a reply in it, and the multi-select mode. Screenshots at each state.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 60000
+- repeat:
+    times: 6
+    commands:
+      - tapOn:
+          text: "Expandir compositor"
+          optional: true
+      - tapOn:
+          point: "50%,86%"
+      - inputText: "Mais uma linha do dia para encher a pagina e ver a rolagem e o cabecalho"
+      - tapOn: "Guardar"
+      - waitForAnimationToEnd
+- swipe:
+    start: "50%,35%"
+    end: "50%,60%"
+- waitForAnimationToEnd
+- takeScreenshot: 21-long
+- swipe:
+    start: "50%,70%"
+    end: "50%,25%"
+- waitForAnimationToEnd
+- takeScreenshot: 21-collapsed
+- scrollUntilVisible:
+    element:
+      text: "Oi"
+    direction: DOWN
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: 21-bottom
+- swipe:
+    from:
+      text: "Oi"
+    direction: LEFT
+- waitForAnimationToEnd
+- takeScreenshot: 21-focus
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
+- inputText: "Uma resposta"
+- tapOn: "Guardar"
+- waitForAnimationToEnd
+- takeScreenshot: 21-focus-reply
+- tapOn: "Fechar modo foco"
+- waitForAnimationToEnd
+- takeScreenshot: 21-after-focus
