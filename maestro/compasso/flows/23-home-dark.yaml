@@ -1,0 +1,33 @@
+# The home in dark mode (the owner's appearance): Configurações > Aparência > Escuro, then the page, the menu and the
+# focus mode. Screenshots only.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 60000
+- tapOn: "Abrir menu lateral"
+- waitForAnimationToEnd
+- tapOn: "Configurações"
+- waitForAnimationToEnd
+- tapOn: "Aparência"
+- waitForAnimationToEnd
+- tapOn: "Escuro"
+- waitForAnimationToEnd
+- tapOn:
+    text: "Fechar"
+    optional: true
+- waitForAnimationToEnd
+- tapOn:
+    point: "50%,8%"
+    optional: true
+- waitForAnimationToEnd
+- takeScreenshot: 23-dark
+- swipe:
+    start: "50%,70%"
+    end: "50%,30%"
+- waitForAnimationToEnd
+- takeScreenshot: 23-dark-scrolled
+- longPressOn: "comprar pao"
+- waitForAnimationToEnd
+- takeScreenshot: 23-dark-menu
