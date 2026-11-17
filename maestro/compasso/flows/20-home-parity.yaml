@@ -53,7 +53,7 @@ appId: app.monologue.mobile
 - takeScreenshot: 20-four
 - tapOn: "Abrir anexos"
 - extendedWaitUntil:
-    visible: "Câmera"
+    visible: "Tirar foto"
     timeout: 5000
 - waitForAnimationToEnd
 - takeScreenshot: 20-tray
