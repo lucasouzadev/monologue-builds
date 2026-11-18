@@ -1,0 +1,33 @@
+# Overlap check (QA native-12 follow-up, 18/11): same data as 20 and 21. Screenshots of the page before and after
+# pinning, after scrolling both ways, and with "Selecionar texto" open, to see whether rows overlap or get cut.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 60000
+- takeScreenshot: 25-before
+- longPressOn: ".*mais longa.*"
+- waitForAnimationToEnd
+- tapOn: "Fixar"
+- waitForAnimationToEnd
+- takeScreenshot: 25-after-pin
+- swipe:
+    start: "50%,70%"
+    end: "50%,25%"
+- waitForAnimationToEnd
+- takeScreenshot: 25-scrolled-down
+- swipe:
+    start: "50%,30%"
+    end: "50%,80%"
+- waitForAnimationToEnd
+- takeScreenshot: 25-scrolled-up
+- longPressOn: ".*mais longa.*"
+- waitForAnimationToEnd
+- tapOn: "Escrever"
+- tapOn: "Selecionar texto"
+- waitForAnimationToEnd
+- takeScreenshot: 25-text-select
+- tapOn: "Sair da seleção de texto"
+- waitForAnimationToEnd
+- takeScreenshot: 25-after-select
