@@ -1,17 +1,15 @@
-# Menu checks (QA native-12 follow-up, 18/11), after 20 and 21 (same data, no clearState): a long press must not fire
+# Menu checks (QA native-12 follow-up, 18/11), seeds its own data: a long press must not fire
 # what is under the finger (link, task box), the reaction pin must not be cut on a short bubble, and deleting the
 # message that starts a thought must keep its reply on the timeline.
 appId: app.monologue.mobile
 ---
-- launchApp
-- extendedWaitUntil:
-    visible: "Hoje"
-    timeout: 60000
+- runFlow: support/seed-home.yaml
 - scrollUntilVisible:
     element:
       text: "https://example.com"
     direction: DOWN
     timeout: 20000
+    waitToSettleTimeoutMs: 500
 - waitForAnimationToEnd
 # D2: a long press on the link opens the menu, not the browser.
 - longPressOn: "https://example.com"

@@ -1,11 +1,8 @@
-# Home parity, part 3 (after 20 and 21, same data): the thread line, pinning (the chip under the header), the
+# Home parity, part 3 (seeds its own data): the thread line, pinning (the chip under the header), the
 # multi-select mode, deleting and the notice. Screenshots at each state.
 appId: app.monologue.mobile
 ---
-- launchApp
-- extendedWaitUntil:
-    visible: "Hoje"
-    timeout: 60000
+- runFlow: support/seed-home.yaml
 - scrollUntilVisible:
     element:
       text: ".*resposta.*"

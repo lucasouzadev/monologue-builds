@@ -1,17 +1,15 @@
-# Overlap check (QA native-12 follow-up, 18/11): same data as 20 and 21. Screenshots of the page before and after
+# Overlap check (QA native-12 follow-up, 18/11): seeds its own data. Screenshots of the page before and after
 # pinning, after scrolling both ways, and with "Selecionar texto" open, to see whether rows overlap or get cut.
 appId: app.monologue.mobile
 ---
-- launchApp
-- extendedWaitUntil:
-    visible: "Hoje"
-    timeout: 60000
+- runFlow: support/seed-home.yaml
 - takeScreenshot: 25-before
 - scrollUntilVisible:
     element:
       text: "Uma mensagem.*mais longa.*"
     direction: DOWN
     timeout: 20000
+    waitToSettleTimeoutMs: 500
 - waitForAnimationToEnd
 - takeScreenshot: 25-before-pin
 # The pinned chip carries the same words ("Mensagem fixada: ..."): the regex starts at the bubble's own first word.
