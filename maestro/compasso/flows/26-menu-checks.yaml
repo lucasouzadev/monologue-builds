@@ -1,0 +1,51 @@
+# Menu checks (QA native-12 follow-up, 18/11), after 20 and 21 (same data, no clearState): a long press must not fire
+# what is under the finger (link, task box), the reaction pin must not be cut on a short bubble, and deleting the
+# message that starts a thought must keep its reply on the timeline.
+appId: app.monologue.mobile
+---
+- launchApp
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: "https://example.com"
+    direction: DOWN
+    timeout: 20000
+- waitForAnimationToEnd
+# D2: a long press on the link opens the menu, not the browser.
+- longPressOn: "https://example.com"
+- waitForAnimationToEnd
+- takeScreenshot: 26-link-menu
+- tapOn:
+    point: "50%,12%"
+    optional: true
+- waitForAnimationToEnd
+# D2: a long press on the task opens the menu and the box stays empty.
+- longPressOn: "comprar pao"
+- waitForAnimationToEnd
+- takeScreenshot: 26-task-menu
+- tapOn:
+    point: "50%,12%"
+    optional: true
+- waitForAnimationToEnd
+- takeScreenshot: 26-task-after
+# D4: a reaction on a short bubble keeps its pin whole.
+- longPressOn:
+    text: "Oi"
+    index: 0
+- waitForAnimationToEnd
+- tapOn: "❤️"
+- waitForAnimationToEnd
+- takeScreenshot: 26-reacted
+# D3: delete only the message that starts the thought; its reply stays.
+- longPressOn:
+    text: "Oi"
+    index: 0
+- waitForAnimationToEnd
+- tapOn: "Excluir"
+- waitForAnimationToEnd
+- takeScreenshot: 26-delete-section
+- tapOn: "Só esta mensagem"
+- waitForAnimationToEnd
+- takeScreenshot: 26-deleted-start
