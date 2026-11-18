@@ -35,7 +35,10 @@ appId: app.monologue.mobile
     direction: DOWN
     timeout: 20000
     optional: true
-- longPressOn: ".*mais longa.*"
+# Pinned now: the chip under the header also matches this text, so the message is the second match (as in flow 22).
+- longPressOn:
+    text: ".*mais longa.*"
+    index: 1
 - waitForAnimationToEnd
 - tapOn: "Escrever"
 - tapOn: "Selecionar texto"
