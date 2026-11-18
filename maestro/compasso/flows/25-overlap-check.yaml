@@ -7,6 +7,13 @@ appId: app.monologue.mobile
     visible: "Hoje"
     timeout: 60000
 - takeScreenshot: 25-before
+- scrollUntilVisible:
+    element:
+      text: ".*mais longa.*"
+    direction: DOWN
+    timeout: 20000
+- waitForAnimationToEnd
+- takeScreenshot: 25-before-pin
 - longPressOn: ".*mais longa.*"
 - waitForAnimationToEnd
 - tapOn: "Fixar"
@@ -22,6 +29,12 @@ appId: app.monologue.mobile
     end: "50%,80%"
 - waitForAnimationToEnd
 - takeScreenshot: 25-scrolled-up
+- scrollUntilVisible:
+    element:
+      text: ".*mais longa.*"
+    direction: DOWN
+    timeout: 20000
+    optional: true
 - longPressOn: ".*mais longa.*"
 - waitForAnimationToEnd
 - tapOn: "Escrever"
