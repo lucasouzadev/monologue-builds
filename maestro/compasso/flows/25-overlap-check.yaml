@@ -19,6 +19,15 @@ appId: app.monologue.mobile
 - tapOn: "Fixar"
 - waitForAnimationToEnd
 - takeScreenshot: 25-after-pin
+# A second menu right after an action: does it open again, on the same message, without scrolling?
+- longPressOn: ".*mais longa.*"
+- waitForAnimationToEnd
+- takeScreenshot: 25-menu-second
+- tapOn:
+    point: "50%,12%"
+    optional: true
+- waitForAnimationToEnd
+- takeScreenshot: 25-menu-closed
 - swipe:
     start: "50%,70%"
     end: "50%,25%"
@@ -35,10 +44,9 @@ appId: app.monologue.mobile
     direction: DOWN
     timeout: 20000
     optional: true
-# Pinned now: the chip under the header also matches this text, so the message is the second match (as in flow 22).
-- longPressOn:
-    text: ".*mais longa.*"
-    index: 1
+- longPressOn: ".*mais longa.*"
+- waitForAnimationToEnd
+- takeScreenshot: 25-menu-after-scroll
 - waitForAnimationToEnd
 - tapOn: "Escrever"
 - tapOn: "Selecionar texto"
