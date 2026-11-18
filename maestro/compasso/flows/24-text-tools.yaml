@@ -1,0 +1,70 @@
+# Text tools (QA native-12, 17/11): the empty page illustration, a bare-domain link card in the compose with its X,
+# "Formatar" in the tray over a selection, and "Selecionar texto" opening a message in place in the timeline.
+# Starts from a clean state; screenshots at each state (encrypted evidence).
+appId: app.monologue.mobile
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 60000
+- takeScreenshot: 24-empty-page
+# A bare domain gets a link and a compose card with an X (no network in CI: the card may stay "loading").
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
+- inputText: "veja lucas.club"
+- waitForAnimationToEnd
+- takeScreenshot: 24-compose-link
+- tapOn:
+    text: "Remover prévia do link"
+    optional: true
+- waitForAnimationToEnd
+- takeScreenshot: 24-compose-link-closed
+- tapOn: "Guardar"
+- extendedWaitUntil:
+    visible: ".*lucas.club.*"
+    timeout: 15000
+# Formatar: select the compose's words, open the tray, bold them.
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
+- inputText: "palavra forte"
+- longPressOn:
+    id: "Texto da entrada"
+    optional: true
+- tapOn:
+    text: "(Selecionar tudo|Select All)"
+    optional: true
+- tapOn: "Abrir anexos"
+- waitForAnimationToEnd
+- tapOn: "Formatar o texto selecionado"
+- waitForAnimationToEnd
+- takeScreenshot: 24-tray-format
+- tapOn:
+    text: "Negrito"
+    optional: true
+- waitForAnimationToEnd
+- takeScreenshot: 24-bold-applied
+- tapOn:
+    text: "Voltar ao teclado"
+    optional: true
+- tapOn:
+    text: "Guardar"
+    optional: true
+- waitForAnimationToEnd
+- takeScreenshot: 24-bold-saved
+# Selecionar texto: in place, the others dimmed, the foot bar carries it to the compose.
+- longPressOn: ".*palavra forte.*"
+- waitForAnimationToEnd
+- tapOn: "Escrever"
+- tapOn: "Selecionar texto"
+- waitForAnimationToEnd
+- takeScreenshot: 24-select-text
+- tapOn: "Levar ao compose"
+- waitForAnimationToEnd
+- takeScreenshot: 24-taken-to-compose
