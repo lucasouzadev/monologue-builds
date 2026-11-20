@@ -1,11 +1,8 @@
-# Home parity, part 2 (run after 20-home-parity, same data): a long page that scrolls (the header collapses), the
+# Home parity, part 2 (seeds its own data, can run alone): a long page that scrolls (the header collapses), the
 # swipe that opens the focus mode, a reply in it, and the multi-select mode. Screenshots at each state.
 appId: app.monologue.mobile
 ---
-- launchApp
-- extendedWaitUntil:
-    visible: "Hoje"
-    timeout: 60000
+- runFlow: support/seed-home.yaml
 - repeat:
     times: 6
     commands:
@@ -32,6 +29,7 @@ appId: app.monologue.mobile
       text: "Oi"
     direction: DOWN
     timeout: 10000
+    waitToSettleTimeoutMs: 500
 - waitForAnimationToEnd
 - takeScreenshot: 21-bottom
 - swipe:

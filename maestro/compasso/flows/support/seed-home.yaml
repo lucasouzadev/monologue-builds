@@ -1,0 +1,69 @@
+# Shared seed for the home flows (21, 22, 25, 26). Each of them runs this first, so any subset of flows can run alone
+# (`only: "25-overlap-check"`) without depending on 20-home-parity having run before it. Clean state, four messages
+# (short, long, bare link, task) and one reply that makes "Oi" the start of a thought. No screenshots.
+appId: app.monologue.mobile
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 60000
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
+- inputText: "Oi"
+- tapOn: "Guardar"
+- extendedWaitUntil:
+    visible: "Oi"
+    timeout: 15000
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
+- inputText: "Uma mensagem um pouco mais longa para ver como o balao quebra a linha no diario"
+- tapOn: "Guardar"
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
+- inputText: "https://example.com"
+- tapOn: "Guardar"
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
+- inputText: "- [ ] comprar pao"
+- tapOn: "Guardar"
+- extendedWaitUntil:
+    visible: ".*comprar pao.*"
+    timeout: 15000
+# Close the keyboard, then make "Oi" start a thought (swipe left on it, one reply, close the focus mode).
+- tapOn:
+    point: "50%,40%"
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      text: "Oi"
+    direction: DOWN
+    timeout: 10000
+    waitToSettleTimeoutMs: 500
+- swipe:
+    from:
+      text: "Oi"
+    direction: LEFT
+- waitForAnimationToEnd
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
+- inputText: "Uma resposta"
+- tapOn: "Guardar"
+- waitForAnimationToEnd
+- tapOn: "Fechar modo foco"
+- waitForAnimationToEnd
