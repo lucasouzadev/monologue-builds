@@ -9,18 +9,20 @@ appId: app.monologue.mobile
 - takeScreenshot: 25-before
 - scrollUntilVisible:
     element:
-      text: ".*mais longa.*"
+      text: "Uma mensagem.*mais longa.*"
     direction: DOWN
     timeout: 20000
 - waitForAnimationToEnd
 - takeScreenshot: 25-before-pin
-- longPressOn: ".*mais longa.*"
+# The pinned chip carries the same words ("Mensagem fixada: ..."): the regex starts at the bubble's own first word.
+- longPressOn: "Uma mensagem.*mais longa.*"
 - waitForAnimationToEnd
 - tapOn: "Fixar"
 - waitForAnimationToEnd
 - takeScreenshot: 25-after-pin
 # A second menu right after an action: does it open again, on the same message, without scrolling?
-- longPressOn: ".*mais longa.*"
+# The pinned chip carries the same words ("Mensagem fixada: ..."): the regex starts at the bubble's own first word.
+- longPressOn: "Uma mensagem.*mais longa.*"
 - waitForAnimationToEnd
 - takeScreenshot: 25-menu-second
 - tapOn:
@@ -40,11 +42,12 @@ appId: app.monologue.mobile
 - takeScreenshot: 25-scrolled-up
 - scrollUntilVisible:
     element:
-      text: ".*mais longa.*"
+      text: "Uma mensagem.*mais longa.*"
     direction: DOWN
     timeout: 20000
     optional: true
-- longPressOn: ".*mais longa.*"
+# The pinned chip carries the same words ("Mensagem fixada: ..."): the regex starts at the bubble's own first word.
+- longPressOn: "Uma mensagem.*mais longa.*"
 - waitForAnimationToEnd
 - takeScreenshot: 25-menu-after-scroll
 - waitForAnimationToEnd
