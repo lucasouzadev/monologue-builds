@@ -1,0 +1,106 @@
+# QA 22 fixes, ONE run, one screenshot per fix (owner 2026-11-21: "abra o simulador, teste o que corrigiu, envie a imagem").
+# Every step after the first is optional so one miss never hides the other shots. Evidence is encrypted like every flow's.
+appId: app.monologue.mobile
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Hoje"
+    timeout: 60000
+# A task message: Return continues the task (owner QA 21), the bar under the tasks starts at 0 / 2.
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
+- inputText: "[ ] leite"
+- pressKey: Enter
+- inputText: "pao"
+- waitForAnimationToEnd
+- takeScreenshot: 30-task-continues
+- tapOn:
+    text: "Guardar"
+    optional: true
+- waitForAnimationToEnd
+- takeScreenshot: 30-progress-0
+- tapOn:
+    text: ".*leite.*"
+    optional: true
+- waitForAnimationToEnd
+- takeScreenshot: 30-progress-1
+# Aa: bold + italic + strike on one word, the list button cycle, the + turning into the X.
+- tapOn:
+    text: "Expandir compositor"
+    optional: true
+- tapOn:
+    point: "50%,86%"
+- inputText: "teste"
+- longPressOn:
+    id: "Texto da entrada"
+    optional: true
+- tapOn:
+    text: "(Selecionar tudo|Select All)"
+    optional: true
+- tapOn:
+    text: "Formatar texto"
+    optional: true
+- takeScreenshot: 30-aa-morph-mid
+- waitForAnimationToEnd
+- tapOn:
+    text: "Negrito"
+    optional: true
+- tapOn:
+    text: "Itálico"
+    optional: true
+- tapOn:
+    text: "Riscado"
+    optional: true
+- waitForAnimationToEnd
+- takeScreenshot: 30-aa-strike-bold-italic
+- tapOn:
+    text: "Lista"
+    optional: true
+- takeScreenshot: 30-aa-list-bullets
+- tapOn:
+    text: "Lista"
+    optional: true
+- takeScreenshot: 30-aa-list-numbers
+- tapOn:
+    text: "Fechar formatação"
+    optional: true
+- waitForAnimationToEnd
+- takeScreenshot: 30-aa-closed
+# Tray with the keyboard up: the card opens on the + and is bigger and frosted.
+- tapOn:
+    text: "Abrir anexos"
+    optional: true
+- waitForAnimationToEnd
+- takeScreenshot: 30-tray-card
+- tapOn:
+    point: "50%,20%"
+    optional: true
+- waitForAnimationToEnd
+# The message menu: the submenu in three beats (one shot mid-motion, one at rest).
+- tapOn:
+    text: "Guardar"
+    optional: true
+- waitForAnimationToEnd
+- longPressOn: ".*leite.*"
+- waitForAnimationToEnd
+- takeScreenshot: 30-menu-open
+- tapOn:
+    text: "Escrever"
+    optional: true
+- takeScreenshot: 30-menu-submenu-mid
+- waitForAnimationToEnd
+- takeScreenshot: 30-menu-submenu
+- tapOn:
+    point: "50%,12%"
+    optional: true
+- waitForAnimationToEnd
+# The search sheet edges.
+- tapOn:
+    text: "Buscar no diário"
+    optional: true
+- waitForAnimationToEnd
+- takeScreenshot: 30-search-sheet
