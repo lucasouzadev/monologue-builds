@@ -148,6 +148,21 @@ jobs:
             grep -aE '^(RESULT|STEP) ' "$RUNNER_TEMP/qa-logs/compasso-flows.log" || true
             echo 'Maestro Compasso: FAIL (detailed evidence encrypted)'; exit 1
           fi
+      # Measures the recordings of this run for one-frame glitches (a bubble that vanishes, a hard cut). It reads the video on the
+      # runner and prints ONLY the clip name (from the public flow file), the kind, the time and the share of the screen that
+      # changed: no app text, no screenshots, nothing uploaded. The recording itself stays in the encrypted evidence below.
+      - name: Frame glitch measurement (counts and times only)
+        if: always()
+        run: |
+          clips=$(find "$HOME/.maestro/tests" -type f -name '*.mp4' 2>/dev/null | sort)
+          if [ -z "$clips" ]; then echo 'No recordings to measure.'; exit 0; fi
+          if [ ! -f src/tools/qa/frame-glitches.py ]; then echo 'frame-glitches.py is not in this source commit: measurement skipped.'; exit 0; fi
+          brew list ffmpeg >/dev/null 2>&1 || brew install ffmpeg >/dev/null 2>&1 || { echo 'ffmpeg unavailable: measurement skipped.'; exit 0; }
+          python3 -m venv "$RUNNER_TEMP/measure" >/dev/null 2>&1 && "$RUNNER_TEMP/measure/bin/pip" install --quiet numpy >/dev/null 2>&1 || { echo 'numpy unavailable: measurement skipped.'; exit 0; }
+          for clip in $clips; do
+            name=$(basename "$clip" .mp4)
+            "$RUNNER_TEMP/measure/bin/python" -I src/tools/qa/frame-glitches.py "$clip" 2>&1 | grep -E '^(BLINK|STEP|[0-9]+ frames)' | sed "s/^/GLITCH $name: /" || true
+          done
       - name: Per-flow results (names only)
         if: always()
         run: grep -hE '^(RESULT|STEP) ' "$RUNNER_TEMP"/qa-logs/compasso-*.log 2>/dev/null || echo 'No per-flow results recorded.'

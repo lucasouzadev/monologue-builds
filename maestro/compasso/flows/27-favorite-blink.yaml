@@ -1,0 +1,23 @@
+# Favoritar / Desfavoritar must not make the bubble vanish for a frame (owner QA 2026-11-22, seen at 60 fps: the whole bubble
+# disappears for one frame ~0.15 s after the menu closes). The flow only records; the workflow's frame measurement step reads
+# the recording (counts and times, nothing uploaded in plain text) and the verdict is the number of BLINK lines for this clip.
+appId: app.monologue.mobile
+---
+- runFlow: support/seed-home.yaml
+- scrollUntilVisible:
+    element:
+      text: ".*example.com.*"
+    direction: DOWN
+    timeout: 20000
+    waitToSettleTimeoutMs: 500
+- waitForAnimationToEnd
+- startRecording: 27-favorite-blink
+- longPressOn: ".*example.com.*"
+- waitForAnimationToEnd
+- tapOn: "Favoritar"
+- waitForAnimationToEnd
+- longPressOn: ".*example.com.*"
+- waitForAnimationToEnd
+- tapOn: "Desfavoritar"
+- waitForAnimationToEnd
+- stopRecording
