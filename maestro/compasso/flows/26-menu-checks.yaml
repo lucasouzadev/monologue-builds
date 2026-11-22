@@ -20,7 +20,14 @@ appId: app.monologue.mobile
     point: "50%,12%"
     optional: true
 - waitForAnimationToEnd
-# D2: a long press on the task opens the menu and the box stays empty.
+# D2: a long press on the task opens the menu and the box stays empty. The task may be off screen after the link step.
+- scrollUntilVisible:
+    element:
+      text: "comprar pao"
+    direction: DOWN
+    timeout: 20000
+    waitToSettleTimeoutMs: 500
+- waitForAnimationToEnd
 - longPressOn: "comprar pao"
 - waitForAnimationToEnd
 - takeScreenshot: 26-task-menu
