@@ -4,15 +4,16 @@
 appId: app.monologue.mobile
 ---
 - runFlow: support/seed-home.yaml
+# The bubble may show the link as its full text or as the preview card's site name, so match either (as flow 22 does).
 - scrollUntilVisible:
     element:
-      text: "https://example.com"
+      text: ".*example.com.*"
     direction: DOWN
     timeout: 20000
     waitToSettleTimeoutMs: 500
 - waitForAnimationToEnd
 # D2: a long press on the link opens the menu, not the browser.
-- longPressOn: "https://example.com"
+- longPressOn: ".*example.com.*"
 - waitForAnimationToEnd
 - takeScreenshot: 26-link-menu
 - tapOn:
